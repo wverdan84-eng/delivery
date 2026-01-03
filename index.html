@@ -1,288 +1,140 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Sistema de Pedidos</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <title>Sistema de Pedidos SaaS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
+    :root{
+      --bg:#f4f6f8; --card:#fff; --text:#111; --primary:#2e7d32; --secondary:#1565c0;
     }
-
-    header {
-      background: #111;
-      color: #fff;
-      padding: 14px;
-      text-align: center;
-      font-size: 18px;
+    [data-theme="dark"]{
+      --bg:#0f1216; --card:#151a21; --text:#e6e6e6; --primary:#4caf50; --secondary:#64b5f6;
     }
-
-    .container {
-      padding: 16px;
-      max-width: 900px;
-      margin: auto;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      margin-bottom: 12px;
-      font-size: 15px;
-    }
-
-    button {
-      background: #2e7d32;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    button.secondary {
-      background: #1565c0;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-
-    th, td {
-      border-bottom: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-
-    th {
-      background: #f0f0f0;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .status {
-      font-weight: bold;
-    }
+    body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+    header{background:#000;color:#fff;padding:12px;text-align:center}
+    .container{max-width:1100px;margin:auto;padding:16px}
+    .card{background:var(--card);border-radius:10px;padding:16px;margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+    input,select,button{width:100%;padding:10px;margin:6px 0;font-size:15px}
+    button{background:var(--primary);color:#fff;border:0;border-radius:8px;cursor:pointer}
+    button.secondary{background:var(--secondary)}
+    button.outline{background:transparent;color:var(--text);border:1px solid #999}
+    .grid{display:grid;grid-template-columns:1fr;gap:16px}
+    @media(min-width:900px){.grid{grid-template-columns:1fr 1fr}}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid #ccc;text-align:left}
+    th{background:#ddd}
+    .hidden{display:none}
+    .topbar{display:flex;gap:8px;justify-content:space-between;align-items:center}
+    .badge{padding:4px 8px;border-radius:6px;background:#ddd}
   </style>
 </head>
 <body>
-
-<header>Sistema de Pedidos</header>
-
-<div class="container">
-
-  <!-- LOGIN -->
-  <div class="card" id="loginBox">
-    <h3>Login por e-mail</h3>
+<header>
+  <div class="topbar">
+    <div>Sistema de Pedidos</div>
+    <div>
+      <button class="outline" onclick="toggleTheme()">Tema</button>
+      <button class="outline" onclick="logout()">Sair</button>
+    </div>
+  </div>
+</header><div class="container">  <!-- LOGIN -->  <div class="card" id="loginBox">
+    <h3>Acesso por e-mail</h3>
     <input type="email" id="emailLogin" placeholder="Seu e-mail" />
-    <button onclick="login()">Enviar link de acesso</button>
+    <button onclick="login()">Enviar link</button>
     <p id="loginMsg"></p>
-  </div>
-
-  <!-- DASHBOARD -->
-  <div class="card hidden" id="dashboardBox">
+  </div>  <!-- DASHBOARD -->  <div class="card hidden" id="dashboardBox">
     <h3>Dashboard</h3>
-    <p>Total de pedidos: <b id="dashPedidos">0</b></p>
+    <p>Pedidos: <b id="dashPedidos">0</b></p>
     <p>Faturamento: <b>R$ <span id="dashTotal">0</span></b></p>
-  </div>
-
-  <!-- NOVO PEDIDO -->
-  <div class="card hidden" id="pedidoBox">
-    <h3>Novo Pedido</h3>
-
-    <input id="clienteNome" placeholder="Nome do cliente" />
-    <input id="clienteWhats" placeholder="WhatsApp do cliente" />
-
-    <select id="produtoSelect"></select>
-    <input id="qtdProduto" type="number" placeholder="Quantidade" value="1" />
-
-    <button onclick="addItem()">Adicionar item</button>
-
-    <ul id="itensLista"></ul>
-
-    <p><b>Total: R$ <span id="totalPedido">0</span></b></p>
-
-    <button onclick="enviarPedido()">Finalizar Pedido</button>
-  </div>
-
-  <!-- PEDIDOS -->
-  <div class="card hidden" id="pedidosBox">
-    <h3>Pedidos</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Cliente</th>
-          <th>Total</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="listaPedidos"></tbody>
-    </table>
-  </div>
-
+  </div>  <div class="grid">
+    <!-- NOVO PEDIDO -->
+    <div class="card hidden" id="pedidoBox">
+      <h3>Novo Pedido</h3>
+      <input id="clienteNome" placeholder="Cliente" />
+      <input id="clienteWhats" placeholder="WhatsApp" />
+      <select id="produtoSelect"></select>
+      <input id="qtdProduto" type="number" value="1" />
+      <button onclick="addItem()">Adicionar</button>
+      <ul id="itensLista"></ul>
+      <p><b>Total: R$ <span id="totalPedido">0</span></b></p>
+      <button onclick="enviarPedido()">Finalizar</button>
+    </div><!-- PEDIDOS / ADMIN -->
+<div class="card hidden" id="pedidosBox">
+  <h3>Pedidos</h3>
+  <table>
+    <thead><tr><th>ID</th><th>Cliente</th><th>Total</th><th>Status</th><th>Ação</th></tr></thead>
+    <tbody id="listaPedidos"></tbody>
+  </table>
 </div>
 
-<script>
-/* ================= CONFIG ================= */
-const WEBAPP_URL = "COLE_AQUI_A_URL_DO_SEU_WEBAPP";
+  </div></div><script>
+const WEBAPP_URL = "COLE_AQUI_A_URL_DO_WEBAPP";
+let state = JSON.parse(localStorage.getItem('sessao')||'{}');
+let produtos=[], itens=[];
 
-/* ================= ESTADO ================= */
-let email = "";
-let lojaId = "";
-let produtos = [];
-let itens = [];
+function save(){localStorage.setItem('sessao',JSON.stringify(state));}
+function logout(){localStorage.removeItem('sessao');location.href=location.pathname;}
+function toggleTheme(){document.documentElement.dataset.theme = document.documentElement.dataset.theme==='dark'?'':'dark';}
 
-/* ================= LOGIN ================= */
-function login() {
-  const em = document.getElementById("emailLogin").value;
-  fetch(`${WEBAPP_URL}?action=login&email=${encodeURIComponent(em)}`)
-    .then(r => r.json())
-    .then(() => {
-      document.getElementById("loginMsg").innerText =
-        "Link enviado para seu e-mail.";
-    });
-}
-
-function validarToken() {
-  const p = new URLSearchParams(window.location.search);
-  const token = p.get("token");
-  if (!token) return;
-
-  fetch(`${WEBAPP_URL}?action=validar&token=${token}`)
-    .then(r => r.json())
-    .then(d => {
-      email = d.email;
-      lojaId = d.loja_id;
-      iniciarSistema();
-    });
-}
-
-/* ================= SISTEMA ================= */
-function iniciarSistema() {
-  document.getElementById("loginBox").classList.add("hidden");
-  document.getElementById("dashboardBox").classList.remove("hidden");
-  document.getElementById("pedidoBox").classList.remove("hidden");
-  document.getElementById("pedidosBox").classList.remove("hidden");
-
-  carregarDashboard();
-  carregarProdutos();
-  carregarPedidos();
-}
-
-function carregarDashboard() {
-  fetch(`${WEBAPP_URL}?action=dashboard&email=${email}&loja_id=${lojaId}`)
-    .then(r => r.json())
-    .then(d => {
-      document.getElementById("dashPedidos").innerText = d.pedidos;
-      document.getElementById("dashTotal").innerText = d.faturamento;
-    });
-}
-
-function carregarProdutos() {
-  fetch(`${WEBAPP_URL}?action=produtos&loja_id=${lojaId}`)
-    .then(r => r.json())
-    .then(d => {
-      produtos = d;
-      const sel = document.getElementById("produtoSelect");
-      sel.innerHTML = "";
-      d.forEach(p => {
-        const o = document.createElement("option");
-        o.value = p.id;
-        o.text = `${p.nome} - R$ ${p.preco}`;
-        o.dataset.preco = p.preco;
-        sel.appendChild(o);
-      });
-    });
-}
-
-/* ================= PEDIDO ================= */
-function addItem() {
-  const sel = document.getElementById("produtoSelect");
-  const qtd = Number(document.getElementById("qtdProduto").value);
-  const preco = Number(sel.selectedOptions[0].dataset.preco);
-
-  itens.push({
-    nome: sel.selectedOptions[0].text,
-    qtd: qtd,
-    total: qtd * preco
-  });
-
-  renderItens();
-}
-
-function renderItens() {
-  const ul = document.getElementById("itensLista");
-  ul.innerHTML = "";
-  let total = 0;
-
-  itens.forEach(i => {
-    total += i.total;
-    const li = document.createElement("li");
-    li.innerText = `${i.nome} (${i.qtd})`;
-    ul.appendChild(li);
-  });
-
-  document.getElementById("totalPedido").innerText = total;
-}
-
-function enviarPedido() {
-  fetch(WEBAPP_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "novoPedido",
-      loja_id: lojaId,
-      cliente_nome: document.getElementById("clienteNome").value,
-      cliente_whatsapp: document.getElementById("clienteWhats").value,
-      itens: JSON.stringify(itens),
-      total: document.getElementById("totalPedido").innerText
-    })
-  }).then(() => {
-    itens = [];
-    renderItens();
-    carregarDashboard();
-    carregarPedidos();
-    alert("Pedido enviado!");
+function login(){
+  const email=document.getElementById('emailLogin').value;
+  fetch(`${WEBAPP_URL}?action=login&email=${encodeURIComponent(email)}`).then(()=>{
+    document.getElementById('loginMsg').innerText='Link enviado.';
   });
 }
 
-/* ================= LISTAGEM ================= */
-function carregarPedidos() {
-  fetch(`${WEBAPP_URL}?action=pedidos&email=${email}&loja_id=${lojaId}`)
-    .then(r => r.json())
-    .then(d => {
-      const tb = document.getElementById("listaPedidos");
-      tb.innerHTML = "";
-      d.forEach(p => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${p.id}</td>
-          <td>${p.cliente}</td>
-          <td>R$ ${p.total}</td>
-          <td class="status">${p.status}</td>
-        `;
-        tb.appendChild(tr);
-      });
-    });
+function validarToken(){
+  const p=new URLSearchParams(location.search); const token=p.get('token');
+  if(!token && state.email) return iniciar();
+  if(!token) return;
+  fetch(`${WEBAPP_URL}?action=validar&token=${token}`).then(r=>r.json()).then(d=>{
+    if(d.email){ state.email=d.email; state.loja_id=d.loja_id; save(); iniciar(); }
+  });
 }
 
-/* ================= INIT ================= */
+function iniciar(){
+  ['loginBox'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  ['dashboardBox','pedidoBox','pedidosBox'].forEach(id=>document.getElementById(id).classList.remove('hidden'));
+  carregarDashboard(); carregarProdutos(); carregarPedidos();
+}
+
+function carregarDashboard(){
+  fetch(`${WEBAPP_URL}?action=dashboard&email=${state.email}&loja_id=${state.loja_id}`)
+  .then(r=>r.json()).then(d=>{
+    dashPedidos.innerText=d.pedidos||0; dashTotal.innerText=d.faturamento||0;
+  });
+}
+
+function carregarProdutos(){
+  fetch(`${WEBAPP_URL}?action=produtos&loja_id=${state.loja_id}`).then(r=>r.json()).then(d=>{
+    produtos=d; produtoSelect.innerHTML='';
+    d.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.text=`${p.nome} - R$ ${p.preco}`;o.dataset.preco=p.preco;produtoSelect.appendChild(o);});
+  });
+}
+
+function addItem(){
+  const opt=produtoSelect.selectedOptions[0]; const qtd=Number(qtdProduto.value); const preco=Number(opt.dataset.preco);
+  itens.push({nome:opt.text,qtd,total:qtd*preco}); renderItens();
+}
+function renderItens(){ itensLista.innerHTML=''; let t=0; itens.forEach(i=>{t+=i.total; const li=document.createElement('li'); li.innerText=`${i.nome} (${i.qtd})`; itensLista.appendChild(li);}); totalPedido.innerText=t; }
+
+function enviarPedido(){
+  fetch(WEBAPP_URL,{method:'POST',body:JSON.stringify({action:'novoPedido',loja_id:state.loja_id,cliente_nome:clienteNome.value,cliente_whatsapp:clienteWhats.value,itens:JSON.stringify(itens),total:totalPedido.innerText})})
+  .then(()=>{itens=[];renderItens();carregarDashboard();carregarPedidos();});
+}
+
+function carregarPedidos(){
+  fetch(`${WEBAPP_URL}?action=pedidos&email=${state.email}&loja_id=${state.loja_id}`).then(r=>r.json()).then(d=>{
+    listaPedidos.innerHTML=''; (d||[]).forEach(p=>{
+      const tr=document.createElement('tr'); tr.innerHTML=`<td>${p.id}</td><td>${p.cliente}</td><td>R$ ${p.total}</td><td><span class="badge">${p.status}</span></td><td><select onchange="mudarStatus(${p.id},this.value)"><option>Recebido</option><option>Em preparo</option><option>Finalizado</option></select></td>`; listaPedidos.appendChild(tr);
+    });
+  });
+}
+
+function mudarStatus(id,status){
+  fetch(WEBAPP_URL,{method:'POST',body:JSON.stringify({action:'status',pedido_id:id,status:status,email:state.email,loja_id:state.loja_id})}).then(()=>carregarPedidos());
+}
+
 validarToken();
-</script>
-
-</body>
+</script></body>
 </html>
