@@ -3,278 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minha Loja Profissional</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Loja Profissional V2</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --primary: #2563eb;
-            --secondary: #1e40af;
-            --bg: #f3f4f6;
-            --card-bg: #ffffff;
-            --text: #1f2937;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        :root { --primary: #0f172a; --accent: #3b82f6; --bg: #f8fafc; --white: #ffffff; --text: #334155; --success: #22c55e; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 80px; }
         
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; }
-
-        /* Header */
-        header { background: white; padding: 1rem 5%; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
-        .cart-icon { position: relative; cursor: pointer; font-size: 1.2rem; }
-        .cart-count { position: absolute; top: -8px; right: -8px; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; font-weight: bold; }
-
-        /* Hero Section */
-        .hero { text-align: center; padding: 3rem 1rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; margin-bottom: 2rem; }
-        .hero h1 { margin-bottom: 0.5rem; }
-
-        /* Filters */
-        .controls { max-width: 1200px; margin: 0 auto 2rem; padding: 0 1rem; display: flex; gap: 1rem; flex-wrap: wrap; }
-        .search-bar { flex: 1; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
-        .category-filter { padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px; background: white; }
-
-        /* Grid de Produtos */
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+        /* Navbar & Layout (Mesmo do anterior) */
+        nav { background: var(--white); padding: 1rem 5%; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; }
+        .brand { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        .cart-trigger { position: relative; cursor: pointer; padding: 10px; }
+        .badge { position: absolute; top: 0; right: 0; background: var(--accent); color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
         
-        .product-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; display: flex; flex-direction: column; }
-        .product-card:hover { transform: translateY(-5px); }
-        .product-img { width: 100%; height: 200px; object-fit: cover; background: #eee; }
-        .product-info { padding: 1rem; flex-grow: 1; display: flex; flex-direction: column; }
-        .product-cat { font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
-        .product-title { font-size: 1.1rem; font-weight: bold; margin: 0.5rem 0; }
-        .product-price { font-size: 1.3rem; color: var(--primary); font-weight: bold; margin-top: auto; }
-        .add-btn { width: 100%; padding: 0.8rem; background: var(--primary); color: white; border: none; border-radius: 6px; margin-top: 1rem; cursor: pointer; transition: background 0.2s; }
-        .add-btn:hover { background: var(--secondary); }
+        /* Grid Produtos */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: transform 0.2s; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-5px); }
+        .card-img { width: 100%; height: 220px; object-fit: cover; }
+        .card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+        .card-title { font-weight: 700; margin: 0 0 0.5rem; color: var(--primary); }
+        .price { font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-top: auto; }
+        .btn-add { background: var(--primary); color: white; border: none; padding: 0.8rem; border-radius: 8px; margin-top: 1rem; cursor: pointer; width: 100%; font-weight: 600; }
+        .btn-add:hover { background: var(--accent); }
 
-        /* Modal do Carrinho */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: flex-end; }
-        .modal.active { display: flex; }
-        .cart-sidebar { background: white; width: 100%; max-width: 400px; height: 100%; padding: 2rem; display: flex; flex-direction: column; animation: slideIn 0.3s; }
+        /* Drawer Carrinho */
+        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+        .drawer { position: fixed; top: 0; right: 0; height: 100%; width: 100%; max-width: 450px; background: white; z-index: 100; transform: translateX(100%); transition: transform 0.3s; display: flex; flex-direction: column; }
+        .drawer.open { transform: translateX(0); }
+        .drawer-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .drawer-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
+        .cart-item { display: flex; gap: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; }
+        .cart-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+        .drawer-footer { padding: 1.5rem; border-top: 1px solid #e2e8f0; background: #f8fafc; }
+        .btn-checkout { width: 100%; background: var(--success); color: white; padding: 1rem; border: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
+
+        /* --- NOVO: Modal de Pagamento --- */
+        .pay-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; padding: 1rem; }
+        .pay-modal.active { display: flex; }
+        .pay-box { background: white; width: 100%; max-width: 500px; border-radius: 16px; overflow: hidden; animation: slideUp 0.3s; }
+        .pay-header { background: var(--primary); color: white; padding: 1.5rem; text-align: center; }
+        .pay-body { padding: 2rem; }
         
-        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .payment-options { display: flex; gap: 1rem; margin-bottom: 2rem; }
+        .pay-option { flex: 1; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .pay-option.selected { border-color: var(--success); background: #f0fdf4; color: var(--success); }
+        .pay-option i { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
 
-        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid #eee; padding-bottom: 1rem; }
-        .close-cart { cursor: pointer; font-size: 1.5rem; }
-        .cart-items { flex-grow: 1; overflow-y: auto; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #f0f0f0; padding-bottom: 0.5rem; }
-        .cart-item-info h4 { font-size: 0.9rem; }
-        .cart-total { font-size: 1.5rem; font-weight: bold; margin: 1rem 0; text-align: right; }
-        .checkout-btn { width: 100%; padding: 1rem; background: #25D366; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .checkout-btn:hover { background: #128C7E; }
-        .remove-item { color: red; cursor: pointer; margin-left: 10px; }
+        .pix-area { display: none; text-align: center; background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px dashed #cbd5e1; }
+        .pix-key { font-family: monospace; background: white; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 4px; margin: 0.5rem 0; word-break: break-all; }
+        .btn-copy { background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        
+        .card-msg { display: none; text-align: center; color: #64748b; font-size: 0.9rem; margin-bottom: 1rem; }
 
-        /* Loading */
-        #loading { text-align: center; padding: 2rem; font-size: 1.2rem; color: #666; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo"><i class="fas fa-store"></i> UltraStore</div>
-        <div class="cart-icon" onclick="toggleCart()">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="cart-count" id="cartCount">0</span>
+    <nav>
+        <div class="brand"><i class="fas fa-cube"></i> TechStore</div>
+        <div class="cart-trigger" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i> <span class="badge" id="cartCount">0</span>
         </div>
-    </header>
+    </nav>
 
-    <div class="hero">
-        <h1>Bem-vindo à Melhor Loja</h1>
-        <p>Produtos selecionados com qualidade premium</p>
+    <div class="container">
+        <input type="text" id="search" placeholder="Buscar produtos..." style="width:100%; padding:1rem; border-radius:8px; border:1px solid #ccc; margin-bottom:1rem" oninput="filter()">
+        <div id="grid" class="grid"></div>
     </div>
 
-    <div class="controls">
-        <input type="text" id="searchInput" class="search-bar" placeholder="Buscar produtos..." oninput="filterProducts()">
-        <select id="categoryFilter" class="category-filter" onchange="filterProducts()">
-            <option value="all">Todas Categorias</option>
-        </select>
+    <div class="drawer-overlay" id="overlay" onclick="toggleCart()"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header"><h2>Carrinho</h2> <span onclick="toggleCart()" style="cursor:pointer">&times;</span></div>
+        <div class="drawer-body" id="cartItems"></div>
+        <div class="drawer-footer">
+            <div style="display:flex; justify-content:space-between; margin-bottom:1rem; font-weight:bold; font-size:1.2rem">
+                <span>Total:</span> <span id="cartTotal">R$ 0,00</span>
+            </div>
+            <button class="btn-checkout" onclick="openPaymentModal()">Ir para Pagamento</button>
+        </div>
     </div>
 
-    <div id="loading"><i class="fas fa-spinner fa-spin"></i> Carregando catálogo...</div>
-    <div class="products-grid" id="productsGrid"></div>
+    <div class="pay-modal" id="payModal">
+        <div class="pay-box">
+            <div class="pay-header">
+                <h3>Como deseja pagar?</h3>
+            </div>
+            <div class="pay-body">
+                <div class="payment-options">
+                    <div class="pay-option" onclick="selectPayment('pix', this)">
+                        <i class="brands fa-pix"></i> PIX (Imediato)
+                    </div>
+                    <div class="pay-option" onclick="selectPayment('card', this)">
+                        <i class="far fa-credit-card"></i> Cartão
+                    </div>
+                </div>
 
-    <div class="modal" id="cartModal">
-        <div class="cart-sidebar">
-            <div class="cart-header">
-                <h2>Seu Carrinho</h2>
-                <span class="close-cart" onclick="toggleCart()">&times;</span>
-            </div>
-            <div class="cart-items" id="cartItemsContainer">
-                <p>Seu carrinho está vazio.</p>
-            </div>
-            <div class="cart-footer">
-                <div class="cart-total">Total: R$ <span id="cartTotal">0.00</span></div>
-                <button class="checkout-btn" onclick="checkout()">
-                    <i class="fab fa-whatsapp"></i> Finalizar no WhatsApp
+                <div id="pixInfo" class="pix-area">
+                    <p style="font-size:0.9rem; color:#64748b; margin-bottom:10px">Escaneie ou copie a chave abaixo:</p>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SEU_PIX_AQUI" style="width:120px; margin-bottom:10px">
+                    <div class="pix-key" id="pixKeyText"></div>
+                    <button class="btn-copy" onclick="copyPix()">Copiar Chave Pix</button>
+                    <p style="font-size:0.8rem; color:#ef4444; margin-top:10px">Envie o comprovante no WhatsApp após confirmar.</p>
+                </div>
+
+                <div id="cardInfo" class="card-msg">
+                    <p><i class="fas fa-info-circle"></i> Enviaremos um <strong>Link de Pagamento Seguro</strong> (MercadoPago/Cielo) diretamente no seu WhatsApp para garantir a segurança dos seus dados.</p>
+                </div>
+
+                <button class="btn-checkout" style="margin-top:1rem" onclick="finalizeOrder()">
+                    <i class="fab fa-whatsapp"></i> <span id="btnText">Confirmar Pedido</span>
                 </button>
+                <button onclick="closePaymentModal()" style="width:100%; background:none; border:none; color:#64748b; margin-top:1rem; cursor:pointer">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURAÇÃO (Edite aqui) ---
-        // 1. Publique sua planilha na web (Arquivo > Compartilhar > Publicar na Web > CSV)
-        // 2. Cole o ID da planilha abaixo:
-        const SHEET_ID = '1YYobMz2udkbtX9P9N76QhTvCJkNXnxpYUbNvv3M4G_M'; 
-        const WHATSAPP_NUMBER = '5527997566512'; // Seu número com DDD
-        // ---------------------------------
-
-        let allProducts = [];
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-        async function fetchProducts() {
-            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+        // --- CONFIGURAÇÕES DA LOJA (EDITE AQUI) ---
+        const CONFIG = {
+            sheetID: '', // 1YYobMz2udkbtX9P9N76QhTvCJkNXnxpYUbNvv3M4G_M
+            whatsapp: '5527997566512',
+            // --- DADOS DO PIX ---
+            pixKey: '5527997566512', // SUA CHAVE PIX AQUI
+            pixName: 'Washington Verdan Neto', // NOME QUE APARECE NO BANCO
             
-            try {
-                const response = await fetch(url);
-                const text = await response.text();
-                allProducts = csvToJson(text);
-                renderProducts(allProducts);
-                populateCategories(allProducts);
-                document.getElementById('loading').style.display = 'none';
-            } catch (error) {
-                console.error('Erro ao carregar:', error);
-                // Dados de fallback para teste se a planilha falhar
-                allProducts = [
-                    {id: 1, nome: "Produto Exemplo 1", preco: 99.90, imagem: "https://via.placeholder.com/300", categoria: "Eletrônicos", descricao: "Descrição teste"},
-                    {id: 2, nome: "Produto Exemplo 2", preco: 149.50, imagem: "https://via.placeholder.com/300", categoria: "Moda", descricao: "Descrição teste"}
-                ];
-                renderProducts(allProducts);
-                document.getElementById('loading').style.display = 'none';
-                alert('Atenção: Usando produtos de teste. Verifique o ID da sua planilha.');
-            }
+            // Dados de demonstração
+            demoData: [
+                {id: 1, nome: "Relógio Smart", preco: 299.90, imagem: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=60", categoria: "Tech"},
+                {id: 2, nome: "Fone Pro", preco: 149.00, imagem: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=60", categoria: "Tech"},
+                {id: 3, nome: "Mochila Urban", preco: 199.90, imagem: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=500&q=60", categoria: "Acessórios"}
+            ]
+        };
+
+        let products = [], cart = JSON.parse(localStorage.getItem('cartV2')) || [], selectedPayment = '';
+
+        // Inicialização
+        async function init() {
+            document.getElementById('pixKeyText').innerText = CONFIG.pixKey;
+            
+            if(CONFIG.sheetID) {
+                try {
+                    const res = await fetch(`https://docs.google.com/spreadsheets/d/${CONFIG.sheetID}/gviz/tq?tqx=out:csv`);
+                    const txt = await res.text();
+                    products = csvToJson(txt);
+                } catch(e) { products = CONFIG.demoData; }
+            } else { products = CONFIG.demoData; }
+            render(); updateCart();
         }
 
         function csvToJson(csv) {
-            const rows = csv.split('\n').map(row => row.split(','));
-            const headers = rows[0].map(header => header.replace(/"/g, '').trim());
-            return rows.slice(1).map(row => {
-                let obj = {};
-                row.forEach((val, i) => {
-                    if(headers[i]) obj[headers[i]] = val.replace(/"/g, '').trim();
-                });
-                return obj;
+            const rows = csv.split('\n').map(r => r.split(','));
+            const h = rows[0].map(x => x.replace(/"/g, '').trim());
+            return rows.slice(1).map(r => {
+                let o = {}; r.forEach((v, i) => { if(h[i]) o[h[i]] = v.replace(/"/g, '').trim(); });
+                return o;
             });
         }
 
-        function renderProducts(products) {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = products.map(p => `
-                <div class="product-card">
-                    <img src="${p.imagem}" alt="${p.nome}" class="product-img">
-                    <div class="product-info">
-                        <span class="product-cat">${p.categoria}</span>
-                        <h3 class="product-title">${p.nome}</h3>
-                        <p style="font-size:0.9rem; color:#777; margin-bottom:10px">${p.descricao}</p>
-                        <div class="product-price">R$ ${parseFloat(p.preco).toFixed(2)}</div>
-                        <button class="add-btn" onclick="addToCart('${p.id}')">Adicionar ao Carrinho</button>
+        function render() {
+            const term = document.getElementById('search').value.toLowerCase();
+            const list = products.filter(p => p.nome.toLowerCase().includes(term));
+            document.getElementById('grid').innerHTML = list.map(p => `
+                <div class="card">
+                    <img src="${p.imagem}" class="card-img">
+                    <div class="card-body">
+                        <h3 class="card-title">${p.nome}</h3>
+                        <div class="price">R$ ${parseFloat(p.preco).toFixed(2)}</div>
+                        <button class="btn-add" onclick="add('${p.id}')">Adicionar</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
-        function populateCategories(products) {
-            const categories = [...new Set(products.map(p => p.categoria))];
-            const select = document.getElementById('categoryFilter');
-            categories.forEach(c => {
-                if(c) select.innerHTML += `<option value="${c}">${c}</option>`;
-            });
+        function add(id) {
+            const p = products.find(x => x.id == id);
+            const exists = cart.find(x => x.id == id);
+            if(exists) exists.qty++; else cart.push({...p, qty:1});
+            save(); toggleCart();
         }
 
-        function filterProducts() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const cat = document.getElementById('categoryFilter').value;
-            
-            const filtered = allProducts.filter(p => {
-                const matchSearch = p.nome.toLowerCase().includes(search) || p.descricao.toLowerCase().includes(search);
-                const matchCat = cat === 'all' || p.categoria === cat;
-                return matchSearch && matchCat;
-            });
-            renderProducts(filtered);
+        function remove(id) {
+            cart = cart.filter(x => x.id != id);
+            save();
         }
 
-        function addToCart(id) {
-            const product = allProducts.find(p => p.id == id);
-            const existing = cart.find(item => item.id == id);
-            
-            if(existing) {
-                existing.qty++;
-            } else {
-                cart.push({...product, qty: 1});
-            }
-            updateCart();
-            toggleCart(); // Opcional: abre o carrinho ao adicionar
-        }
-
-        function removeFromCart(id) {
-            cart = cart.filter(item => item.id != id);
-            updateCart();
-        }
+        function save() { localStorage.setItem('cartV2', JSON.stringify(cart)); updateCart(); }
 
         function updateCart() {
-            localStorage.setItem('cart', JSON.stringify(cart));
-            document.getElementById('cartCount').innerText = cart.reduce((acc, item) => acc + item.qty, 0);
-            
-            const container = document.getElementById('cartItemsContainer');
-            if(cart.length === 0) {
-                container.innerHTML = '<p>Seu carrinho está vazio.</p>';
-                document.getElementById('cartTotal').innerText = '0.00';
-                return;
-            }
-
-            let total = 0;
-            container.innerHTML = cart.map(item => {
-                const subtotal = item.price ? item.price * item.qty : item.preco * item.qty;
-                total += subtotal;
-                return `
-                    <div class="cart-item">
-                        <div class="cart-item-info">
-                            <h4>${item.nome} (${item.qty}x)</h4>
-                            <span>R$ ${parseFloat(item.preco).toFixed(2)}</span>
-                        </div>
-                        <i class="fas fa-trash remove-item" onclick="removeFromCart('${item.id}')"></i>
+            document.getElementById('cartCount').innerText = cart.reduce((a,b)=>a+b.qty,0);
+            const total = cart.reduce((a,b)=>a+(b.qty*b.preco),0);
+            document.getElementById('cartTotal').innerText = `R$ ${total.toFixed(2)}`;
+            document.getElementById('cartItems').innerHTML = cart.map(i => `
+                <div class="cart-item">
+                    <img src="${i.imagem}">
+                    <div style="flex:1">
+                        <h4>${i.nome} (${i.qty}x)</h4>
+                        <div>R$ ${(i.preco*i.qty).toFixed(2)}</div>
                     </div>
-                `;
-            }).join('');
-            
-            document.getElementById('cartTotal').innerText = total.toFixed(2);
+                    <i class="fas fa-trash" style="color:red; cursor:pointer" onclick="remove('${i.id}')"></i>
+                </div>`).join('');
         }
 
-        function toggleCart() {
-            const modal = document.getElementById('cartModal');
-            if (modal.style.display === 'flex') {
-                modal.style.display = 'none';
+        // Funções de UI
+        function toggleCart() { 
+            document.getElementById('drawer').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('open');
+        }
+        function filter() { render(); }
+
+        // --- LÓGICA DE PAGAMENTO ---
+        function openPaymentModal() {
+            if(cart.length === 0) return alert("Carrinho vazio!");
+            toggleCart(); // fecha carrinho
+            document.getElementById('payModal').classList.add('active');
+            selectPayment('pix', document.querySelector('.pay-option')); // default
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payModal').classList.remove('active');
+        }
+
+        function selectPayment(method, element) {
+            selectedPayment = method;
+            document.querySelectorAll('.pay-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+
+            if(method === 'pix') {
+                document.getElementById('pixInfo').style.display = 'block';
+                document.getElementById('cardInfo').style.display = 'none';
+                document.getElementById('btnText').innerText = 'Enviar Comprovante';
             } else {
-                modal.style.display = 'flex';
+                document.getElementById('pixInfo').style.display = 'none';
+                document.getElementById('cardInfo').style.display = 'block';
+                document.getElementById('btnText').innerText = 'Pedir Link no WhatsApp';
             }
         }
-        
-        // Fechar modal ao clicar fora
-        document.getElementById('cartModal').addEventListener('click', function(e) {
-            if (e.target === this) toggleCart();
-        });
 
-        function checkout() {
-            if(cart.length === 0) return alert('Carrinho vazio!');
-            
-            let message = "Olá! Gostaria de fazer um pedido:\n\n";
-            let total = 0;
-            
-            cart.forEach(item => {
-                const subtotal = item.preco * item.qty;
-                total += subtotal;
-                message += `▪️ ${item.qty}x ${item.nome} - R$ ${parseFloat(item.preco).toFixed(2)}\n`;
-            });
-            
-            message += `\n*Total: R$ ${total.toFixed(2)}*`;
-            message += `\n\nAguardo confirmação de pagamento e entrega.`;
-            
-            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
+        function copyPix() {
+            navigator.clipboard.writeText(CONFIG.pixKey);
+            alert("Chave Pix copiada!");
         }
 
-        // Inicialização
-        fetchProducts();
-        updateCart();
+        function finalizeOrder() {
+            let total = cart.reduce((a,b)=>a+(b.qty*b.preco),0);
+            let msg = `*NOVO PEDIDO DO SITE*\n------------------\n`;
+            cart.forEach(i => msg += `▪️ ${i.qty}x ${i.nome}\n`);
+            msg += `------------------\n💰 *TOTAL: R$ ${total.toFixed(2)}*\n`;
+            
+            if(selectedPayment === 'pix') {
+                msg += `📱 Pagamento: *PIX* (Aguardando conferência)\n🧾 *Envio o comprovante nesta mensagem.*`;
+            } else {
+                msg += `💳 Pagamento: *CARTÃO DE CRÉDITO*\n🔗 *Por favor, me envie o link de pagamento.*`;
+            }
+
+            window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
+            cart = []; save(); closePaymentModal();
+        }
+
+        init();
     </script>
 </body>
 </html>
