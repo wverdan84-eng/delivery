@@ -3,266 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loja Profissional V2</title>
+    <title>Minha Loja Profissional</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #0f172a; --accent: #3b82f6; --bg: #f8fafc; --white: #ffffff; --text: #334155; --success: #22c55e; }
-        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 80px; }
-        
-        /* Navbar & Layout (Mesmo do anterior) */
-        nav { background: var(--white); padding: 1rem 5%; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; }
-        .brand { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
-        .cart-trigger { position: relative; cursor: pointer; padding: 10px; }
-        .badge { position: absolute; top: 0; right: 0; background: var(--accent); color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
-        
-        /* Grid Produtos */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
-        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: transform 0.2s; display: flex; flex-direction: column; }
-        .card:hover { transform: translateY(-5px); }
-        .card-img { width: 100%; height: 220px; object-fit: cover; }
-        .card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
-        .card-title { font-weight: 700; margin: 0 0 0.5rem; color: var(--primary); }
-        .price { font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-top: auto; }
-        .btn-add { background: var(--primary); color: white; border: none; padding: 0.8rem; border-radius: 8px; margin-top: 1rem; cursor: pointer; width: 100%; font-weight: 600; }
-        .btn-add:hover { background: var(--accent); }
+        :root {
+            --p-color: #000000;
+            --s-color: #3b82f6;
+            --bg-color: #fcfcfd;
+            --card-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-        /* Drawer Carrinho */
-        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .drawer-overlay.open { opacity: 1; pointer-events: auto; }
-        .drawer { position: fixed; top: 0; right: 0; height: 100%; width: 100%; max-width: 450px; background: white; z-index: 100; transform: translateX(100%); transition: transform 0.3s; display: flex; flex-direction: column; }
-        .drawer.open { transform: translateX(0); }
-        .drawer-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-        .drawer-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
-        .cart-item { display: flex; gap: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; }
-        .cart-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
-        .drawer-footer { padding: 1.5rem; border-top: 1px solid #e2e8f0; background: #f8fafc; }
-        .btn-checkout { width: 100%; background: var(--success); color: white; padding: 1rem; border: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: #1f2937; padding-bottom: 80px; }
 
-        /* --- NOVO: Modal de Pagamento --- */
-        .pay-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; padding: 1rem; }
-        .pay-modal.active { display: flex; }
-        .pay-box { background: white; width: 100%; max-width: 500px; border-radius: 16px; overflow: hidden; animation: slideUp 0.3s; }
-        .pay-header { background: var(--primary); color: white; padding: 1.5rem; text-align: center; }
-        .pay-body { padding: 2rem; }
+        header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 1.2rem 8%;
+            position: sticky; top: 0; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -1px; }
+        .logo i { color: var(--s-color); margin-right: 8px; }
+
+        .cart-icon {
+            background: var(--p-color); color: white;
+            padding: 10px 20px; border-radius: 50px;
+            cursor: pointer; display: flex; align-items: center; gap: 10px;
+            transition: var(--transition); box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 8%; }
         
-        .payment-options { display: flex; gap: 1rem; margin-bottom: 2rem; }
-        .pay-option { flex: 1; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; }
-        .pay-option.selected { border-color: var(--success); background: #f0fdf4; color: var(--success); }
-        .pay-option i { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+        .search-wrapper { position: relative; margin-bottom: 40px; }
+        .search-wrapper i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        .search-input {
+            width: 100%; padding: 18px 55px; border-radius: 14px;
+            border: 1px solid #e2e8f0; font-size: 1rem; outline: none;
+        }
 
-        .pix-area { display: none; text-align: center; background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px dashed #cbd5e1; }
-        .pix-key { font-family: monospace; background: white; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 4px; margin: 0.5rem 0; word-break: break-all; }
-        .btn-copy { background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        
-        .card-msg { display: none; text-align: center; color: #64748b; font-size: 0.9rem; margin-bottom: 1rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; }
+        .card {
+            background: white; border-radius: var(--card-radius); padding: 12px;
+            transition: var(--transition); border: 1px solid rgba(0,0,0,0.03);
+            display: flex; flex-direction: column;
+        }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
+        .img-box { width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; margin-bottom: 15px; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .add-btn {
+            width: 100%; padding: 14px; margin-top: 15px; border: none;
+            border-radius: 12px; background: #f1f5f9; font-weight: 600; cursor: pointer;
+        }
+        .add-btn:hover { background: var(--p-color); color: white; }
+
+        /* Panel e Modais */
+        .cart-panel {
+            position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px;
+            height: 100%; background: white; z-index: 2000; transition: 0.4s;
+            box-shadow: -10px 0 50px rgba(0,0,0,0.1); display: flex; flex-direction: column;
+        }
+        .cart-panel.active { right: 0; }
+        .modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px); z-index: 3000; align-items: center; justify-content: center;
+        }
+        .modal-content { background: white; width: 90%; max-width: 450px; border-radius: 24px; padding: 30px; text-align: center; }
+
+        .pay-option {
+            display: flex; align-items: center; gap: 15px; padding: 15px;
+            border: 2px solid #f1f5f9; border-radius: 14px; margin-bottom: 15px; cursor: pointer;
+        }
+        .pay-option.active { border-color: var(--s-color); background: #f0f7ff; }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="brand"><i class="fas fa-cube"></i> TechStore</div>
-        <div class="cart-trigger" onclick="toggleCart()">
-            <i class="fas fa-shopping-cart"></i> <span class="badge" id="cartCount">0</span>
+    <header>
+        <div class="logo"><i class="fas fa-shopping-bag"></i> MINHA LOJA</div>
+        <div class="cart-icon" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i> <span id="count">0</span>
         </div>
-    </nav>
+    </header>
 
     <div class="container">
-        <input type="text" id="search" placeholder="Buscar produtos..." style="width:100%; padding:1rem; border-radius:8px; border:1px solid #ccc; margin-bottom:1rem" oninput="filter()">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search" class="search-input" placeholder="Buscar produtos..." oninput="filter()">
+        </div>
         <div id="grid" class="grid"></div>
     </div>
 
-    <div class="drawer-overlay" id="overlay" onclick="toggleCart()"></div>
-    <div class="drawer" id="drawer">
-        <div class="drawer-header"><h2>Carrinho</h2> <span onclick="toggleCart()" style="cursor:pointer">&times;</span></div>
-        <div class="drawer-body" id="cartItems"></div>
-        <div class="drawer-footer">
-            <div style="display:flex; justify-content:space-between; margin-bottom:1rem; font-weight:bold; font-size:1.2rem">
-                <span>Total:</span> <span id="cartTotal">R$ 0,00</span>
+    <div class="cart-panel" id="cartPanel">
+        <div style="padding:30px; border-bottom:1px solid #eee; display:flex; justify-content:space-between">
+            <h2>Sacola</h2> <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer"></i>
+        </div>
+        <div id="cartList" style="flex-grow:1; overflow-y:auto; padding:30px"></div>
+        <div style="padding:30px; background:#fafafa">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-weight:800">
+                <span>Total</span> <span id="total">R$ 0,00</span>
             </div>
-            <button class="btn-checkout" onclick="openPaymentModal()">Ir para Pagamento</button>
+            <button onclick="openPay()" style="width:100%; padding:18px; border-radius:14px; background:black; color:white; border:none; cursor:pointer; font-weight:bold">Finalizar Pedido</button>
         </div>
     </div>
 
-    <div class="pay-modal" id="payModal">
-        <div class="pay-box">
-            <div class="pay-header">
-                <h3>Como deseja pagar?</h3>
+    <div class="modal" id="payModal">
+        <div class="modal-content">
+            <h2 style="margin-bottom:20px">Como quer pagar?</h2>
+            <div class="pay-option active" id="optPix" onclick="setPay('pix')">
+                <i class="fas fa-qrcode" style="color:#22c55e"></i> <b>Pix (Copia e Cola)</b>
             </div>
-            <div class="pay-body">
-                <div class="payment-options">
-                    <div class="pay-option" onclick="selectPayment('pix', this)">
-                        <i class="brands fa-pix"></i> PIX (Imediato)
-                    </div>
-                    <div class="pay-option" onclick="selectPayment('card', this)">
-                        <i class="far fa-credit-card"></i> Cartão
-                    </div>
-                </div>
-
-                <div id="pixInfo" class="pix-area">
-                    <p style="font-size:0.9rem; color:#64748b; margin-bottom:10px">Escaneie ou copie a chave abaixo:</p>
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SEU_PIX_AQUI" style="width:120px; margin-bottom:10px">
-                    <div class="pix-key" id="pixKeyText"></div>
-                    <button class="btn-copy" onclick="copyPix()">Copiar Chave Pix</button>
-                    <p style="font-size:0.8rem; color:#ef4444; margin-top:10px">Envie o comprovante no WhatsApp após confirmar.</p>
-                </div>
-
-                <div id="cardInfo" class="card-msg">
-                    <p><i class="fas fa-info-circle"></i> Enviaremos um <strong>Link de Pagamento Seguro</strong> (MercadoPago/Cielo) diretamente no seu WhatsApp para garantir a segurança dos seus dados.</p>
-                </div>
-
-                <button class="btn-checkout" style="margin-top:1rem" onclick="finalizeOrder()">
-                    <i class="fab fa-whatsapp"></i> <span id="btnText">Confirmar Pedido</span>
-                </button>
-                <button onclick="closePaymentModal()" style="width:100%; background:none; border:none; color:#64748b; margin-top:1rem; cursor:pointer">Cancelar</button>
+            <div class="pay-option" id="optCard" onclick="setPay('card')">
+                <i class="fas fa-credit-card" style="color:#3b82f6"></i> <b>Cartão de Crédito</b>
             </div>
+            <button onclick="sendZap()" style="width:100%; padding:18px; border-radius:14px; background:#22c55e; color:white; border:none; cursor:pointer; font-weight:bold">
+                <i class="fab fa-whatsapp"></i> Confirmar no WhatsApp
+            </button>
+            <p onclick="document.getElementById('payModal').style.display='none'" style="margin-top:20px; cursor:pointer; color:#999">Voltar</p>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURAÇÕES DA LOJA (EDITE AQUI) ---
         const CONFIG = {
-            sheetID: '1YYobMz2udkbtX9P9N76QhTvCJkNXnxpYUbNvv3M4G_M', // Colar código id da planilha aqui 
+            sheetId: '1YYobMz2udkbtX9P9N76QhTvCJkNXnxpYUbNvv3M4G_M',
             whatsapp: '5527997566512',
-            // --- DADOS DO PIX ---
-            pixKey: '5527997566512', // SUA CHAVE PIX AQUI
-            pixName: 'Washington Verdan Neto', // NOME QUE APARECE NO BANCO
-            
-            // Dados de demonstração
-            demoData: [
-                {id: 1, nome: "Relógio Smart", preco: 299.90, imagem: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=60", categoria: "Tech"},
-                {id: 2, nome: "Fone Pro", preco: 149.00, imagem: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=60", categoria: "Tech"},
-                {id: 3, nome: "Mochila Urban", preco: 199.90, imagem: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=500&q=60", categoria: "Acessórios"}
-            ]
+            pix: '27997566512'
         };
 
-        let products = [], cart = JSON.parse(localStorage.getItem('cartV2')) || [], selectedPayment = '';
+        let products = [], cart = [], payMethod = 'pix';
 
-        // Inicialização
-        async function init() {
-            document.getElementById('pixKeyText').innerText = CONFIG.pixKey;
-            
-            if(CONFIG.sheetID) {
-                try {
-                    const res = await fetch(`https://docs.google.com/spreadsheets/d/${CONFIG.sheetID}/gviz/tq?tqx=out:csv`);
-                    const txt = await res.text();
-                    products = csvToJson(txt);
-                } catch(e) { products = CONFIG.demoData; }
-            } else { products = CONFIG.demoData; }
-            render(); updateCart();
+        async function load() {
+            const r = await fetch(`https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/gviz/tq?tqx=out:csv`);
+            const t = await r.text();
+            products = csvToJson(t);
+            render(products);
         }
 
         function csvToJson(csv) {
             const rows = csv.split('\n').map(r => r.split(','));
-            const h = rows[0].map(x => x.replace(/"/g, '').trim());
+            const h = rows[0].map(x => x.replace(/"/g, '').trim().toLowerCase());
             return rows.slice(1).map(r => {
                 let o = {}; r.forEach((v, i) => { if(h[i]) o[h[i]] = v.replace(/"/g, '').trim(); });
                 return o;
             });
         }
 
-        function render() {
-            const term = document.getElementById('search').value.toLowerCase();
-            const list = products.filter(p => p.nome.toLowerCase().includes(term));
-            document.getElementById('grid').innerHTML = list.map(p => `
+        function render(data) {
+            document.getElementById('grid').innerHTML = data.map(p => `
                 <div class="card">
-                    <img src="${p.imagem}" class="card-img">
-                    <div class="card-body">
-                        <h3 class="card-title">${p.nome}</h3>
-                        <div class="price">R$ ${parseFloat(p.preco).toFixed(2)}</div>
-                        <button class="btn-add" onclick="add('${p.id}')">Adicionar</button>
+                    <div class="img-box"><img src="${p.imagem}"></div>
+                    <div style="flex-grow:1">
+                        <small style="color:#3b82f6; font-weight:bold">${p.categoria || 'Geral'}</small>
+                        <h3 style="margin:5px 0">${p.nome}</h3>
+                        <div style="font-weight:800; font-size:1.2rem">R$ ${parseFloat(p.preco).toFixed(2)}</div>
                     </div>
-                </div>`).join('');
+                    <button class="add-btn" onclick="add('${p.id}')">Adicionar</button>
+                </div>
+            `).join('');
         }
 
         function add(id) {
             const p = products.find(x => x.id == id);
-            const exists = cart.find(x => x.id == id);
-            if(exists) exists.qty++; else cart.push({...p, qty:1});
-            save(); toggleCart();
+            const inCart = cart.find(x => x.id == id);
+            if(inCart) inCart.q++; else cart.push({...p, q: 1});
+            update();
+            if(!document.getElementById('cartPanel').classList.contains('active')) toggleCart();
         }
 
-        function remove(id) {
-            cart = cart.filter(x => x.id != id);
-            save();
+        function update() {
+            document.getElementById('count').innerText = cart.reduce((a, b) => a + b.q, 0);
+            const total = cart.reduce((a, b) => a + (b.q * b.preco), 0);
+            document.getElementById('total').innerText = `R$ ${total.toFixed(2)}`;
+            document.getElementById('cartList').innerHTML = cart.map(i => `
+                <div style="display:flex; gap:10px; margin-bottom:15px">
+                    <img src="${i.imagem}" style="width:50px; height:50px; border-radius:8px; object-fit:cover">
+                    <div style="flex:1"><b>${i.nome}</b><br><small>${i.q}x R$ ${i.preco}</small></div>
+                </div>
+            `).join('');
         }
 
-        function save() { localStorage.setItem('cartV2', JSON.stringify(cart)); updateCart(); }
-
-        function updateCart() {
-            document.getElementById('cartCount').innerText = cart.reduce((a,b)=>a+b.qty,0);
-            const total = cart.reduce((a,b)=>a+(b.qty*b.preco),0);
-            document.getElementById('cartTotal').innerText = `R$ ${total.toFixed(2)}`;
-            document.getElementById('cartItems').innerHTML = cart.map(i => `
-                <div class="cart-item">
-                    <img src="${i.imagem}">
-                    <div style="flex:1">
-                        <h4>${i.nome} (${i.qty}x)</h4>
-                        <div>R$ ${(i.preco*i.qty).toFixed(2)}</div>
-                    </div>
-                    <i class="fas fa-trash" style="color:red; cursor:pointer" onclick="remove('${i.id}')"></i>
-                </div>`).join('');
+        function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
+        function openPay() { document.getElementById('payModal').style.display = 'flex'; }
+        function setPay(m) { 
+            payMethod = m;
+            document.getElementById('optPix').classList.toggle('active', m === 'pix');
+            document.getElementById('optCard').classList.toggle('active', m === 'card');
         }
 
-        // Funções de UI
-        function toggleCart() { 
-            document.getElementById('drawer').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('open');
-        }
-        function filter() { render(); }
-
-        // --- LÓGICA DE PAGAMENTO ---
-        function openPaymentModal() {
-            if(cart.length === 0) return alert("Carrinho vazio!");
-            toggleCart(); // fecha carrinho
-            document.getElementById('payModal').classList.add('active');
-            selectPayment('pix', document.querySelector('.pay-option')); // default
+        function sendZap() {
+            const total = cart.reduce((a, b) => a + (b.q * b.preco), 0);
+            let m = `*PEDIDO:* \n`;
+            cart.forEach(i => m += `• ${i.q}x ${i.nome}\n`);
+            m += `\n*TOTAL:* R$ ${total.toFixed(2)}`;
+            m += `\n*PAGAMENTO:* ${payMethod === 'pix' ? 'Pix (Chave: ' + CONFIG.pix + ')' : 'Cartão'}`;
+            window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(m)}`);
         }
 
-        function closePaymentModal() {
-            document.getElementById('payModal').classList.remove('active');
+        function filter() {
+            const q = document.getElementById('search').value.toLowerCase();
+            render(products.filter(p => p.nome.toLowerCase().includes(q)));
         }
 
-        function selectPayment(method, element) {
-            selectedPayment = method;
-            document.querySelectorAll('.pay-option').forEach(el => el.classList.remove('selected'));
-            element.classList.add('selected');
-
-            if(method === 'pix') {
-                document.getElementById('pixInfo').style.display = 'block';
-                document.getElementById('cardInfo').style.display = 'none';
-                document.getElementById('btnText').innerText = 'Enviar Comprovante';
-            } else {
-                document.getElementById('pixInfo').style.display = 'none';
-                document.getElementById('cardInfo').style.display = 'block';
-                document.getElementById('btnText').innerText = 'Pedir Link no WhatsApp';
-            }
-        }
-
-        function copyPix() {
-            navigator.clipboard.writeText(CONFIG.pixKey);
-            alert("Chave Pix copiada!");
-        }
-
-        function finalizeOrder() {
-            let total = cart.reduce((a,b)=>a+(b.qty*b.preco),0);
-            let msg = `*NOVO PEDIDO DO SITE*\n------------------\n`;
-            cart.forEach(i => msg += `▪️ ${i.qty}x ${i.nome}\n`);
-            msg += `------------------\n💰 *TOTAL: R$ ${total.toFixed(2)}*\n`;
-            
-            if(selectedPayment === 'pix') {
-                msg += `📱 Pagamento: *PIX* (Aguardando conferência)\n🧾 *Envio o comprovante nesta mensagem.*`;
-            } else {
-                msg += `💳 Pagamento: *CARTÃO DE CRÉDITO*\n🔗 *Por favor, me envie o link de pagamento.*`;
-            }
-
-            window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
-            cart = []; save(); closePaymentModal();
-        }
-
-        init();
+        load();
     </script>
 </body>
 </html>
