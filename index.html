@@ -1,140 +1,280 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Sistema de Pedidos SaaS</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root{
-      --bg:#f4f6f8; --card:#fff; --text:#111; --primary:#2e7d32; --secondary:#1565c0;
-    }
-    [data-theme="dark"]{
-      --bg:#0f1216; --card:#151a21; --text:#e6e6e6; --primary:#4caf50; --secondary:#64b5f6;
-    }
-    body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
-    header{background:#000;color:#fff;padding:12px;text-align:center}
-    .container{max-width:1100px;margin:auto;padding:16px}
-    .card{background:var(--card);border-radius:10px;padding:16px;margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-    input,select,button{width:100%;padding:10px;margin:6px 0;font-size:15px}
-    button{background:var(--primary);color:#fff;border:0;border-radius:8px;cursor:pointer}
-    button.secondary{background:var(--secondary)}
-    button.outline{background:transparent;color:var(--text);border:1px solid #999}
-    .grid{display:grid;grid-template-columns:1fr;gap:16px}
-    @media(min-width:900px){.grid{grid-template-columns:1fr 1fr}}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:8px;border-bottom:1px solid #ccc;text-align:left}
-    th{background:#ddd}
-    .hidden{display:none}
-    .topbar{display:flex;gap:8px;justify-content:space-between;align-items:center}
-    .badge{padding:4px 8px;border-radius:6px;background:#ddd}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Loja Profissional</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; }
+
+        /* Header */
+        header { background: white; padding: 1rem 5%; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+        .cart-icon { position: relative; cursor: pointer; font-size: 1.2rem; }
+        .cart-count { position: absolute; top: -8px; right: -8px; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; font-weight: bold; }
+
+        /* Hero Section */
+        .hero { text-align: center; padding: 3rem 1rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; margin-bottom: 2rem; }
+        .hero h1 { margin-bottom: 0.5rem; }
+
+        /* Filters */
+        .controls { max-width: 1200px; margin: 0 auto 2rem; padding: 0 1rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+        .search-bar { flex: 1; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+        .category-filter { padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px; background: white; }
+
+        /* Grid de Produtos */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+        
+        .product-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-img { width: 100%; height: 200px; object-fit: cover; background: #eee; }
+        .product-info { padding: 1rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .product-cat { font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .product-title { font-size: 1.1rem; font-weight: bold; margin: 0.5rem 0; }
+        .product-price { font-size: 1.3rem; color: var(--primary); font-weight: bold; margin-top: auto; }
+        .add-btn { width: 100%; padding: 0.8rem; background: var(--primary); color: white; border: none; border-radius: 6px; margin-top: 1rem; cursor: pointer; transition: background 0.2s; }
+        .add-btn:hover { background: var(--secondary); }
+
+        /* Modal do Carrinho */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: flex-end; }
+        .modal.active { display: flex; }
+        .cart-sidebar { background: white; width: 100%; max-width: 400px; height: 100%; padding: 2rem; display: flex; flex-direction: column; animation: slideIn 0.3s; }
+        
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid #eee; padding-bottom: 1rem; }
+        .close-cart { cursor: pointer; font-size: 1.5rem; }
+        .cart-items { flex-grow: 1; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #f0f0f0; padding-bottom: 0.5rem; }
+        .cart-item-info h4 { font-size: 0.9rem; }
+        .cart-total { font-size: 1.5rem; font-weight: bold; margin: 1rem 0; text-align: right; }
+        .checkout-btn { width: 100%; padding: 1rem; background: #25D366; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .checkout-btn:hover { background: #128C7E; }
+        .remove-item { color: red; cursor: pointer; margin-left: 10px; }
+
+        /* Loading */
+        #loading { text-align: center; padding: 2rem; font-size: 1.2rem; color: #666; }
+    </style>
 </head>
 <body>
-<header>
-  <div class="topbar">
-    <div>Sistema de Pedidos</div>
-    <div>
-      <button class="outline" onclick="toggleTheme()">Tema</button>
-      <button class="outline" onclick="logout()">Sair</button>
+
+    <header>
+        <div class="logo"><i class="fas fa-store"></i> UltraStore</div>
+        <div class="cart-icon" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count" id="cartCount">0</span>
+        </div>
+    </header>
+
+    <div class="hero">
+        <h1>Bem-vindo à Melhor Loja</h1>
+        <p>Produtos selecionados com qualidade premium</p>
     </div>
-  </div>
-</header><div class="container">  <!-- LOGIN -->  <div class="card" id="loginBox">
-    <h3>Acesso por e-mail</h3>
-    <input type="email" id="emailLogin" placeholder="Seu e-mail" />
-    <button onclick="login()">Enviar link</button>
-    <p id="loginMsg"></p>
-  </div>  <!-- DASHBOARD -->  <div class="card hidden" id="dashboardBox">
-    <h3>Dashboard</h3>
-    <p>Pedidos: <b id="dashPedidos">0</b></p>
-    <p>Faturamento: <b>R$ <span id="dashTotal">0</span></b></p>
-  </div>  <div class="grid">
-    <!-- NOVO PEDIDO -->
-    <div class="card hidden" id="pedidoBox">
-      <h3>Novo Pedido</h3>
-      <input id="clienteNome" placeholder="Cliente" />
-      <input id="clienteWhats" placeholder="WhatsApp" />
-      <select id="produtoSelect"></select>
-      <input id="qtdProduto" type="number" value="1" />
-      <button onclick="addItem()">Adicionar</button>
-      <ul id="itensLista"></ul>
-      <p><b>Total: R$ <span id="totalPedido">0</span></b></p>
-      <button onclick="enviarPedido()">Finalizar</button>
-    </div><!-- PEDIDOS / ADMIN -->
-<div class="card hidden" id="pedidosBox">
-  <h3>Pedidos</h3>
-  <table>
-    <thead><tr><th>ID</th><th>Cliente</th><th>Total</th><th>Status</th><th>Ação</th></tr></thead>
-    <tbody id="listaPedidos"></tbody>
-  </table>
-</div>
 
-  </div></div><script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbziCb6da52E_SQBHv1f88Uz0NlkvA1g-OmaPxNXgIURVSNWbIhGGH-2l4Vv-vjRDAst/exec";
-let state = JSON.parse(localStorage.getItem('sessao')||'{}');
-let produtos=[], itens=[];
+    <div class="controls">
+        <input type="text" id="searchInput" class="search-bar" placeholder="Buscar produtos..." oninput="filterProducts()">
+        <select id="categoryFilter" class="category-filter" onchange="filterProducts()">
+            <option value="all">Todas Categorias</option>
+        </select>
+    </div>
 
-function save(){localStorage.setItem('sessao',JSON.stringify(state));}
-function logout(){localStorage.removeItem('sessao');location.href=location.pathname;}
-function toggleTheme(){document.documentElement.dataset.theme = document.documentElement.dataset.theme==='dark'?'':'dark';}
+    <div id="loading"><i class="fas fa-spinner fa-spin"></i> Carregando catálogo...</div>
+    <div class="products-grid" id="productsGrid"></div>
 
-function login(){
-  const email=document.getElementById('emailLogin').value;
-  fetch(`${WEBAPP_URL}?action=login&email=${encodeURIComponent(email)}`).then(()=>{
-    document.getElementById('loginMsg').innerText='Link enviado.';
-  });
-}
+    <div class="modal" id="cartModal">
+        <div class="cart-sidebar">
+            <div class="cart-header">
+                <h2>Seu Carrinho</h2>
+                <span class="close-cart" onclick="toggleCart()">&times;</span>
+            </div>
+            <div class="cart-items" id="cartItemsContainer">
+                <p>Seu carrinho está vazio.</p>
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">Total: R$ <span id="cartTotal">0.00</span></div>
+                <button class="checkout-btn" onclick="checkout()">
+                    <i class="fab fa-whatsapp"></i> Finalizar no WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
 
-function validarToken(){
-  const p=new URLSearchParams(location.search); const token=p.get('token');
-  if(!token && state.email) return iniciar();
-  if(!token) return;
-  fetch(`${WEBAPP_URL}?action=validar&token=${token}`).then(r=>r.json()).then(d=>{
-    if(d.email){ state.email=d.email; state.loja_id=d.loja_id; save(); iniciar(); }
-  });
-}
+    <script>
+        // --- CONFIGURAÇÃO (Edite aqui) ---
+        // 1. Publique sua planilha na web (Arquivo > Compartilhar > Publicar na Web > CSV)
+        // 2. Cole o ID da planilha abaixo:
+        const SHEET_ID = '1YYobMz2udkbtX9P9N76QhTvCJkNXnxpYUbNvv3M4G_M'; 
+        const WHATSAPP_NUMBER = '5527997566512'; // Seu número com DDD
+        // ---------------------------------
 
-function iniciar(){
-  ['loginBox'].forEach(id=>document.getElementById(id).classList.add('hidden'));
-  ['dashboardBox','pedidoBox','pedidosBox'].forEach(id=>document.getElementById(id).classList.remove('hidden'));
-  carregarDashboard(); carregarProdutos(); carregarPedidos();
-}
+        let allProducts = [];
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-function carregarDashboard(){
-  fetch(`${WEBAPP_URL}?action=dashboard&email=${state.email}&loja_id=${state.loja_id}`)
-  .then(r=>r.json()).then(d=>{
-    dashPedidos.innerText=d.pedidos||0; dashTotal.innerText=d.faturamento||0;
-  });
-}
+        async function fetchProducts() {
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+            
+            try {
+                const response = await fetch(url);
+                const text = await response.text();
+                allProducts = csvToJson(text);
+                renderProducts(allProducts);
+                populateCategories(allProducts);
+                document.getElementById('loading').style.display = 'none';
+            } catch (error) {
+                console.error('Erro ao carregar:', error);
+                // Dados de fallback para teste se a planilha falhar
+                allProducts = [
+                    {id: 1, nome: "Produto Exemplo 1", preco: 99.90, imagem: "https://via.placeholder.com/300", categoria: "Eletrônicos", descricao: "Descrição teste"},
+                    {id: 2, nome: "Produto Exemplo 2", preco: 149.50, imagem: "https://via.placeholder.com/300", categoria: "Moda", descricao: "Descrição teste"}
+                ];
+                renderProducts(allProducts);
+                document.getElementById('loading').style.display = 'none';
+                alert('Atenção: Usando produtos de teste. Verifique o ID da sua planilha.');
+            }
+        }
 
-function carregarProdutos(){
-  fetch(`${WEBAPP_URL}?action=produtos&loja_id=${state.loja_id}`).then(r=>r.json()).then(d=>{
-    produtos=d; produtoSelect.innerHTML='';
-    d.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.text=`${p.nome} - R$ ${p.preco}`;o.dataset.preco=p.preco;produtoSelect.appendChild(o);});
-  });
-}
+        function csvToJson(csv) {
+            const rows = csv.split('\n').map(row => row.split(','));
+            const headers = rows[0].map(header => header.replace(/"/g, '').trim());
+            return rows.slice(1).map(row => {
+                let obj = {};
+                row.forEach((val, i) => {
+                    if(headers[i]) obj[headers[i]] = val.replace(/"/g, '').trim();
+                });
+                return obj;
+            });
+        }
 
-function addItem(){
-  const opt=produtoSelect.selectedOptions[0]; const qtd=Number(qtdProduto.value); const preco=Number(opt.dataset.preco);
-  itens.push({nome:opt.text,qtd,total:qtd*preco}); renderItens();
-}
-function renderItens(){ itensLista.innerHTML=''; let t=0; itens.forEach(i=>{t+=i.total; const li=document.createElement('li'); li.innerText=`${i.nome} (${i.qtd})`; itensLista.appendChild(li);}); totalPedido.innerText=t; }
+        function renderProducts(products) {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <img src="${p.imagem}" alt="${p.nome}" class="product-img">
+                    <div class="product-info">
+                        <span class="product-cat">${p.categoria}</span>
+                        <h3 class="product-title">${p.nome}</h3>
+                        <p style="font-size:0.9rem; color:#777; margin-bottom:10px">${p.descricao}</p>
+                        <div class="product-price">R$ ${parseFloat(p.preco).toFixed(2)}</div>
+                        <button class="add-btn" onclick="addToCart('${p.id}')">Adicionar ao Carrinho</button>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-function enviarPedido(){
-  fetch(WEBAPP_URL,{method:'POST',body:JSON.stringify({action:'novoPedido',loja_id:state.loja_id,cliente_nome:clienteNome.value,cliente_whatsapp:clienteWhats.value,itens:JSON.stringify(itens),total:totalPedido.innerText})})
-  .then(()=>{itens=[];renderItens();carregarDashboard();carregarPedidos();});
-}
+        function populateCategories(products) {
+            const categories = [...new Set(products.map(p => p.categoria))];
+            const select = document.getElementById('categoryFilter');
+            categories.forEach(c => {
+                if(c) select.innerHTML += `<option value="${c}">${c}</option>`;
+            });
+        }
 
-function carregarPedidos(){
-  fetch(`${WEBAPP_URL}?action=pedidos&email=${state.email}&loja_id=${state.loja_id}`).then(r=>r.json()).then(d=>{
-    listaPedidos.innerHTML=''; (d||[]).forEach(p=>{
-      const tr=document.createElement('tr'); tr.innerHTML=`<td>${p.id}</td><td>${p.cliente}</td><td>R$ ${p.total}</td><td><span class="badge">${p.status}</span></td><td><select onchange="mudarStatus(${p.id},this.value)"><option>Recebido</option><option>Em preparo</option><option>Finalizado</option></select></td>`; listaPedidos.appendChild(tr);
-    });
-  });
-}
+        function filterProducts() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const cat = document.getElementById('categoryFilter').value;
+            
+            const filtered = allProducts.filter(p => {
+                const matchSearch = p.nome.toLowerCase().includes(search) || p.descricao.toLowerCase().includes(search);
+                const matchCat = cat === 'all' || p.categoria === cat;
+                return matchSearch && matchCat;
+            });
+            renderProducts(filtered);
+        }
 
-function mudarStatus(id,status){
-  fetch(WEBAPP_URL,{method:'POST',body:JSON.stringify({action:'status',pedido_id:id,status:status,email:state.email,loja_id:state.loja_id})}).then(()=>carregarPedidos());
-}
+        function addToCart(id) {
+            const product = allProducts.find(p => p.id == id);
+            const existing = cart.find(item => item.id == id);
+            
+            if(existing) {
+                existing.qty++;
+            } else {
+                cart.push({...product, qty: 1});
+            }
+            updateCart();
+            toggleCart(); // Opcional: abre o carrinho ao adicionar
+        }
 
-validarToken();
-</script></body>
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id != id);
+            updateCart();
+        }
+
+        function updateCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            document.getElementById('cartCount').innerText = cart.reduce((acc, item) => acc + item.qty, 0);
+            
+            const container = document.getElementById('cartItemsContainer');
+            if(cart.length === 0) {
+                container.innerHTML = '<p>Seu carrinho está vazio.</p>';
+                document.getElementById('cartTotal').innerText = '0.00';
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = cart.map(item => {
+                const subtotal = item.price ? item.price * item.qty : item.preco * item.qty;
+                total += subtotal;
+                return `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <h4>${item.nome} (${item.qty}x)</h4>
+                            <span>R$ ${parseFloat(item.preco).toFixed(2)}</span>
+                        </div>
+                        <i class="fas fa-trash remove-item" onclick="removeFromCart('${item.id}')"></i>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('cartTotal').innerText = total.toFixed(2);
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cartModal');
+            if (modal.style.display === 'flex') {
+                modal.style.display = 'none';
+            } else {
+                modal.style.display = 'flex';
+            }
+        }
+        
+        // Fechar modal ao clicar fora
+        document.getElementById('cartModal').addEventListener('click', function(e) {
+            if (e.target === this) toggleCart();
+        });
+
+        function checkout() {
+            if(cart.length === 0) return alert('Carrinho vazio!');
+            
+            let message = "Olá! Gostaria de fazer um pedido:\n\n";
+            let total = 0;
+            
+            cart.forEach(item => {
+                const subtotal = item.preco * item.qty;
+                total += subtotal;
+                message += `▪️ ${item.qty}x ${item.nome} - R$ ${parseFloat(item.preco).toFixed(2)}\n`;
+            });
+            
+            message += `\n*Total: R$ ${total.toFixed(2)}*`;
+            message += `\n\nAguardo confirmação de pagamento e entrega.`;
+            
+            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        // Inicialização
+        fetchProducts();
+        updateCart();
+    </script>
+</body>
 </html>
