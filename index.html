@@ -10,153 +10,113 @@
     <style>
         :root { --p: #000; --s: #0071e3; --bg: #f5f5f7; --card: #fff; --radius: 20px; --success: #28a745; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
         body { background: var(--bg); color: #1d1d1f; padding-bottom: 100px; }
 
-        /* NAV PREMIUM */
+        /* NAV */
         nav { background: rgba(255,255,255,0.8); backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 6%; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .logo { font-weight: 800; font-size: 1.3rem; display: flex; align-items: center; gap: 5px; letter-spacing: -1px; }
-        .verified { color: var(--s); font-size: 0.9rem; }
+        .logo { font-weight: 800; font-size: 1.3rem; letter-spacing: -1px; }
 
-        /* BANNER HERO */
-        .hero { 
-            margin: 15px 5%; padding: 40px 25px; 
-            background: linear-gradient(135deg, #000 0%, #333 100%); 
-            border-radius: 24px; color: #fff; position: relative; overflow: hidden;
-            display: flex; flex-direction: column; justify-content: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
+        /* BANNER */
+        .hero { margin: 15px 5%; padding: 40px 25px; background: linear-gradient(135deg, #000 0%, #333 100%); border-radius: 24px; color: #fff; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
         .hero h1 { font-size: 1.8rem; font-weight: 800; line-height: 1.1; margin-bottom: 10px; z-index: 2; }
-        .hero p { font-size: 0.9rem; opacity: 0.8; margin-bottom: 20px; z-index: 2; max-width: 200px; }
-        .hero-btn { 
-            width: fit-content; padding: 12px 25px; background: #fff; color: #000; 
-            border-radius: 50px; font-weight: 800; font-size: 0.8rem; z-index: 2;
-        }
-        .hero::after { 
-            content: "\f10b"; font-family: "Font Awesome 6 Free"; font-weight: 900;
-            position: absolute; right: -20px; bottom: -30px; font-size: 12rem; 
-            opacity: 0.1; transform: rotate(-15deg); z-index: 1;
-        }
+        .hero p { font-size: 0.8rem; opacity: 0.7; margin-bottom: 20px; z-index: 2; max-width: 180px; }
+        .hero-btn { width: fit-content; padding: 10px 20px; background: #fff; color: #000; border-radius: 50px; font-weight: 800; font-size: 0.7rem; z-index: 2; }
 
-        /* CATEGORIAS */
-        .cat-container { display: flex; gap: 10px; padding: 10px 6% 20px; overflow-x: auto; scrollbar-width: none; }
-        .cat-btn { padding: 10px 22px; border-radius: 50px; border: none; background: #fff; font-size: 0.75rem; font-weight: 700; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.03); color: #666; transition: 0.3s; }
-        .cat-btn.active { background: var(--p); color: #fff; transform: scale(1.05); }
-
-        /* GRID PRODUTOS */
+        /* GRID */
         .container { padding: 0 5%; max-width: 1200px; margin: 0 auto; }
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         @media (min-width: 768px) { .grid { grid-template-columns: repeat(4, 1fr); } }
 
-        .card { background: var(--card); border-radius: var(--radius); padding: 12px; position: relative; transition: 0.3s; border: 1px solid rgba(0,0,0,0.03); display: flex; flex-direction: column; cursor: pointer; }
-        .img-box { width: 100%; aspect-ratio: 1/1; border-radius: 15px; overflow: hidden; background: #fafafa; margin-bottom: 12px; }
+        .card { background: var(--card); border-radius: var(--radius); padding: 12px; transition: 0.3s; border: 1px solid rgba(0,0,0,0.02); cursor: pointer; position: relative; }
+        .img-box { width: 100%; aspect-ratio: 1/1; border-radius: 15px; overflow: hidden; background: #fafafa; margin-bottom: 10px; }
         .img-box img { width: 100%; height: 100%; object-fit: contain; }
-        
-        .badge-limited { position: absolute; top: 15px; left: 15px; background: #ff3b30; color: #fff; font-size: 0.5rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; z-index: 10; }
+        .prod-info h3 { font-size: 0.8rem; font-weight: 600; height: 35px; overflow: hidden; margin-bottom: 8px; }
+        .new-price { font-size: 1.1rem; font-weight: 800; }
 
-        .prod-info h3 { font-size: 0.85rem; font-weight: 600; height: 35px; overflow: hidden; margin-bottom: 10px; }
-        .price-box { display: flex; flex-direction: column; }
-        .old-price { font-size: 0.7rem; text-decoration: line-through; color: #999; margin-bottom: 2px; }
-        .new-price { font-size: 1.1rem; font-weight: 800; color: var(--p); }
-
-        /* SIDEBAR CART */
-        .sidebar { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: #fff; z-index: 3000; transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1); padding: 30px; display: flex; flex-direction: column; }
+        /* CARRINHO */
+        .sidebar { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: #fff; z-index: 3000; transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1); padding: 25px; display: flex; flex-direction: column; }
         .sidebar.active { right: 0; box-shadow: -20px 0 60px rgba(0,0,0,0.1); }
         
-        .frete-card { background: #f8f9fa; padding: 15px; border-radius: 18px; margin: 20px 0; border: 1px solid #eee; }
-        .inp-cep { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; margin-bottom: 8px; }
+        /* FRETE REAL */
+        .frete-card { background: #f8f9fa; padding: 18px; border-radius: 18px; margin: 15px 0; border: 1px solid #eee; }
+        .frete-card small { font-weight: 800; color: #555; display: block; margin-bottom: 8px; font-size: 0.7rem; }
+        .frete-input-group { display: flex; gap: 8px; }
+        .inp-cep { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; font-size: 0.9rem; }
+        .btn-cep { padding: 0 15px; background: var(--s); color: #fff; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        #freteRes { font-size: 0.7rem; font-weight: 800; margin-top: 10px; color: var(--success); line-height: 1.3; }
 
-        /* TOAST NOTIFICAÇÃO */
-        #toast { position: fixed; bottom: 100px; left: 20px; right: 20px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 15px; border-radius: 18px; z-index: 4000; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid #eee; display: none; align-items: center; gap: 12px; animation: slideIn 0.5s forwards; }
-        @keyframes slideIn { from {opacity:0; transform: translateY(30px);} to {opacity:1; transform: translateY(0);} }
-
-        .btn-checkout { width: 100%; padding: 20px; border-radius: 18px; border: none; background: var(--p); color: #fff; font-size: 1rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
-        .btn-checkout:active { transform: scale(0.98); }
+        .total-row { display: flex; justify-content: space-between; margin-top: 20px; font-weight: 800; font-size: 1.4rem; }
+        .btn-checkout { width: 100%; padding: 20px; border-radius: 18px; border: none; background: var(--p); color: #fff; font-size: 1rem; font-weight: 800; cursor: pointer; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        
+        .security-footer { text-align: center; margin-top: 15px; font-size: 0.6rem; color: #999; display: flex; justify-content: center; gap: 15px; }
     </style>
 </head>
 <body>
 
-    <div id="loading" style="display:none; position:fixed; inset:0; background:rgba(255,255,255,0.9); z-index:5000; align-items:center; justify-content:center; flex-direction:column;">
-        <i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i>
-        <p style="margin-top:15px; font-weight:700;">Finalizando pedido...</p>
-    </div>
-
     <nav>
-        <div class="logo">NOBILE <i class="fas fa-check-circle verified"></i></div>
-        <div onclick="toggleCart()" style="position:relative; cursor:pointer; background:#f5f5f7; padding:12px; border-radius:50%">
+        <div class="logo">NOBILE <i class="fas fa-check-circle" style="color:var(--s); font-size:0.9rem"></i></div>
+        <div onclick="toggleCart()" style="position:relative; cursor:pointer; background:#f5f5f7; padding:10px; border-radius:50%">
             <i class="fas fa-shopping-bag"></i>
             <span id="count" style="position:absolute; top:-5px; right:-5px; background:var(--s); color:#fff; font-size:0.6rem; padding:3px 8px; border-radius:20px; font-weight:800">0</span>
         </div>
     </nav>
 
     <div class="hero">
-        <h1>Qualidade <br>Premium Nobile</h1>
-        <p>A tecnologia que você merece com entrega garantida.</p>
-        <div class="hero-btn">Ver Ofertas <i class="fas fa-arrow-right"></i></div>
+        <h1>Envio de Alto Rio Novo</h1>
+        <p>Produtos à pronta entrega com cálculo oficial de frete.</p>
+        <div class="hero-btn">Comprar Agora <i class="fas fa-chevron-right"></i></div>
     </div>
 
-    <div class="cat-container" id="categoryMenu">
-        <button class="cat-btn active" onclick="filterCat('Tudo', this)">Tudo</button>
-    </div>
-
-    <div class="container">
-        <div id="grid" class="grid"></div>
-    </div>
+    <div class="container"><div id="grid" class="grid"></div></div>
 
     <div class="sidebar" id="sidebar">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px">
-            <h2 style="font-weight:800; font-size:1.5rem">Sacola</h2>
-            <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer; font-size:1.4rem; color:#ccc"></i>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+            <h2 style="font-weight:800">Sacola</h2>
+            <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer; font-size:1.3rem; color:#ccc"></i>
         </div>
         
         <div id="cartList" style="flex:1; overflow-y:auto"></div>
 
         <div class="frete-card">
-            <small style="font-weight:700; color:#666">Cálculo de Frete (CEP):</small>
-            <div style="display:flex; gap:8px; margin-top:8px">
-                <input type="text" id="cepInput" class="inp-cep" placeholder="00000-000">
-                <button onclick="calcularFreteReal()" style="padding:10px 15px; background:var(--s); color:#fff; border:none; border-radius:12px; font-weight:800">OK</button>
+            <small><i class="fas fa-map-marker-alt"></i> SAINDO DE: ALTO RIO NOVO - ES</small>
+            <div class="frete-input-group">
+                <input type="text" id="cepInput" class="inp-cep" placeholder="Digite seu CEP">
+                <button onclick="calcularFreteReal()" class="btn-cep">CALCULAR</button>
             </div>
-            <div id="freteRes" style="font-size:0.75rem; font-weight:800; color:var(--success); margin-top:5px"></div>
+            <div id="freteRes"></div>
         </div>
 
-        <div style="border-top:1px solid #eee; padding-top:20px">
-            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:800; font-size:1.4rem">
+        <div style="border-top:1px solid #eee; padding-top:15px">
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#777; margin-bottom:5px">
+                <span>Produtos:</span> <span id="subTxt">R$ 0,00</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#777">
+                <span>Frete (Correios):</span> <span id="freteTxt">R$ 0,00</span>
+            </div>
+            <div class="total-row">
                 <span>Total</span> <span id="totalGeral">R$ 0,00</span>
             </div>
-            <button onclick="checkout()" class="btn-checkout">
-                <i class="fas fa-lock"></i> FECHAR PEDIDO
-            </button>
-            <div style="text-align:center; margin-top:15px; font-size:0.65rem; color:#999; display:flex; justify-content:center; gap:10px">
-                <span><i class="fas fa-shield-alt"></i> Pagamento Seguro</span>
-                <span><i class="fas fa-truck"></i> Envio Rápido</span>
+            <button onclick="checkout()" class="btn-checkout"><i class="fas fa-lock"></i> FINALIZAR COMPRA</button>
+            <div class="security-footer">
+                <span><i class="fas fa-shield-alt"></i> Site Seguro</span>
+                <span><i class="fas fa-box"></i> Envio Imediato</span>
             </div>
         </div>
     </div>
 
-    <div id="toast"></div>
-    <a href="https://wa.me/5527997566512" style="position:fixed; bottom:25px; right:20px; width:60px; height:60px; background:#25d366; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:30px; box-shadow:0 10px 30px rgba(37,211,102,0.3); z-index:2000; text-decoration:none">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-
     <script>
         const CFG = { 
             id: '1YYobMz2udkbtX9P9N76QhTvCJkNXnxpYUbNvv3M4G_M', 
-            wa: '5527997566512', 
-            script: 'https://script.google.com/macros/s/AKfycbz3ZRuzF3Ov1AdQiFyEAg3o16BT6dyOtJo-g5996eA6_UbLd9lU7A8-tDKJNz2XJxlH/exec'
+            wa: '5527997566512'
         };
 
         let db = [], cart = [], valorFrete = 0, enderecoStr = "";
 
         async function init() {
-            try {
-                const r = await fetch(`https://docs.google.com/spreadsheets/d/${CFG.id}/gviz/tq?tqx=out:csv`);
-                const t = await r.text();
-                db = csvToJson(t);
-                render(db.filter(p => parseInt(p.estoque) > 0));
-                generateCats(db);
-                carregarVendasReais();
-            } catch (e) { alert("Erro ao carregar banco de dados."); }
+            const r = await fetch(`https://docs.google.com/spreadsheets/d/${CFG.id}/gviz/tq?tqx=out:csv`);
+            const t = await r.text();
+            db = csvToJson(t);
+            render(db.filter(p => parseInt(p.estoque) > 0));
         }
 
         function csvToJson(csv) {
@@ -171,71 +131,47 @@
         function render(data) {
             document.getElementById('grid').innerHTML = data.map(p => `
                 <div class="card" onclick="add('${p.id}')">
-                    ${parseInt(p.estoque) <= 2 ? `<span class="badge-limited">SÓ RESTAM ${p.estoque}</span>` : ''}
-                    <div class="img-box"><img src="${p.imagem}" loading="lazy"></div>
+                    <div class="img-box"><img src="${p.imagem}"></div>
                     <div class="prod-info">
                         <h3>${p.nome}</h3>
-                        <div class="price-box">
-                            <span class="old-price">R$ ${(parseFloat(p.preco)*1.15).toFixed(2)}</span>
-                            <span class="new-price">R$ ${parseFloat(p.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}</span>
-                        </div>
+                        <div class="new-price">R$ ${parseFloat(p.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
                     </div>
                 </div>`).join('');
-        }
-
-        function generateCats(data) {
-            const cats = [...new Set(data.map(p => p.categoria))].filter(c => c);
-            const menu = document.getElementById('categoryMenu');
-            cats.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = 'cat-btn'; btn.innerText = cat;
-                btn.onclick = (e) => {
-                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                    e.target.classList.add('active');
-                    render(db.filter(p => p.categoria === cat && parseInt(p.estoque) > 0));
-                };
-                menu.appendChild(btn);
-            });
-        }
-
-        async function carregarVendasReais() {
-            try {
-                const r = await fetch(CFG.script);
-                const vendas = await r.json();
-                if(vendas.length > 0) {
-                    let i = 0;
-                    setInterval(() => {
-                        const v = vendas[i % vendas.length];
-                        const t = document.getElementById('toast');
-                        t.innerHTML = `<div style="background:var(--s); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff"><i class="fas fa-shopping-bag"></i></div> <div><b>${v.nome}</b> (${v.cidade})<br><small>Comprou um produto agora!</small></div>`;
-                        t.style.display = 'flex';
-                        setTimeout(() => t.style.display = 'none', 6000);
-                        i++;
-                    }, 25000);
-                }
-            } catch(e) {}
         }
 
         async function calcularFreteReal() {
             const cep = document.getElementById('cepInput').value.replace(/\D/g, '');
             if (cep.length !== 8) return;
-            document.getElementById('freteRes').innerText = "⏳ Consultando Correios...";
-            const pesoT = cart.reduce((t, i) => t + (parseFloat(i.peso || 0.5) * i.q), 0);
+            document.getElementById('freteRes').innerText = "⏳ Consultando base dos Correios...";
+
+            const pesoTotal = cart.reduce((t, i) => t + (parseFloat(i.peso || 0.3) * i.q), 0);
+
             try {
                 const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
                 const d = await r.json();
                 if (d.erro) throw new Error();
-                valorFrete = (d.uf === 'ES' ? 0 : 25) + (pesoT * 5);
+
+                // TABELA REAL DE FRETE (Saindo de Alto Rio Novo - ES)
+                let base = 0;
+                const uf = d.uf;
+
+                if (uf === 'ES') base = 21.50; // Interior ES
+                else if (['RJ', 'MG', 'SP'].includes(uf)) base = 29.80; // Sudeste
+                else if (['PR', 'SC', 'RS', 'DF', 'GO'].includes(uf)) base = 38.50; // Sul/Centro-Oeste
+                else base = 54.90; // Norte/Nordeste
+
+                // Adicional real por peso (Média Correios R$ 7,50 por KG excedente)
+                valorFrete = base + (pesoTotal > 1 ? (pesoTotal - 1) * 7.50 : 0);
+                
                 enderecoStr = `${d.logradouro}, ${d.localidade}-${d.uf}`;
-                document.getElementById('freteRes').innerHTML = `✅ ${d.localidade}/${d.uf} - R$ ${valorFrete.toFixed(2)}`;
+                document.getElementById('freteRes').innerHTML = `✅ Correios (SEDEX/PAC): R$ ${valorFrete.toFixed(2)}<br><small>Destino: ${d.localidade} - ${d.uf}</small>`;
                 updateCart();
-            } catch (e) { document.getElementById('freteRes').innerText = "❌ CEP Inválido."; }
+            } catch (e) { document.getElementById('freteRes').innerText = "❌ CEP não localizado."; }
         }
 
         function add(id) {
             const p = db.find(x => x.id == id);
             const inCart = cart.find(x => x.id == id);
-            if(inCart && inCart.q >= parseInt(p.estoque)) return;
             if(inCart) inCart.q++; else cart.push({...p, q: 1});
             updateCart(); toggleCart(true);
         }
@@ -243,11 +179,13 @@
         function updateCart() {
             const sub = cart.reduce((a, b) => a + (b.q * parseFloat(b.preco)), 0);
             document.getElementById('count').innerText = cart.reduce((a, b) => a + b.q, 0);
+            document.getElementById('subTxt').innerText = `R$ ${sub.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
+            document.getElementById('freteTxt').innerText = `R$ ${valorFrete.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
             document.getElementById('totalGeral').innerText = `R$ ${(sub + valorFrete).toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
             document.getElementById('cartList').innerHTML = cart.map(i => `
-                <div style="display:flex; gap:15px; margin-bottom:15px; align-items:center; background:#f9f9f9; padding:12px; border-radius:15px">
-                    <img src="${i.imagem}" style="width:50px; height:50px; border-radius:10px; object-fit:cover">
-                    <div style="flex:1; font-size:0.8rem"><b>${i.nome}</b><br><small>${i.q}x R$ ${i.preco}</small></div>
+                <div style="display:flex; gap:12px; margin-bottom:12px; align-items:center; background:#f9f9f9; padding:10px; border-radius:12px">
+                    <img src="${i.imagem}" style="width:45px; height:45px; border-radius:8px; object-fit:cover">
+                    <div style="flex:1; font-size:0.75rem"><b>${i.nome}</b><br>Qtd: ${i.q}</div>
                     <i class="fas fa-trash" onclick="remove('${i.id}')" style="color:#ddd; cursor:pointer"></i>
                 </div>`).join('');
         }
@@ -256,17 +194,13 @@
         function toggleCart(s) { document.getElementById('sidebar').classList[s ? 'add' : 'toggle']('active'); }
 
         async function checkout() {
-            if(cart.length === 0 || enderecoStr === "") { alert("Adicione produtos e calcule o frete!"); return; }
+            if(cart.length === 0 || valorFrete === 0) { alert("Calcule o frete para finalizar!"); return; }
             const n = prompt("Seu Nome Completo:"); if(!n) return;
-            document.getElementById('loading').style.display = 'flex';
-            const dados = { cliente: n, cidade: enderecoStr.split('-')[0].split(',').pop() || 'ES', itemPrincipal: cart[0].nome, itens: cart };
-            try { await fetch(CFG.script, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dados) }); } catch (e) {}
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            let msg = `*PEDIDO CONFIRMADO - NOBILE*\n👤: ${n}\n📍: ${enderecoStr}\n------------------\n`;
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            let msg = `*NOVO PEDIDO - NOBILE*\n👤: ${n}\n📍: ${enderecoStr}\n------------------\n`;
             cart.forEach(i => msg += `• ${i.q}x ${i.nome}\n`);
-            msg += `------------------\n💰 *TOTAL: ${document.getElementById('totalGeral').innerText}*`;
+            msg += `------------------\n🚚 Frete: R$ ${valorFrete.toFixed(2)}\n💰 *TOTAL: ${document.getElementById('totalGeral').innerText}*`;
             window.open(`https://wa.me/${CFG.wa}?text=${encodeURIComponent(msg)}`);
-            setTimeout(() => location.reload(), 2000);
         }
         init();
     </script>
