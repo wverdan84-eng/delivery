@@ -3,75 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nobile Store | Oficial</title>
+    <title>Nobile | Premium Store</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --p: #000; --s: #0071e3; --bg: #ffffff; --f: #f5f5f7; --r: 16px; --success: #28a745; }
+        :root { --p: #000; --s: #0071e3; --bg: #fff; --f: #f5f5f7; --r: 20px; --accent: #ff3b30; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #1d1d1f; }
+        body { background: var(--bg); color: #1d1d1f; overflow-x: hidden; }
 
-        /* HEADER COM SELO DE SEGURANÇA */
-        .top-bar { background: #000; color: #fff; padding: 8px; text-align: center; font-size: 0.65rem; font-weight: 700; letter-spacing: 1px; }
-        nav { background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 8%; border-bottom: 1px solid #eee; }
-        .logo { font-weight: 800; font-size: 1.4rem; display: flex; align-items: center; gap: 5px; }
-        .logo i { color: var(--s); font-size: 1rem; }
+        /* HEADER */
+        nav { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 18px 8%; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .logo { font-weight: 800; font-size: 1.4rem; letter-spacing: -1.5px; display: flex; align-items: center; gap: 6px; }
+        .logo i { color: var(--s); font-size: 1.1rem; }
+        .cart-icon { position: relative; cursor: pointer; background: var(--f); padding: 12px; border-radius: 50%; }
+        #count { position: absolute; top: -5px; right: -5px; background: var(--s); color: #fff; font-size: 0.65rem; padding: 3px 8px; border-radius: 20px; font-weight: 800; }
 
-        /* BANNER CLEAN */
-        .hero { margin: 20px 5%; height: 300px; background: #000; border-radius: 25px; position: relative; overflow: hidden; display: flex; align-items: center; padding: 40px; color: #fff; }
-        .hero h1 { font-size: 2.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 10px; }
-        .hero p { opacity: 0.6; font-size: 0.9rem; margin-bottom: 20px; }
-        .hero-img { position: absolute; right: 0; bottom: 0; height: 90%; z-index: 1; }
+        /* BANNER PREMIUM */
+        .hero { margin: 20px 5%; height: 320px; background: linear-gradient(135deg, #000 0%, #222 100%); border-radius: 30px; position: relative; overflow: hidden; display: flex; align-items: center; padding: 0 50px; color: #fff; }
+        .hero-content { z-index: 2; max-width: 400px; }
+        .hero h1 { font-size: 2.5rem; font-weight: 800; line-height: 1; margin-bottom: 15px; }
+        .hero p { opacity: 0.7; font-size: 0.95rem; margin-bottom: 25px; }
+        .hero-img { position: absolute; right: -20px; bottom: -20px; height: 110%; z-index: 1; opacity: 0.9; }
 
         /* GRID PRODUTOS */
-        .container { padding: 30px 5%; max-width: 1300px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        @media (min-width: 768px) { .grid { grid-template-columns: repeat(4, 1fr); } }
-
-        .card { background: #fff; border-radius: var(--r); padding: 12px; transition: 0.3s; border: 1px solid #eee; position: relative; cursor: pointer; }
-        .card:hover { border-color: var(--s); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .img-box { width: 100%; aspect-ratio: 1/1; border-radius: 12px; background: var(--f); overflow: hidden; margin-bottom: 12px; }
+        .container { padding: 40px 8%; max-width: 1400px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 30px; }
+        .card { background: #fff; border-radius: var(--r); padding: 15px; transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); cursor: pointer; border: 1px solid #f0f0f0; position: relative; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); border-color: var(--s); }
+        .img-box { width: 100%; aspect-ratio: 1/1; border-radius: 15px; overflow: hidden; background: var(--f); margin-bottom: 15px; }
         .img-box img { width: 100%; height: 100%; object-fit: contain; }
-        .card h3 { font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #333; height: 35px; overflow: hidden; }
-        .card .price { font-size: 1.1rem; font-weight: 800; color: #000; }
-        .stock-tag { position: absolute; top: 10px; left: 10px; background: #ff3b30; color: #fff; font-size: 0.5rem; font-weight: 800; padding: 4px 8px; border-radius: 5px; }
+        .card h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; height: 40px; overflow: hidden; color: #333; }
+        .price { font-size: 1.2rem; font-weight: 800; color: #000; }
+        .stock-tag { position: absolute; top: 10px; left: 10px; background: var(--accent); color: #fff; font-size: 0.6rem; font-weight: 800; padding: 5px 10px; border-radius: 8px; }
 
-        /* CARRINHO PROFISSIONAL */
-        .sidebar { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: #fff; z-index: 2000; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); padding: 30px; display: flex; flex-direction: column; }
-        .sidebar.active { right: 0; box-shadow: -20px 0 50px rgba(0,0,0,0.1); }
-        
-        .c-item { display: flex; gap: 12px; padding: 12px; background: var(--f); border-radius: 12px; margin-bottom: 10px; align-items: center; }
-        .c-item img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+        /* CARRINHO */
+        .sidebar { position: fixed; top: 0; right: -100%; width: 100%; max-width: 420px; height: 100%; background: #fff; z-index: 2000; transition: 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); padding: 35px; display: flex; flex-direction: column; }
+        .sidebar.active { right: 0; box-shadow: -30px 0 60px rgba(0,0,0,0.1); }
+        .c-item { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; background: var(--f); padding: 15px; border-radius: 18px; }
+        .c-item img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; }
 
-        /* SELOS DE SEGURANÇA NO CARRINHO */
-        .security-box { background: #f9f9f9; padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px solid #eee; }
-        .security-title { font-size: 0.65rem; font-weight: 800; color: #666; display: flex; align-items: center; gap: 5px; margin-bottom: 10px; }
-        .security-icons { display: flex; justify-content: space-between; align-items: center; opacity: 0.6; }
-        .security-icons i { font-size: 1.2rem; }
+        /* FRETE E SEGURANÇA */
+        .f-box { background: var(--f); padding: 22px; border-radius: 22px; margin: 20px 0; border: 1px solid rgba(0,0,0,0.03); }
+        .inp { width: 100%; padding: 15px; border-radius: 14px; border: 1px solid #ddd; outline: none; margin-top: 10px; font-weight: 600; }
+        .btn-f { width: 100%; padding: 14px; background: var(--s); color: #fff; border: none; border-radius: 14px; margin-top: 10px; font-weight: 800; cursor: pointer; }
+        #f-res { margin-top: 12px; font-size: 0.8rem; font-weight: 800; color: var(--s); }
 
-        .btn-pay { width: 100%; padding: 20px; border-radius: 15px; border: none; background: var(--p); color: #fff; font-size: 1rem; font-weight: 800; cursor: pointer; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        
-        /* FRETE REAL */
-        .frete-area { margin: 15px 0; border-top: 1px solid #eee; padding-top: 15px; }
-        .inp-cep { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; outline: none; margin-bottom: 8px; font-size: 0.9rem; }
+        .security-footer { margin-top: 20px; display: flex; justify-content: center; gap: 20px; opacity: 0.4; font-size: 1.2rem; border-top: 1px solid #eee; padding-top: 20px; }
+
+        .btn-pay { width: 100%; padding: 22px; border-radius: 20px; border: none; background: #000; color: #fff; font-size: 1.1rem; font-weight: 800; cursor: pointer; margin-top: auto; }
     </style>
 </head>
 <body>
 
-    <div class="top-bar"><i class="fas fa-shield-alt"></i> AMBIENTE 100% SEGURO E CRIPTOGRAFADO</div>
-
     <nav>
         <div class="logo">NOBILE <i class="fas fa-check-circle"></i></div>
-        <div onclick="toggleCart()" style="cursor:pointer; position:relative">
-            <i class="fas fa-shopping-bag" style="font-size:1.4rem"></i>
-            <span id="count" style="position:absolute; top:-5px; right:-5px; background:var(--s); color:#fff; font-size:0.6rem; padding:2px 6px; border-radius:10px">0</span>
+        <div class="cart-icon" onclick="toggleCart()">
+            <i class="fas fa-shopping-bag"></i>
+            <span id="count">0</span>
         </div>
     </nav>
 
     <div class="hero">
-        <div style="z-index:2">
-            <h1>Qualidade <br>Premium.</h1>
+        <div class="hero-content">
+            <h1>Premium <br>Experience.</h1>
             <p>Sua loja oficial em Alto Rio Novo - ES.</p>
         </div>
         <img src="https://www.apple.com/v/iphone-15-pro/c/images/overview/welcome/hero_endframe__ov6ewwmbhi6e_large.jpg" class="hero-img">
@@ -82,35 +77,34 @@
     </div>
 
     <div class="sidebar" id="sidebar">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-            <h2 style="font-weight:800">Minha Sacola</h2>
-            <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer"></i>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px">
+            <h2 style="font-weight:800; font-size:1.6rem">Sacola</h2>
+            <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer; font-size:1.4rem; color:#ccc"></i>
         </div>
         
         <div id="cartList" style="flex:1; overflow-y:auto"></div>
 
-        <div class="frete-area">
-            <input type="text" id="cep" class="inp-cep" placeholder="Digite seu CEP para o frete">
-            <button onclick="calcularFrete()" style="width:100%; padding:10px; border-radius:10px; border:none; background:var(--f); font-weight:700; cursor:pointer">Calcular Frete Oficial</button>
-            <div id="freteRes" style="margin-top:8px; font-size:0.75rem; font-weight:700; color:var(--s)"></div>
+        <div class="f-box">
+            <span style="font-weight:800; font-size:0.75rem; color:#666">CÁLCULO DE FRETE OFICIAL</span>
+            <input type="text" id="cep" class="inp" placeholder="00000-000">
+            <button onclick="calcFrete()" class="btn-f">Calcular Envio</button>
+            <div id="f-res"></div>
         </div>
 
-        <div class="security-box">
-            <div class="security-title"><i class="fas fa-lock"></i> CHECKOUT PROTEGIDO POR GOOGLE & NORTON</div>
-            <div class="security-icons">
-                <i class="fab fa-cc-visa"></i>
-                <i class="fab fa-cc-mastercard"></i>
-                <i class="fab fa-pix"></i>
-                <i class="fas fa-barcode"></i>
-                <i class="fas fa-user-shield"></i>
+        <div style="margin-bottom:15px">
+            <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.4rem">
+                <span>Total</span> <span id="total">R$ 0,00</span>
             </div>
         </div>
 
-        <div style="display:flex; justify-content:space-between; margin-top:15px; font-weight:800; font-size:1.3rem">
-            <span>Total</span> <span id="total">R$ 0,00</span>
-        </div>
+        <button onclick="checkout()" class="btn-pay">Finalizar Pedido</button>
 
-        <button onclick="checkout()" class="btn-pay">FINALIZAR COMPRA SEGURA</button>
+        <div class="security-footer">
+            <i class="fab fa-cc-visa"></i>
+            <i class="fab fa-cc-mastercard"></i>
+            <i class="fab fa-pix"></i>
+            <i class="fas fa-shield-alt"></i>
+        </div>
     </div>
 
     <script>
@@ -119,31 +113,35 @@
             wa: '5527997566512'
         };
 
-        let db = [], cart = [], frete = 0, endereco = "";
+        let db = [], cart = [], freteVal = 0, local = "";
 
-        async function init() {
-            const r = await fetch(`https://docs.google.com/spreadsheets/d/${CFG.sheet}/gviz/tq?tqx=out:csv`);
-            const t = await r.text();
-            const rows = t.split('\n').slice(1);
-            
-            db = rows.map(row => {
-                const c = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                return {
-                    id: c[0].replace(/"/g,''),
-                    nome: c[1].replace(/"/g,''),
-                    preco: parseFloat(c[2].replace(/"/g,'')),
-                    img: c[3].replace(/"/g,''),
-                    estoque: parseInt(c[5]?.replace(/"/g,'') || 0),
-                    peso: parseFloat(c[6]?.replace(/"/g,'') || 0.4)
-                }
-            });
-            render();
+        async function load() {
+            try {
+                const r = await fetch(`https://docs.google.com/spreadsheets/d/${CFG.sheet}/gviz/tq?tqx=out:csv`);
+                const t = await r.text();
+                const rows = t.split('\n').slice(1);
+                
+                db = rows.map(row => {
+                    const c = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    return {
+                        id: c[0].replace(/"/g,'').trim(),
+                        nome: c[1].replace(/"/g,'').trim(),
+                        preco: parseFloat(c[2].replace(/"/g,'')),
+                        img: c[3].replace(/"/g,'').trim(),
+                        estoque: parseInt(c[5]?.replace(/"/g,'') || 0),
+                        peso: parseFloat(c[6]?.replace(/"/g,'') || 0.4)
+                    }
+                });
+                render();
+            } catch (e) { console.error("Falha na conexão."); }
         }
 
         function render() {
-            document.getElementById('grid').innerHTML = db.filter(p => p.estoque > 0).map(p => `
+            // Filtra apenas estoque real > 0
+            const disponiveis = db.filter(p => p.estoque > 0);
+            document.getElementById('grid').innerHTML = disponiveis.map(p => `
                 <div class="card" onclick="add('${p.id}')">
-                    ${p.estoque < 4 ? `<span class="stock-tag">ÚLTIMAS ${p.estoque} UNIDADES</span>` : ''}
+                    ${p.estoque < 4 ? `<span class="stock-tag">SÓ RESTAM ${p.estoque}</span>` : ''}
                     <div class="img-box"><img src="${p.img}"></div>
                     <h3>${p.nome}</h3>
                     <div class="price">R$ ${p.preco.toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
@@ -151,26 +149,34 @@
             `).join('');
         }
 
-        async function calcularFrete() {
+        async function calcFrete() {
             const cep = document.getElementById('cep').value.replace(/\D/g,'');
             if(cep.length !== 8) return;
-            const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-            const d = await r.json();
-            if(d.erro) return;
-
-            const pesoT = cart.reduce((a,b) => a + (b.peso * b.q), 0);
-            let base = (d.uf === 'ES') ? 22.50 : 39.90;
-            frete = base + (pesoT * 5);
-            endereco = `${d.localidade}/${d.uf}`;
+            document.getElementById('f-res').innerText = "Consultando Correios...";
             
-            document.getElementById('freteRes').innerHTML = `📦 Envio Correios para ${endereco}: R$ ${frete.toFixed(2)}`;
-            update();
+            try {
+                const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const d = await r.json();
+                if(d.erro) throw new Error();
+
+                const pesoTotal = cart.reduce((a,b) => a + (b.peso * b.q), 0);
+                
+                // Lógica Real saindo de Alto Rio Novo/ES
+                let base = (d.uf === 'ES') ? 22.00 : 39.50;
+                freteVal = base + (pesoTotal > 1 ? (pesoTotal - 1) * 8.00 : 0);
+                local = `${d.localidade}/${d.uf}`;
+                
+                document.getElementById('f-res').innerHTML = `✅ Frete para ${local}: R$ ${freteVal.toFixed(2)}`;
+                update();
+            } catch (e) { document.getElementById('f-res').innerText = "CEP Inválido."; }
         }
 
         function add(id) {
             const p = db.find(x => x.id == id);
             const item = cart.find(x => x.id == id);
-            if(item && item.q >= p.estoque) return alert("Estoque máximo atingido!");
+            
+            if(item && item.q >= p.estoque) return alert("Limite de estoque atingido.");
+            
             if(item) item.q++; else cart.push({...p, q: 1});
             update();
             toggleCart(true);
@@ -179,29 +185,32 @@
         function update() {
             const sub = cart.reduce((a,b) => a + (b.preco * b.q), 0);
             document.getElementById('count').innerText = cart.reduce((a,b) => a + b.q, 0);
-            document.getElementById('total').innerText = `R$ ${(sub + frete).toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
+            document.getElementById('total').innerText = `R$ ${(sub + freteVal).toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
             document.getElementById('cartList').innerHTML = cart.map(i => `
                 <div class="c-item">
                     <img src="${i.img}">
-                    <div style="flex:1"><b>${i.nome}</b><br><small>${i.q}x R$ ${i.preco}</small></div>
+                    <div style="flex:1"><b>${i.nome}</b><br><small>${i.q}x R$ ${i.preco.toFixed(2)}</small></div>
+                    <i class="fas fa-trash" onclick="remove('${i.id}')" style="color:#ddd; cursor:pointer"></i>
                 </div>
             `).join('');
         }
 
+        function remove(id) { cart = cart.filter(x => x.id != id); update(); }
         function toggleCart(s) { document.getElementById('sidebar').classList[s ? 'add' : 'toggle']('active'); }
 
         function checkout() {
-            if(!cart.length || !frete) return alert("Calcule o frete para finalizar!");
-            const nome = prompt("Seu Nome:");
+            if(!cart.length || !freteVal) return alert("Adicione itens e calcule o frete!");
+            const nome = prompt("Seu Nome Completo:");
             if(!nome) return;
-            confetti();
-            let msg = `*PEDIDO SEGURO - NOBILE*\n👤 Cliente: ${nome}\n📍 Local: ${endereco}\n---\n`;
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            
+            let msg = `*NOVO PEDIDO - NOBILE*\n👤 Cliente: ${nome}\n📍 Destino: ${local}\n---\n`;
             cart.forEach(i => msg += `• ${i.q}x ${i.nome}\n`);
-            msg += `---\n🚚 Frete: R$ ${frete.toFixed(2)}\n💰 *TOTAL: ${document.getElementById('total').innerText}*`;
+            msg += `---\n🚚 Frete: R$ ${freteVal.toFixed(2)}\n💰 *TOTAL: ${document.getElementById('total').innerText}*`;
             window.open(`https://wa.me/${CFG.wa}?text=${encodeURIComponent(msg)}`);
         }
 
-        init();
+        load();
     </script>
 </body>
 </html>
