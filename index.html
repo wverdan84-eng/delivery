@@ -1,202 +1,218 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!--
+NOBILE STORE PRO
+Template Premium – HTML + JS + Google Sheets + PWA Offline
+Autor: Washington Verdan
+Licença: Comercial
+--><!DOCTYPE html><html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nobile Store | Oficial</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        :root { --p: #000; --s: #0071e3; --bg: #fff; --f: #f5f5f7; --r: 22px; --accent: #ff3b30; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #1d1d1f; overflow-x: hidden; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nobile Store | Oficial</title>  <!-- SEO -->  <meta name="description" content="Nobile Store – Template premium de loja virtual integrada ao Google Sheets, com PWA offline e checkout via WhatsApp." />
+  <meta name="robots" content="index, follow" />  <!-- PWA -->  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#000000" />  <!-- Fonts & Icons -->  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>  <style>
+    :root {
+      --primary:#000;
+      --secondary:#0071e3;
+      --bg:#fff;
+      --soft:#f5f5f7;
+      --radius:22px;
+      --danger:#ff3b30;
+    }
 
-        /* NAV */
-        nav { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 18px 8%; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: -1.5px; }
-        .logo span { color: var(--s); }
-        .cart-trigger { position: relative; cursor: pointer; background: var(--f); padding: 12px; border-radius: 50%; }
-        #count { position: absolute; top: -5px; right: -5px; background: var(--s); color: #fff; font-size: 0.65rem; padding: 3px 8px; border-radius: 20px; font-weight: 800; }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
+    body{background:var(--bg);color:#1d1d1f}
 
-        /* HERO */
-        .hero { margin: 20px 5%; height: 350px; background: linear-gradient(135deg, #000 0%, #1a1a1a 100%); border-radius: 35px; position: relative; overflow: hidden; display: flex; align-items: center; padding: 0 50px; color: #fff; }
-        .hero-text { z-index: 2; max-width: 450px; }
-        .hero h1 { font-size: 2.8rem; font-weight: 800; line-height: 1; margin-bottom: 15px; letter-spacing: -2px; }
-        .hero-img { position: absolute; right: -20px; bottom: -30px; height: 110%; z-index: 1; opacity: 0.9; }
+    nav{
+      position:sticky;top:0;z-index:10;
+      display:flex;justify-content:space-between;align-items:center;
+      padding:18px 8%;background:rgba(255,255,255,.85);
+      backdrop-filter:blur(20px);border-bottom:1px solid #eee
+    }
+    .logo{font-size:1.5rem;font-weight:800}
+    .logo span{color:var(--secondary)}
 
-        /* GRID */
-        .container { padding: 40px 8%; max-width: 1400px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 30px; }
-        .card { background: #fff; border-radius: var(--r); padding: 15px; transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); cursor: pointer; border: 1px solid #f0f0f0; position: relative; display: flex; flex-direction: column; }
-        .card:hover { transform: translateY(-10px); border-color: var(--s); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
-        .img-box { width: 100%; aspect-ratio: 1/1; border-radius: 18px; overflow: hidden; background: var(--f); margin-bottom: 15px; }
-        .img-box img { width: 100%; height: 100%; object-fit: contain; }
-        .card h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; height: 40px; overflow: hidden; }
-        .price { font-size: 1.2rem; font-weight: 800; }
-        .tag { position: absolute; top: 10px; left: 10px; background: var(--accent); color: #fff; font-size: 0.6rem; font-weight: 800; padding: 5px 10px; border-radius: 8px; z-index: 5; }
+    .cart-trigger{background:var(--soft);padding:12px;border-radius:50%;cursor:pointer;position:relative}
+    #count{position:absolute;top:-5px;right:-5px;background:var(--secondary);color:#fff;font-size:.7rem;padding:3px 8px;border-radius:20px;font-weight:800}
 
-        /* SIDEBAR */
-        .sidebar { position: fixed; top: 0; right: -100%; width: 100%; max-width: 420px; height: 100%; background: #fff; z-index: 2000; transition: 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); padding: 35px; display: flex; flex-direction: column; }
-        .sidebar.active { right: 0; box-shadow: -30px 0 60px rgba(0,0,0,0.1); }
-        .c-item { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; background: var(--f); padding: 15px; border-radius: 18px; }
-        .c-item img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; }
+    .hero{
+      margin:20px 5%;height:340px;border-radius:35px;
+      background:linear-gradient(135deg,#000,#1a1a1a);
+      color:#fff;display:flex;align-items:center;padding:0 50px;overflow:hidden
+    }
+    .hero h1{font-size:2.8rem;font-weight:800;letter-spacing:-2px}
 
-        /* FORM */
-        .f-box { background: var(--f); padding: 22px; border-radius: 22px; margin: 20px 0; border: 1px solid rgba(0,0,0,0.03); }
-        .inp { width: 100%; padding: 15px; border-radius: 14px; border: 1px solid #ddd; outline: none; margin-top: 10px; font-weight: 600; }
-        .btn-f { width: 100%; padding: 14px; background: var(--s); color: #fff; border: none; border-radius: 14px; margin-top: 10px; font-weight: 800; cursor: pointer; }
-        #f-res { margin-top: 12px; font-size: 0.8rem; font-weight: 800; color: var(--s); }
+    .container{padding:40px 8%;max-width:1400px;margin:auto}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:30px}
 
-        .btn-pay { width: 100%; padding: 22px; border-radius: 20px; border: none; background: #000; color: #fff; font-size: 1.1rem; font-weight: 800; cursor: pointer; margin-top: auto; }
-        .sec-icons { display: flex; justify-content: center; gap: 15px; margin-top: 15px; opacity: 0.3; font-size: 1.2rem; }
-    </style>
-</head>
-<body>
+    .card{
+      background:#fff;border-radius:var(--radius);
+      padding:15px;border:1px solid #eee;cursor:pointer;
+      transition:.4s;display:flex;flex-direction:column
+    }
+    .card:hover{transform:translateY(-8px);border-color:var(--secondary)}
 
-    <nav>
-        <div class="logo">NOBILE<span>.</span></div>
-        <div class="cart-trigger" onclick="toggleCart()">
-            <i class="fas fa-shopping-bag"></i>
-            <span id="count">0</span>
-        </div>
-    </nav>
+    .img-box{aspect-ratio:1/1;background:var(--soft);border-radius:18px;overflow:hidden;margin-bottom:12px}
+    .img-box img{width:100%;height:100%;object-fit:contain}
 
-    <div class="hero">
-        <div class="hero-text">
-            <h1>Premium <br>Experience.</h1>
-            <p style="opacity:0.7">Qualidade garantida.</p>
-        </div>
-        <img src="https://www.apple.com/v/iphone-15-pro/c/images/overview/welcome/hero_endframe__ov6ewwmbhi6e_large.jpg" class="hero-img">
+    .price{font-weight:800;font-size:1.2rem}
+
+    .tag{position:absolute;top:10px;left:10px;background:var(--danger);color:#fff;font-size:.6rem;padding:5px 10px;border-radius:8px}
+
+    .sidebar{
+      position:fixed;top:0;right:-100%;width:100%;max-width:420px;height:100%;
+      background:#fff;z-index:50;padding:35px;transition:.4s;display:flex;flex-direction:column
+    }
+    .sidebar.active{right:0;box-shadow:-20px 0 50px rgba(0,0,0,.15)}
+
+    .c-item{display:flex;gap:15px;background:var(--soft);padding:15px;border-radius:18px;margin-bottom:12px}
+    .c-item img{width:55px;height:55px;border-radius:12px;object-fit:cover}
+
+    .btn-pay{margin-top:auto;padding:22px;border-radius:20px;border:none;background:#000;color:#fff;font-size:1.1rem;font-weight:800;cursor:pointer}
+  </style></head>
+<body><h1 hidden>Nobile Store Oficial</h1><nav>
+  <div class="logo">NOBILE<span>.</span></div>
+  <div class="cart-trigger" id="cartBtn">
+    <i class="fas fa-shopping-bag"></i>
+    <span id="count">0</span>
+  </div>
+</nav><section class="hero">
+  <div>
+    <h1>Premium<br>Experience.</h1>
+    <p style="opacity:.7">Template profissional para vendas online.</p>
+  </div>
+</section><div class="container">
+  <div id="grid" class="grid">Carregando produtos...</div>
+</div><div class="sidebar" id="sidebar">
+  <h2>Sacola</h2>
+  <div id="cartList" style="flex:1;overflow:auto"></div>
+  <div style="font-weight:800;font-size:1.3rem">Total: <span id="total">R$ 0,00</span></div>
+  <button class="btn-pay" id="checkout">Finalizar Pedido</button>
+</div><script>
+/* CONFIGURAÇÕES */
+const CFG = {
+  SHEET_ID: '1YYobMz2udkbtX9P9N76QhTvCJkNXnxpYUbNvv3M4G_M',
+  WHATSAPP: '5527997566512'
+};
+
+/* ================= STATE ================= */
+let products = [];
+let cart = [];
+
+/* ================= LOAD PRODUCTS ================= */
+async function loadProducts() {
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${CFG.SHEET_ID}/gviz/tq?tqx=out:csv`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Erro ao carregar planilha');
+
+    const csv = await res.text();
+    const rows = csv.split('
+').slice(1);
+
+    products = rows.map(r => {
+      if (!r.trim()) return null;
+      const c = r.split(/,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/);
+      return {
+        id: c[0]?.replace(/\"/g, ''),
+        name: c[1]?.replace(/\"/g, ''),
+        price: parseFloat(c[2]),
+        image: c[3]?.replace(/\"/g, ''),
+        stock: parseInt(c[5] || 0)
+      };
+    }).filter(Boolean);
+
+    renderProducts();
+  } catch (e) {
+    document.getElementById('grid').innerText = 'Erro ao carregar produtos.';
+    console.error(e);
+  }
+}
+
+/* ================= RENDER ================= */
+function renderProducts() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = products.filter(p => p.stock > 0).map(p => `
+    <div class="card" data-id="${p.id}">
+      ${p.stock < 4 ? `<span class="tag">Últimas</span>` : ''}
+      <div class="img-box">
+        <img src="${p.image}" onerror="this.src='https://via.placeholder.com/300'" />
+      </div>
+      <h3>${p.name}</h3>
+      <div class="price">R$ ${p.price.toFixed(2)}</div>
     </div>
+  `).join('');
+}
 
-    <div class="container">
-        <div id="grid" class="grid"></div>
+function renderCart() {
+  const list = document.getElementById('cartList');
+  const totalEl = document.getElementById('total');
+  const countEl = document.getElementById('count');
+
+  list.innerHTML = cart.map(i => `
+    <div class="c-item">
+      <img src="${i.image}" />
+      <div>
+        <strong>${i.name}</strong><br />
+        ${i.qty}x R$ ${i.price.toFixed(2)}
+      </div>
     </div>
+  `).join('');
 
-    <div class="sidebar" id="sidebar">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px">
-            <h2 style="font-weight:800; font-size:1.6rem">Sacola</h2>
-            <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer; font-size:1.4rem; color:#ccc"></i>
-        </div>
-        
-        <div id="cartList" style="flex:1; overflow-y:auto"></div>
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  totalEl.innerText = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  countEl.innerText = cart.reduce((s, i) => s + i.qty, 0);
+}
 
-        <div class="f-box">
-            <span style="font-weight:800; font-size:0.75rem; color:#666">CÁLCULO DE FRETE</span>
-            <input type="text" id="cep" class="inp" placeholder="00000-000">
-            <button onclick="calcFrete()" class="btn-f">Calcular Envio</button>
-            <div id="f-res"></div>
-        </div>
+/* ================= CART ACTIONS ================= */
+document.getElementById('grid').addEventListener('click', e => {
+  const card = e.target.closest('.card');
+  if (!card) return;
 
-        <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.5rem; margin-bottom:15px">
-            <span>Total</span> <span id="total">R$ 0,00</span>
-        </div>
+  const product = products.find(p => p.id === card.dataset.id);
+  if (!product) return;
 
-        <button onclick="checkout()" class="btn-pay">Finalizar Pedido</button>
+  const item = cart.find(i => i.id === product.id);
+  if (item) {
+    if (item.qty >= product.stock) return alert('Estoque máximo atingido');
+    item.qty++;
+  } else {
+    cart.push({ ...product, qty: 1 });
+  }
 
-        <div class="sec-icons">
-            <i class="fab fa-cc-visa"></i><i class="fab fa-cc-mastercard"></i><i class="fab fa-pix"></i><i class="fas fa-shield-alt"></i>
-        </div>
-    </div>
+  openCart();
+  renderCart();
+});
 
-    <script>
-        const CFG = { 
-            sheet: '1YYobMz2udkbtX9P9N76QhTvCJkNXnxpYUbNvv3M4G_M', 
-            wa: '5527997566512',
-            script: 'https://script.google.com/macros/s/AKfycbz2yhsYM6HL3ZuC1VJG4r7fmm7M29RRY3SYgoxbkuY8yM6oImv_vBKFzWPu7VQDWWiS/exec'
-        };
+/* ================= UI ================= */
+const sidebar = document.getElementById('sidebar');
 
-        let db = [], cart = [], freteVal = 0, local = "";
+document.getElementById('cartBtn').onclick = () => toggleCart();
 
-        async function load() {
-            const r = await fetch(`https://docs.google.com/spreadsheets/d/${CFG.sheet}/gviz/tq?tqx=out:csv`);
-            const t = await r.text();
-            db = t.split('\n').slice(1).map(row => {
-                const c = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                return {
-                    id: c[0].replace(/"/g,'').trim(),
-                    nome: c[1].replace(/"/g,'').trim(),
-                    preco: parseFloat(c[2].replace(/"/g,'')),
-                    img: c[3].replace(/"/g,'').trim(),
-                    estoque: parseInt(c[5]?.replace(/"/g,'') || 0),
-                    peso: parseFloat(c[6]?.replace(/"/g,'') || 0.4)
-                }
-            });
-            render();
-        }
+function openCart() {
+  sidebar.classList.add('active');
+}
 
-        function render() {
-            const disp = db.filter(p => p.estoque > 0);
-            document.getElementById('grid').innerHTML = disp.map(p => `
-                <div class="card" onclick="add('${p.id}')">
-                    ${p.estoque < 4 ? `<span class="tag">RESTAM ${p.estoque}</span>` : ''}
-                    <div class="img-box"><img src="${p.img}"></div>
-                    <h3>${p.nome}</h3>
-                    <div class="price">R$ ${p.preco.toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
-                </div>
-            `).join('');
-        }
+function toggleCart() {
+  sidebar.classList.toggle('active');
+}
 
-        async function calcFrete() {
-            const cep = document.getElementById('cep').value.replace(/\D/g,'');
-            if(cep.length !== 8) return;
-            document.getElementById('f-res').innerText = "Consultando...";
-            const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-            const d = await r.json();
-            if(d.erro) return document.getElementById('f-res').innerText = "CEP Inválido";
-            
-            const pesoT = cart.reduce((a,b) => a + (b.peso * b.q), 0);
-            freteVal = (d.uf === 'ES' ? 22.00 : 39.50) + (pesoT > 1 ? (pesoT - 1) * 8.00 : 0);
-            local = `${d.localidade}/${d.uf}`;
-            document.getElementById('f-res').innerHTML = `✅ Envio para ${local}: R$ ${freteVal.toFixed(2)}`;
-            update();
-        }
+/* ================= CHECKOUT ================= */
+document.getElementById('checkout').onclick = () => {
+  if (!cart.length) return alert('Carrinho vazio');
 
-        function add(id) {
-            const p = db.find(x => x.id == id);
-            const item = cart.find(x => x.id == id);
-            if(item && item.q >= p.estoque) return alert("Limite de estoque atingido.");
-            if(item) item.q++; else cart.push({...p, q: 1});
-            update();
-            toggleCart(true);
-        }
+  const name = prompt('Digite seu nome completo');
+  if (!name || name.length < 5) return;
 
-        function update() {
-            const sub = cart.reduce((a,b) => a + (b.preco * b.q), 0);
-            document.getElementById('count').innerText = cart.reduce((a,b) => a + b.q, 0);
-            document.getElementById('total').innerText = `R$ ${(sub + freteVal).toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
-            document.getElementById('cartList').innerHTML = cart.map(i => `
-                <div class="c-item">
-                    <img src="${i.img}">
-                    <div style="flex:1"><b>${i.nome}</b><br><small>${i.q}x R$ ${i.preco.toFixed(2)}</small></div>
-                </div>
-            `).join('');
-        }
+  const message = `*NOVO PEDIDO*%0ACliente: ${name}%0A%0A${cart.map(i => `${i.qty}x ${i.name}`).join('%0A')}%0A%0ATotal: ${document.getElementById('total').innerText}`;
 
-        function toggleCart(s) { document.getElementById('sidebar').classList[s ? 'add' : 'toggle']('active'); }
+  confetti({ particleCount: 120, spread: 70 });
+  window.open(`https://wa.me/${CFG.WHATSAPP}?text=${message}`);
+};
 
-        async function checkout() {
-            if(!cart.length || !freteVal) return alert("Calcule o frete primeiro!");
-            const nome = prompt("Seu Nome Completo:");
-            if(!nome) return;
+/* ================= PWA ================= */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
 
-            const dados = {
-                nome: nome,
-                itens: cart.map(i => `${i.q}x ${i.nome}`).join(', '),
-                total: document.getElementById('total').innerText,
-                local: local
-            };
-
-            // Salva na aba vendas (seu script oficial)
-            fetch(CFG.script, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dados) });
-
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            let msg = `*NOVO PEDIDO NOBILE*\n👤 Cliente: ${nome}\n📍 Local: ${local}\n---\n${dados.itens}\n---\n💰 TOTAL: ${dados.total}`;
-            window.open(`https://wa.me/${CFG.wa}?text=${encodeURIComponent(msg)}`);
-        }
-
-        load();
-    </script>
-</body>
-</html>
+loadProducts();
