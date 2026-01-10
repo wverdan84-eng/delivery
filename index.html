@@ -3,130 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minha Loja Profissional</title>
+    <title>Nobile Store | Official</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --p-color: #000000;
-            --s-color: #3b82f6;
-            --bg-color: #fcfcfd;
-            --card-radius: 16px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --primary: #000000;
+            --accent: #0071e3; /* Azul Apple */
+            --bg: #ffffff;
+            --gray: #f5f5f7;
+            --text-main: #1d1d1f;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); color: #1f2937; padding-bottom: 80px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); }
 
-        header {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            padding: 1.2rem 8%;
+        /* Banner de Aviso */
+        .top-bar { background: var(--primary); color: white; text-align: center; padding: 8px; font-size: 0.8rem; font-weight: 500; }
+
+        /* Navbar Estilo Glass */
+        nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
             position: sticky; top: 0; z-index: 1000;
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 15px 5%; border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
-        .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -1px; }
-        .logo i { color: var(--s-color); margin-right: 8px; }
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; }
+        .nav-icons { display: flex; gap: 20px; align-items: center; }
+        .cart-btn { position: relative; cursor: pointer; padding: 8px; background: var(--gray); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .cart-btn:hover { background: #e8e8ed; }
+        .badge { position: absolute; top: -5px; right: -5px; background: var(--accent); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; border: 2px solid white; }
 
-        .cart-icon {
-            background: var(--p-color); color: white;
-            padding: 10px 20px; border-radius: 50px;
-            cursor: pointer; display: flex; align-items: center; gap: 10px;
-            transition: var(--transition); box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        /* Categorias em Bolhas */
+        .categories-scroll {
+            display: flex; overflow-x: auto; gap: 15px; padding: 20px 5%;
+            scrollbar-width: none;
         }
-
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 8%; }
-        
-        .search-wrapper { position: relative; margin-bottom: 40px; }
-        .search-wrapper i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
-        .search-input {
-            width: 100%; padding: 18px 55px; border-radius: 14px;
-            border: 1px solid #e2e8f0; font-size: 1rem; outline: none;
+        .categories-scroll::-webkit-scrollbar { display: none; }
+        .cat-item {
+            flex: 0 0 auto; text-align: center; cursor: pointer;
         }
+        .cat-img { width: 60px; height: 60px; background: var(--gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; transition: 0.3s; }
+        .cat-item:hover .cat-img { transform: scale(1.1); background: #e8e8ed; }
+        .cat-item span { font-size: 0.75rem; font-weight: 600; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; }
-        .card {
-            background: white; border-radius: var(--card-radius); padding: 12px;
-            transition: var(--transition); border: 1px solid rgba(0,0,0,0.03);
-            display: flex; flex-direction: column;
+        /* Grid de Produtos Premium */
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px 5%; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
+        .product-card {
+            background: white; border-radius: 18px; padding: 15px;
+            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: 1px solid transparent;
         }
-        .card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
-        .img-box { width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; margin-bottom: 15px; }
-        .img-box img { width: 100%; height: 100%; object-fit: cover; }
-
+        .product-card:hover { border-color: #e8e8ed; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .product-img { width: 100%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; margin-bottom: 15px; }
+        .product-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 5px; }
+        .product-price { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
         .add-btn {
-            width: 100%; padding: 14px; margin-top: 15px; border: none;
-            border-radius: 12px; background: #f1f5f9; font-weight: 600; cursor: pointer;
+            width: 100%; padding: 12px; margin-top: 15px; border: none;
+            border-radius: 10px; background: var(--primary); color: white;
+            font-weight: 600; cursor: pointer; transition: 0.3s;
         }
-        .add-btn:hover { background: var(--p-color); color: white; }
+        .add-btn:hover { opacity: 0.8; }
 
-        /* Panel e Modais */
-        .cart-panel {
+        /* WhatsApp Button */
+        .wa-float {
+            position: fixed; bottom: 25px; right: 25px;
+            background: #25d366; color: white; width: 60px; height: 60px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999;
+            cursor: pointer; transition: 0.3s;
+        }
+        .wa-float:hover { transform: scale(1.1); }
+
+        /* Carrinho Lateral */
+        .cart-sidebar {
             position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px;
             height: 100%; background: white; z-index: 2000; transition: 0.4s;
-            box-shadow: -10px 0 50px rgba(0,0,0,0.1); display: flex; flex-direction: column;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.1); padding: 30px;
+            display: flex; flex-direction: column;
         }
-        .cart-panel.active { right: 0; }
-        .modal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px); z-index: 3000; align-items: center; justify-content: center;
-        }
-        .modal-content { background: white; width: 90%; max-width: 450px; border-radius: 24px; padding: 30px; text-align: center; }
+        .cart-sidebar.active { right: 0; }
 
-        .pay-option {
-            display: flex; align-items: center; gap: 15px; padding: 15px;
-            border: 2px solid #f1f5f9; border-radius: 14px; margin-bottom: 15px; cursor: pointer;
-        }
-        .pay-option.active { border-color: var(--s-color); background: #f0f7ff; }
+        /* Rodapé */
+        footer { background: var(--gray); padding: 50px 5%; margin-top: 50px; text-align: center; }
+        .payment-badges { display: flex; justify-content: center; gap: 15px; margin: 20px 0; font-size: 1.5rem; opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo"><i class="fas fa-shopping-bag"></i> MINHA LOJA</div>
-        <div class="cart-icon" onclick="toggleCart()">
-            <i class="fas fa-shopping-cart"></i> <span id="count">0</span>
+    <div class="top-bar">🚚 Frete Grátis para todo Brasil em compras acima de R$ 250</div>
+
+    <nav>
+        <div class="logo">NOBILE.</div>
+        <div class="nav-icons">
+            <div class="cart-btn" onclick="toggleCart()">
+                <i class="fas fa-shopping-bag"></i>
+                <span class="badge" id="count">0</span>
+            </div>
         </div>
-    </header>
+    </nav>
+
+    <div class="categories-scroll" id="categories">
+        <div class="cat-item" onclick="filterCat('Todos')"><div class="cat-img"><i class="fas fa-th"></i></div><span>Todos</span></div>
+        <div class="cat-item" onclick="filterCat('Eletrônicos')"><div class="cat-img"><i class="fas fa-laptop"></i></div><span>Tech</span></div>
+        <div class="cat-item" onclick="filterCat('Acessórios')"><div class="cat-img"><i class="fas fa-headphones"></i></div><span>Acessórios</span></div>
+        <div class="cat-item" onclick="filterCat('Moda')"><div class="cat-img"><i class="fas fa-tshirt"></i></div><span>Moda</span></div>
+    </div>
 
     <div class="container">
-        <div class="search-wrapper">
-            <i class="fas fa-search"></i>
-            <input type="text" id="search" class="search-input" placeholder="Buscar produtos..." oninput="filter()">
-        </div>
-        <div id="grid" class="grid"></div>
+        <div id="grid" class="grid">
+            </div>
     </div>
 
-    <div class="cart-panel" id="cartPanel">
-        <div style="padding:30px; border-bottom:1px solid #eee; display:flex; justify-content:space-between">
-            <h2>Sacola</h2> <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer"></i>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px">
+            <h2>Sua Sacola</h2>
+            <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer"></i>
         </div>
-        <div id="cartList" style="flex-grow:1; overflow-y:auto; padding:30px"></div>
-        <div style="padding:30px; background:#fafafa">
+        <div id="cartList" style="flex:1; overflow-y:auto"></div>
+        <div style="padding-top:20px; border-top:1px solid #eee">
             <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-weight:800">
-                <span>Total</span> <span id="total">R$ 0,00</span>
+                <span>Total</span><span id="total">R$ 0,00</span>
             </div>
-            <button onclick="openPay()" style="width:100%; padding:18px; border-radius:14px; background:black; color:white; border:none; cursor:pointer; font-weight:bold">Finalizar Pedido</button>
+            <button onclick="checkout()" style="width:100%; padding:20px; background:black; color:white; border-radius:12px; border:none; font-weight:bold; cursor:pointer">FINALIZAR PEDIDO</button>
         </div>
     </div>
 
-    <div class="modal" id="payModal">
-        <div class="modal-content">
-            <h2 style="margin-bottom:20px">Como quer pagar?</h2>
-            <div class="pay-option active" id="optPix" onclick="setPay('pix')">
-                <i class="fas fa-qrcode" style="color:#22c55e"></i> <b>Pix (Copia e Cola)</b>
-            </div>
-            <div class="pay-option" id="optCard" onclick="setPay('card')">
-                <i class="fas fa-credit-card" style="color:#3b82f6"></i> <b>Cartão de Crédito</b>
-            </div>
-            <button onclick="sendZap()" style="width:100%; padding:18px; border-radius:14px; background:#22c55e; color:white; border:none; cursor:pointer; font-weight:bold">
-                <i class="fab fa-whatsapp"></i> Confirmar no WhatsApp
-            </button>
-            <p onclick="document.getElementById('payModal').style.display='none'" style="margin-top:20px; cursor:pointer; color:#999">Voltar</p>
+    <a href="https://wa.me/5527997566512" target="_blank" class="wa-float">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <footer>
+        <div class="logo">NOBILE.</div>
+        <p style="font-size: 0.8rem; margin-top:10px; color:#666">© 2026 Nobile Store - Todos os direitos reservados.</p>
+        <div class="payment-badges">
+            <i class="fab fa-cc-visa"></i>
+            <i class="fab fa-cc-mastercard"></i>
+            <i class="fas fa-pix"></i>
         </div>
-    </div>
+        <p style="font-size: 0.7rem; color:#999">Compra 100% Segura com Criptografia SSL</p>
+    </footer>
 
     <script>
         const CONFIG = {
@@ -135,9 +154,9 @@
             pix: '27997566512'
         };
 
-        let products = [], cart = [], payMethod = 'pix';
+        let products = [], cart = [];
 
-        async function load() {
+        async function init() {
             const r = await fetch(`https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/gviz/tq?tqx=out:csv`);
             const t = await r.text();
             products = csvToJson(t);
@@ -155,14 +174,13 @@
 
         function render(data) {
             document.getElementById('grid').innerHTML = data.map(p => `
-                <div class="card">
-                    <div class="img-box"><img src="${p.imagem}"></div>
-                    <div style="flex-grow:1">
-                        <small style="color:#3b82f6; font-weight:bold">${p.categoria || 'Geral'}</small>
-                        <h3 style="margin:5px 0">${p.nome}</h3>
-                        <div style="font-weight:800; font-size:1.2rem">R$ ${parseFloat(p.preco).toFixed(2)}</div>
+                <div class="product-card">
+                    <img src="${p.imagem}" class="product-img">
+                    <div class="product-info">
+                        <h3>${p.nome}</h3>
+                        <div class="product-price">R$ ${parseFloat(p.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
+                        <button class="add-btn" onclick="add('${p.id}')">Adicionar à Sacola</button>
                     </div>
-                    <button class="add-btn" onclick="add('${p.id}')">Adicionar</button>
                 </div>
             `).join('');
         }
@@ -172,55 +190,44 @@
             const inCart = cart.find(x => x.id == id);
             if(inCart) inCart.q++; else cart.push({...p, q: 1});
             update();
-            if(!document.getElementById('cartPanel').classList.contains('active')) toggleCart();
+            toggleCart(true);
         }
 
         function update() {
             document.getElementById('count').innerText = cart.reduce((a, b) => a + b.q, 0);
             const total = cart.reduce((a, b) => a + (b.q * b.preco), 0);
-            document.getElementById('total').innerText = `R$ ${total.toFixed(2)}`;
+            document.getElementById('total').innerText = `R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
             document.getElementById('cartList').innerHTML = cart.map(i => `
-                <div style="display:flex; gap:10px; margin-bottom:15px">
-                    <img src="${i.imagem}" style="width:50px; height:50px; border-radius:8px; object-fit:cover">
+                <div style="display:flex; gap:15px; margin-bottom:20px; align-items:center">
+                    <img src="${i.imagem}" style="width:60px; height:60px; border-radius:10px; object-fit:cover">
                     <div style="flex:1"><b>${i.nome}</b><br><small>${i.q}x R$ ${i.preco}</small></div>
+                    <i class="fas fa-trash" onclick="remove('${i.id}')" style="color:#ccc; cursor:pointer"></i>
                 </div>
             `).join('');
         }
 
-        function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
-        function openPay() { document.getElementById('payModal').style.display = 'flex'; }
-        function setPay(m) { 
-            payMethod = m;
-            document.getElementById('optPix').classList.toggle('active', m === 'pix');
-            document.getElementById('optCard').classList.toggle('active', m === 'card');
+        function remove(id) { cart = cart.filter(x => x.id != id); update(); }
+        function toggleCart(forceOpen) { 
+            const s = document.getElementById('cartSidebar');
+            forceOpen ? s.classList.add('active') : s.classList.toggle('active');
         }
 
-        function sendZap() {
-    const nomeCliente = prompt("Qual seu nome completo?");
-    const endereco = prompt("Qual o endereço de entrega?");
-    
-    if(!nomeCliente || !endereco) return alert("Por favor, preencha os dados para entrega.");
-
-    const total = cart.reduce((a, b) => a + (b.q * b.preco), 0);
-    let m = `*NOVO PEDIDO - NOBILE STORE*\n`;
-    m += `👤 *Cliente:* ${nomeCliente}\n`;
-    m += `📍 *Entrega:* ${endereco}\n`;
-    m += `------------------------------\n`;
-    cart.forEach(i => m += `• ${i.q}x ${i.nome}\n`);
-    m += `------------------------------\n`;
-    m += `💰 *TOTAL:* R$ ${total.toFixed(2)}\n`;
-    m += `💳 *PAGAMENTO:* ${payMethod === 'pix' ? 'Pix' : 'Cartão'}`;
-    
-    window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(m)}`);
-}
-
-
-        function filter() {
-            const q = document.getElementById('search').value.toLowerCase();
-            render(products.filter(p => p.nome.toLowerCase().includes(q)));
+        function filterCat(cat) {
+            if(cat === 'Todos') render(products);
+            else render(products.filter(p => p.categoria.toLowerCase() === cat.toLowerCase()));
         }
 
-        load();
+        function checkout() {
+            if(cart.length === 0) return;
+            const nome = prompt("Qual seu nome completo?");
+            const total = cart.reduce((a, b) => a + (b.q * b.preco), 0);
+            let m = `*PEDIDO:* \n👤 *Cliente:* ${nome}\n------------------\n`;
+            cart.forEach(i => m += `• ${i.q}x ${i.nome}\n`);
+            m += `------------------\n💰 *TOTAL:* R$ ${total.toFixed(2)}\n*PIX:* ${CONFIG.pix}`;
+            window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(m)}`);
+        }
+
+        init();
     </script>
 </body>
 </html>
