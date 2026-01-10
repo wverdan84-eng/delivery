@@ -12,52 +12,60 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: #fff; color: #1d1d1f; padding-bottom: 80px; overflow-x: hidden; }
 
+        /* GATILHOS E HEADER */
         .safety-bar { background: var(--p); color: white; text-align: center; padding: 8px; font-size: 0.65rem; font-weight: 700; letter-spacing: 1px; }
         nav { background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 6%; border-bottom: 1px solid #eee; }
         
+        /* CATEGORIAS */
         .cat-container { position: sticky; top: 55px; z-index: 900; background: #fff; display: flex; gap: 10px; padding: 12px 6%; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid #f0f0f0; }
         .cat-container::-webkit-scrollbar { display: none; }
         .cat-btn { padding: 8px 18px; border-radius: 50px; background: var(--bg); border: none; font-size: 0.75rem; font-weight: 700; cursor: pointer; white-space: nowrap; color: #666; transition: 0.3s; }
         .cat-btn.active { background: var(--p); color: #fff; }
 
+        /* GRID E CARDS */
         .container { padding: 20px 6%; max-width: 1200px; margin: 0 auto; min-height: 400px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-        
         .card { background: #fff; border-radius: var(--radius); border: 1px solid #f2f2f2; padding: 12px; position: relative; transition: 0.3s; cursor: pointer; }
-        .card:hover { transform: translateY(-5px); border-color: #ddd; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .img-box { width: 100%; aspect-ratio: 1/1; border-radius: 15px; overflow: hidden; background: #fafafa; margin-bottom: 10px; }
         .img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .badge-low { position: absolute; top: 15px; right: 15px; background: #ff9500; color: white; font-size: 0.55rem; font-weight: 800; padding: 4px 8px; border-radius: 5px; }
+        
+        .badge-low { position: absolute; top: 15px; right: 15px; background: var(--accent); color: white; font-size: 0.55rem; font-weight: 800; padding: 4px 8px; border-radius: 5px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% {opacity: 1} 50% {opacity: 0.6} 100% {opacity: 1} }
 
         .price { font-size: 1.1rem; font-weight: 800; color: var(--p); margin: 5px 0; }
         .btn-add { width: 100%; padding: 12px; background: var(--p); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.75rem; }
 
+        /* SIDEBAR */
         .sidebar { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: #fff; z-index: 3000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px; box-shadow: -10px 0 40px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
         .sidebar.active { right: 0; }
         .cart-list { flex: 1; overflow-y: auto; margin: 20px 0; }
         
+        /* FRETE */
         .frete-section { background: var(--bg); padding: 15px; border-radius: 15px; margin-bottom: 20px; font-size: 0.8rem; }
         .frete-input-group { display: flex; gap: 8px; margin-top: 8px; }
         .frete-input-group input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
         .btn-calc { padding: 0 15px; background: var(--s); color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
-        #freteRes { margin-top: 10px; font-weight: 600; color: var(--success); }
+
+        /* NOTIFICAÇÃO PROVA SOCIAL */
+        #toast { position: fixed; bottom: 90px; left: 20px; background: white; padding: 12px 18px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 4000; font-size: 0.7rem; border-left: 4px solid var(--success); display: none; transform: translateX(-150%); transition: 0.5s; }
+        #toast.show { display: block; transform: translateX(0); }
+
+        /* WHATSAPP FLUTUANTE */
+        .wa-float { position: fixed; width: 55px; height: 55px; bottom: 85px; right: 20px; background: #25d366; color: white; border-radius: 50px; text-align: center; font-size: 25px; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); z-index: 100; display: flex; align-items: center; justify-content: center; text-decoration: none; }
 
         .mobile-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 10px; z-index: 2000; }
         .nav-link { text-align: center; color: #999; font-size: 0.65rem; cursor: pointer; flex: 1; }
         .nav-link.active { color: var(--p); font-weight: 800; }
-        .nav-link i { font-size: 1.3rem; display: block; margin-bottom: 3px; }
-
         #loading { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; }
     </style>
 </head>
 <body>
 
-    <div id="loading">
-        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 10px;"></i>
-        PROCESSANDO E BAIXANDO ESTOQUE...
-    </div>
+    <div id="loading">🚀 RESERVANDO PRODUTO E ATUALIZANDO ESTOQUE...</div>
+    <div id="toast"></div>
 
-    <div class="safety-bar">🔒 ESTOQUE REAL SINCRONIZADO</div>
+    <div class="safety-bar">⚡ OFERTAS EXCLUSIVAS COM ESTOQUE LIMITADO</div>
 
     <nav>
         <div class="logo" onclick="location.reload()" style="font-weight: 800; font-size: 1.2rem; cursor:pointer">NOBILE STORE</div>
@@ -77,17 +85,17 @@
 
     <div class="sidebar" id="sidebar">
         <div style="display:flex; justify-content:space-between; align-items:center">
-            <h2 style="font-weight:800">Minha Sacola</h2>
-            <i class="fas fa-times" onclick="toggleCart()" style="font-size: 1.5rem; cursor:pointer"></i>
+            <h2 style="font-weight:800">Sacola</h2>
+            <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer"></i>
         </div>
         <div class="cart-list" id="cartList"></div>
         <div class="frete-section">
-            <b><i class="fas fa-truck"></i> Calcular Entrega</b>
+            <b><i class="fas fa-truck"></i> Calcular Frete</b>
             <div class="frete-input-group">
                 <input type="text" id="cepInput" placeholder="CEP" maxlength="9">
                 <button class="btn-calc" onclick="calcularFreteReal()">Ok</button>
             </div>
-            <div id="freteRes"></div>
+            <div id="freteRes" style="margin-top:10px; color:var(--success); font-weight:700"></div>
         </div>
         <div style="border-top: 1px solid #eee; padding-top: 20px;">
             <div style="display:flex; justify-content:space-between; margin-bottom:10px; color: #666; font-size: 0.85rem;">
@@ -103,8 +111,12 @@
         </div>
     </div>
 
+    <a href="https://wa.me/5527997566512?text=Olá! Preciso de ajuda." class="wa-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
     <div class="mobile-nav">
-        <div class="nav-link active" onclick="location.reload()"><i class="fas fa-home"></i>Home</div>
+        <div class="nav-link active" onclick="location.reload()"><i class="fas fa-home"></i>Loja</div>
         <div class="nav-link" onclick="toggleCart()"><i class="fas fa-shopping-cart"></i>Sacola</div>
         <div class="nav-link" onclick="window.open('https://wa.me/5527997566512')"><i class="fab fa-whatsapp"></i>Suporte</div>
     </div>
@@ -128,7 +140,8 @@
                 const disponiveis = db.filter(p => parseInt(p.estoque) > 0);
                 render(disponiveis);
                 generateCats(disponiveis);
-            } catch (e) { alert("Erro ao carregar dados."); }
+                startSocial();
+            } catch (e) { console.log("Erro ao carregar dados."); }
         }
 
         function csvToJson(csv) {
@@ -164,7 +177,7 @@
                 return `
                 <div class="card" onclick="add('${p.id}')">
                     ${est <= 3 ? `<span class="badge-low">SÓ RESTAM ${est}</span>` : ''}
-                    <div class="img-box"><img src="${p.imagem}"></div>
+                    <div class="img-box"><img src="${p.imagem}" onerror="this.src='https://placehold.co/400x400?text=Produto'"></div>
                     <h3 style="font-size:0.8rem; font-weight:600; height:35px; overflow:hidden">${p.nome}</h3>
                     <div class="price">R$ ${parseFloat(p.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
                     <button class="btn-add">Adicionar</button>
@@ -189,7 +202,7 @@
         function add(id) {
             const p = db.find(x => x.id == id);
             const inCart = cart.find(x => x.id == id);
-            if(inCart && inCart.q >= parseInt(p.estoque)) { alert("Limite de estoque atingido!"); return; }
+            if(inCart && inCart.q >= parseInt(p.estoque)) { alert("Estoque máximo atingido!"); return; }
             if(inCart) inCart.q++; else cart.push({...p, q: 1});
             updateCart(); toggleCart(true);
         }
@@ -211,20 +224,30 @@
         function remove(id) { cart = cart.filter(x => x.id != id); updateCart(); }
         function toggleCart(s) { document.getElementById('sidebar').classList[s ? 'add' : 'toggle']('active'); }
 
+        function startSocial() {
+            const cidades = ['Vitória', 'Serra', 'Vila Velha', 'Cariacica', 'São Paulo', 'Rio de Janeiro'];
+            const nomes = ['Marcos', 'Aline', 'Ricardo', 'Beatriz', 'Lucas', 'Thiago'];
+            setInterval(() => {
+                const toast = document.getElementById('toast');
+                const n = nomes[Math.floor(Math.random()*nomes.length)];
+                const c = cidades[Math.floor(Math.random()*cidades.length)];
+                toast.innerHTML = `🛒 <b>${n}</b> de ${c} acabou de comprar!`;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 4000);
+            }, 20000);
+        }
+
         async function checkout() {
             if(cart.length === 0 || enderecoStr === "") { alert("Adicione produtos e calcule o frete!"); return; }
             const n = prompt("Seu Nome:"); if(!n) return;
             document.getElementById('loading').style.display = 'flex';
-            
             try {
                 await fetch(CFG.script, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ itens: cart }) });
-            } catch (e) { console.log("Erro na baixa."); }
-
+            } catch (e) { }
             confetti();
             let m = `*PEDIDO RESERVADO - NOBILE*\n👤 Cliente: ${n}\n📍 Endereço: ${enderecoStr}\n------------------\n`;
             cart.forEach(i => m += `• ${i.q}x ${i.nome}\n`);
             m += `------------------\n💰 *TOTAL: ${document.getElementById('totalGeral').innerText}*\n🔑 Pix: ${CFG.pix}`;
-            
             window.open(`https://wa.me/${CFG.wa}?text=${encodeURIComponent(m)}`);
             setTimeout(() => location.reload(), 1500);
         }
