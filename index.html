@@ -12,40 +12,42 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: #fff; color: #1d1d1f; padding-bottom: 70px; }
 
-        /* HEADER E AVISO */
         .safety-bar { background: #27ae60; color: white; text-align: center; padding: 8px; font-size: 0.7rem; font-weight: 700; }
         nav { background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 6%; border-bottom: 1px solid #eee; }
 
-        /* GRID PRO */
-        .container { padding: 20px 6%; max-width: 1200px; margin: 0 auto; }
+        /* MENU DE CATEGORIAS PROFISSIONAL */
+        .cat-container { 
+            position: sticky; top: 60px; z-index: 900; background: #fff; 
+            display: flex; gap: 10px; padding: 15px 6%; overflow-x: auto; 
+            scrollbar-width: none; border-bottom: 1px solid #f0f0f0;
+        }
+        .cat-container::-webkit-scrollbar { display: none; }
+        .cat-btn { 
+            padding: 8px 18px; border-radius: 50px; background: var(--bg); 
+            border: none; font-size: 0.8rem; font-weight: 600; cursor: pointer; 
+            white-space: nowrap; transition: 0.3s; color: #666;
+        }
+        .cat-btn.active { background: var(--p); color: #fff; }
+
+        /* GRID E CARDS */
+        .container { padding: 20px 6%; max-width: 1200px; margin: 0 auto; min-height: 500px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
-        .card { background: #fff; border-radius: var(--radius); transition: 0.3s; cursor: pointer; border: 1px solid #f0f0f0; padding: 10px; }
-        .card:hover { border-color: #ddd; transform: translateY(-5px); }
+        .card { background: #fff; border-radius: var(--radius); transition: 0.3s; cursor: pointer; border: 1px solid #f0f0f0; padding: 10px; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .img-box { width: 100%; aspect-ratio: 1/1; border-radius: 15px; overflow: hidden; background: #fafafa; margin-bottom: 10px; }
         .img-box img { width: 100%; height: 100%; object-fit: cover; }
-        
         .price { font-size: 1.1rem; font-weight: 800; color: var(--p); margin: 8px 0; }
         .btn-add { width: 100%; padding: 12px; background: var(--p); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.8rem; }
 
-        /* RODAPÉ DE CONFIANÇA */
-        footer { background: var(--bg); padding: 50px 6% 100px; margin-top: 50px; border-top: 1px solid #eee; font-size: 0.8rem; color: #666; line-height: 1.8; }
-        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; }
-        .selos { display: flex; gap: 15px; margin-top: 15px; font-size: 1.8rem; color: #999; }
-
-        /* MENU INFERIOR */
+        /* RODAPÉ E AFINS */
+        footer { background: var(--bg); padding: 50px 6% 100px; margin-top: 50px; border-top: 1px solid #eee; font-size: 0.8rem; color: #666; }
         .mobile-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 10px; z-index: 2000; }
         .nav-link { text-align: center; color: #999; font-size: 0.65rem; text-decoration: none; cursor: pointer; flex: 1; }
-        .nav-link i { font-size: 1.3rem; display: block; margin-bottom: 3px; }
         .nav-link.active { color: var(--p); font-weight: 800; }
 
-        /* CARRINHO */
         .sidebar { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: #fff; z-index: 3000; transition: 0.4s; padding: 30px; box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
         .sidebar.active { right: 0; }
-        .cart-item { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid #f5f5f7; padding-bottom: 15px; }
-
-        /* MODAL */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 4000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: #fff; width: 100%; max-width: 450px; border-radius: 25px; overflow: hidden; position: relative; }
     </style>
 </head>
 <body>
@@ -60,37 +62,29 @@
         </div>
     </nav>
 
+    <div class="cat-container" id="categoryMenu">
+        <button class="cat-btn active" onclick="filterCat('Tudo', this)">Tudo</button>
+        </div>
+
     <div class="container">
-        <h2 style="margin-bottom:20px; font-weight:800">Destaques da Semana</h2>
         <div id="grid" class="grid"></div>
     </div>
 
     <footer>
-        <div class="footer-grid">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px;">
             <div>
                 <h4 style="color:#000; margin-bottom:10px">CONTATO</h4>
                 <p>WhatsApp: (27) 99756-6512</p>
-                <p>E-mail: suporte@nobilestore.com.br</p>
                 <p>Atendimento: Seg a Sex, 09h às 18h</p>
             </div>
             <div>
                 <h4 style="color:#000; margin-bottom:10px">SEGURANÇA</h4>
-                <p><i class="fas fa-shield-alt"></i> Site Blindado contra invasões</p>
-                <p><i class="fas fa-check-circle"></i> Verificado pelo Google</p>
-                <div class="selos">
-                    <i class="fab fa-cc-visa"></i>
-                    <i class="fab fa-cc-mastercard"></i>
-                    <i class="fas fa-pix"></i>
+                <p><i class="fas fa-shield-alt"></i> Compra Garantida via WhatsApp</p>
+                <div style="font-size: 1.5rem; margin-top:10px; display:flex; gap:10px">
+                    <i class="fab fa-cc-visa"></i> <i class="fab fa-cc-mastercard"></i> <i class="fas fa-pix"></i>
                 </div>
             </div>
-            <div>
-                <h4 style="color:#000; margin-bottom:10px">EMPRESA</h4>
-                <p>Nobile Store LTDA</p>
-                <p>CNPJ: 00.000.000/0001-00</p>
-                <p>Vitória - Espírito Santo</p>
-            </div>
         </div>
-        <p style="text-align:center; margin-top:40px; font-size:0.7rem; opacity:0.5">© 2024 Nobile Store. Todos os direitos reservados.</p>
     </footer>
 
     <div class="mobile-nav">
@@ -110,7 +104,6 @@
                 <span>Total</span> <span id="total">R$ 0,00</span>
             </div>
             <button onclick="checkout()" class="btn-add" style="padding:18px; font-size:1rem">FECHAR PEDIDO NO PIX</button>
-            <p style="text-align:center; font-size:0.6rem; color:#999; margin-top:10px"><i class="fas fa-lock"></i> Pagamento Processado via WhatsApp</p>
         </div>
     </div>
 
@@ -122,6 +115,7 @@
             const r = await fetch(`https://docs.google.com/spreadsheets/d/${CFG.id}/gviz/tq?tqx=out:csv`);
             const t = await r.text();
             db = csvToJson(t);
+            generateCategoryMenu(); // MACETE: Gera os botões de categoria sozinho!
             render(db);
         }
 
@@ -134,10 +128,30 @@
             });
         }
 
+        // NOVIDADE: Cria o menu baseado no que você escreveu na coluna "categoria" da planilha
+        function generateCategoryMenu() {
+            const categories = [...new Set(db.map(p => p.categoria))].filter(c => c);
+            const menu = document.getElementById('categoryMenu');
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'cat-btn';
+                btn.innerText = cat;
+                btn.onclick = (e) => filterCat(cat, e.target);
+                menu.appendChild(btn);
+            });
+        }
+
+        function filterCat(cat, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filtered = cat === 'Tudo' ? db : db.filter(p => p.categoria === cat);
+            render(filtered);
+        }
+
         function render(data) {
             document.getElementById('grid').innerHTML = data.map(p => `
                 <div class="card" onclick="add('${p.id}')">
-                    <div class="img-box"><img src="${p.imagem}"></div>
+                    <div class="img-box"><img src="${p.imagem}" onerror="this.src='https://placehold.co/400x400?text=Nobile'"></div>
                     <h3 style="font-size:0.8rem; font-weight:600; height:35px; overflow:hidden">${p.nome}</h3>
                     <div class="price">R$ ${parseFloat(p.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
                     <button class="btn-add">Adicionar</button>
@@ -169,19 +183,18 @@
         function remove(id) { cart = cart.filter(x => x.id != id); updateCart(); }
         function toggleCart(s) { document.getElementById('sidebar').classList[s ? 'add' : 'toggle']('active'); }
 
-        // MACETE: Função de suporte separada da de compra
         function handleSupport() {
-            window.open(`https://wa.me/${CFG.wa}?text=Olá! Estou no site e gostaria de tirar uma dúvida sobre um produto.`, '_blank');
+            window.open(`https://wa.me/${CFG.wa}?text=Olá! Gostaria de tirar uma dúvida sobre a loja.`, '_blank');
         }
 
         function checkout() {
-            if(cart.length === 0) { alert("Sua sacola está vazia!"); return; }
-            const n = prompt("Seu nome completo:");
+            if(cart.length === 0) return;
+            const n = prompt("Seu nome:");
             if(!n) return;
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            let m = `*PEDIDO REALIZADO - NOBILE*\n\n👤 Cliente: ${n}\n------------------\n`;
+            let m = `*PEDIDO REALIZADO - NOBILE*\n👤 Cliente: ${n}\n------------------\n`;
             cart.forEach(i => m += `• ${i.q}x ${i.nome}\n`);
-            m += `------------------\n💰 Total: ${document.getElementById('total').innerText}\n🔑 Pix: ${CFG.pix}\n\n_Aguardando confirmação de pagamento..._`;
+            m += `------------------\n💰 Total: ${document.getElementById('total').innerText}\n🔑 Pix: ${CFG.pix}`;
             setTimeout(() => window.open(`https://wa.me/${CFG.wa}?text=${encodeURIComponent(m)}`), 1000);
             cart = []; updateCart(); toggleCart();
         }
