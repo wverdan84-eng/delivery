@@ -196,13 +196,24 @@
         }
 
         function sendZap() {
-            const total = cart.reduce((a, b) => a + (b.q * b.preco), 0);
-            let m = `*PEDIDO:* \n`;
-            cart.forEach(i => m += `• ${i.q}x ${i.nome}\n`);
-            m += `\n*TOTAL:* R$ ${total.toFixed(2)}`;
-            m += `\n*PAGAMENTO:* ${payMethod === 'pix' ? 'Pix (Chave: ' + CONFIG.pix + ')' : 'Cartão'}`;
-            window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(m)}`);
-        }
+    const nomeCliente = prompt("Qual seu nome completo?");
+    const endereco = prompt("Qual o endereço de entrega?");
+    
+    if(!nomeCliente || !endereco) return alert("Por favor, preencha os dados para entrega.");
+
+    const total = cart.reduce((a, b) => a + (b.q * b.preco), 0);
+    let m = `*NOVO PEDIDO - NOBILE STORE*\n`;
+    m += `👤 *Cliente:* ${nomeCliente}\n`;
+    m += `📍 *Entrega:* ${endereco}\n`;
+    m += `------------------------------\n`;
+    cart.forEach(i => m += `• ${i.q}x ${i.nome}\n`);
+    m += `------------------------------\n`;
+    m += `💰 *TOTAL:* R$ ${total.toFixed(2)}\n`;
+    m += `💳 *PAGAMENTO:* ${payMethod === 'pix' ? 'Pix' : 'Cartão'}`;
+    
+    window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(m)}`);
+}
+
 
         function filter() {
             const q = document.getElementById('search').value.toLowerCase();
