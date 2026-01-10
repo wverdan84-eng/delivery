@@ -3,104 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nobile Ultimate | Loja Oficial</title>
+    <title>Nobile Store | Premium Experience</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --p: #000; --s: #0071e3; --gray: #f5f5f7; --text: #1d1d1f; --radius: 24px; --success: #28a745; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: #fff; color: var(--text); overflow-x: hidden; }
+        :root { --p: #000; --s: #0071e3; --gray: #f5f5f7; --text: #1d1d1f; --radius: 20px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: #fff; color: var(--text); padding-bottom: 70px; }
 
-        /* Banner de Urgência */
-        .urgency-bar { background: var(--p); color: #fff; padding: 8px; text-align: center; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        /* Barra de Topo */
+        .top-banner { background: var(--p); color: #fff; padding: 10px; text-align: center; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; }
 
-        nav { background: rgba(255,255,255,0.8); backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 6%; border-bottom: 1px solid #eee; }
-        .logo { font-size: 1.5rem; font-weight: 800; }
+        /* Navbar Profissional */
+        nav { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 6%; border-bottom: 1px solid #f0f0f0; }
+        .logo { font-size: 1.4rem; font-weight: 800; }
+
+        /* Hero Banner */
+        .hero { margin: 20px 6%; background: linear-gradient(135deg, #000, #333); border-radius: var(--radius); padding: 40px; color: #fff; overflow: hidden; position: relative; }
+        .hero h1 { font-size: 2.2rem; font-weight: 800; line-height: 1; }
+        .hero p { opacity: 0.8; margin-top: 10px; font-size: 0.9rem; }
+
+        /* Grid de Produtos */
+        .container { padding: 20px 6%; }
+        .section-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+
+        .card { background: #fff; border-radius: var(--radius); transition: 0.3s; position: relative; }
+        .img-container { width: 100%; aspect-ratio: 1/1; border-radius: var(--radius); overflow: hidden; background: var(--gray); margin-bottom: 10px; }
+        .img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .card:hover img { transform: scale(1.08); }
+
+        .card-info h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; height: 35px; overflow: hidden; }
+        .card-price { font-size: 1.1rem; font-weight: 800; color: var(--p); }
         
-        /* Grid e Cards */
-        .container { padding: 20px 6% 100px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; }
-        
-        .card { background: #fff; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
-        .card:hover { transform: scale(1.02); }
-        .img-wrap { width: 100%; aspect-ratio: 1/1; border-radius: var(--radius); overflow: hidden; background: var(--gray); margin-bottom: 12px; position: relative; }
-        .img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .stock-tag { position: absolute; top: 12px; left: 12px; background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 50px; font-size: 0.65rem; font-weight: 800; color: #d9534f; border: 1px solid #d9534f; }
-        
-        .rating { color: #ffb400; font-size: 0.8rem; margin: 5px 0; }
-        .price { font-size: 1.4rem; font-weight: 800; margin-bottom: 12px; }
-        
-        /* Botões */
-        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
-        .btn-p { background: var(--p); color: #fff; }
-        .btn-p:active { transform: scale(0.96); }
+        /* Botão Flutuante Mobile */
+        .mobile-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 12px; z-index: 2000; }
+        .nav-item { text-align: center; color: #999; font-size: 0.7rem; cursor: pointer; }
+        .nav-item.active { color: var(--p); }
+        .nav-item i { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+
+        /* Selos de Segurança */
+        .trust-section { background: var(--gray); padding: 40px 6%; text-align: center; border-radius: var(--radius); margin: 40px 6%; }
+        .trust-icons { display: flex; justify-content: center; gap: 30px; margin-top: 20px; font-size: 1.5rem; color: #666; }
 
         /* Sidebar Carrinho */
-        .sidebar { position: fixed; top: 0; right: -100%; width: 100%; max-width: 450px; height: 100%; background: #fff; z-index: 2000; transition: 0.5s; padding: 40px 30px; box-shadow: -20px 0 60px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
-        .sidebar.active { right: 0; }
+        .cart-sidebar { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: #fff; z-index: 3000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: -15px 0 50px rgba(0,0,0,0.1); padding: 30px; display: flex; flex-direction: column; }
+        .cart-sidebar.active { right: 0; }
+
+        /* Botão de Compra */
+        .btn-buy { width: 100%; padding: 14px; background: var(--p); color: #fff; border: none; border-radius: 12px; font-weight: 700; margin-top: 10px; cursor: pointer; font-size: 0.8rem; }
         
         /* Modal Detalhes */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-body { background: #fff; width: 100%; max-width: 800px; border-radius: 30px; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; position: relative; animation: slideUp 0.3s; }
-        @media (max-width: 768px) { .modal-body { grid-template-columns: 1fr; } }
-        
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: #fff; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 10px 25px rgba(37,211,102,0.4); z-index: 1500; cursor: pointer; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-content { background: #fff; width: 100%; max-width: 500px; border-radius: 30px; overflow: hidden; position: relative; animation: pop 0.3s; }
+        @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div class="urgency-bar">⚡ OFERTAS DE VERÃO: ATÉ 40% OFF + FRETE GRÁTIS ⚡</div>
+    <div class="top-banner">COMPRA SEGURA COM ENTREGA VIA CORREIOS 📦</div>
 
     <nav>
-        <div class="logo">NOBILE.</div>
-        <div onclick="toggleCart()" style="position:relative; cursor:pointer">
-            <i class="fas fa-shopping-bag" style="font-size:1.4rem"></i>
-            <span id="count" style="position:absolute; top:-8px; right:-10px; background:var(--s); color:#fff; font-size:0.7rem; padding:2px 6px; border-radius:10px">0</span>
+        <div class="logo">NOBILE</div>
+        <div onclick="toggleCart()" style="position:relative">
+            <i class="fas fa-shopping-cart" style="font-size:1.2rem"></i>
+            <span id="count" style="position:absolute; -8px; -10px; background:var(--s); color:#fff; font-size:0.6rem; padding:2px 5px; border-radius:10px">0</span>
         </div>
     </nav>
 
+    <div class="hero">
+        <h1>Upgrade your lifestyle.</h1>
+        <p>A curadoria mais exclusiva do mercado.</p>
+    </div>
+
     <div class="container">
+        <div class="section-title"><i class="fas fa-fire" style="color:#ff4500"></i> Tendências de Hoje</div>
         <div id="grid" class="grid"></div>
     </div>
 
-    <div class="modal" id="modal">
-        <div class="modal-body">
-            <i class="fas fa-times" onclick="closeModal()" style="position:absolute; top:20px; right:25px; font-size:1.5rem; cursor:pointer; z-index:10"></i>
-            <img id="m-img" style="width:100%; height:400px; object-fit:cover">
-            <div style="padding:40px">
-                <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> (4.9/5)</div>
-                <h2 id="m-nome" style="font-size:1.8rem; margin-bottom:10px"></h2>
-                <p id="m-desc" style="color:#666; margin-bottom:20px; font-size:0.9rem"></p>
-                <div id="m-preco" class="price"></div>
-                <button class="btn btn-p" onclick="addFromModal()">ADICIONAR À SACOLA</button>
-                <p style="font-size:0.75rem; color:var(--success); margin-top:15px"><i class="fas fa-shield-alt"></i> Compra segura garantida</p>
-            </div>
+    <div class="trust-section">
+        <h3 style="font-size:0.9rem">COMPRA 100% GARANTIDA</h3>
+        <div class="trust-icons">
+            <i class="fab fa-cc-visa"></i>
+            <i class="fab fa-cc-mastercard"></i>
+            <i class="fas fa-shield-check"></i>
+            <i class="fas fa-truck-fast"></i>
         </div>
     </div>
 
-    <div class="sidebar" id="sidebar">
-        <div style="display:flex; justify-content:space-between; margin-bottom:40px">
-            <h2 style="font-weight:800">Sua Sacola</h2>
-            <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer; font-size:1.5rem"></i>
+    <div class="mobile-nav">
+        <div class="nav-item active" onclick="location.reload()"><i class="fas fa-home"></i>Início</div>
+        <div class="nav-item" onclick="toggleCart()"><i class="fas fa-shopping-bag"></i>Sacola</div>
+        <div class="nav-item" onclick="window.open('https://wa.me/5527997566512')"><i class="fas fa-headset"></i>Ajuda</div>
+    </div>
+
+    <div class="cart-sidebar" id="cartSidebar">
+        <div style="display:flex; justify-content:space-between; margin-bottom:30px">
+            <h2>Minha Sacola</h2> <i class="fas fa-times" onclick="toggleCart()"></i>
         </div>
         <div id="cartList" style="flex:1; overflow-y:auto"></div>
-        <div style="padding-top:20px; border-top:2px solid #eee">
-            <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-weight:800; font-size:1.4rem">
-                <span>Total</span><span id="total">R$ 0,00</span>
+        <div style="padding-top:20px; border-top:1px solid #eee">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-weight:800">
+                <span>Total</span> <span id="total">R$ 0,00</span>
             </div>
-            <button onclick="checkout()" class="btn btn-p">FINALIZAR NO WHATSAPP</button>
+            <button onclick="checkout()" class="btn-buy" style="font-size:1rem; padding:18px">FECHAR PEDIDO</button>
         </div>
     </div>
 
-    <div class="wa-float" onclick="handleWA()"><i class="fab fa-whatsapp"></i></div>
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <i class="fas fa-times-circle" onclick="closeModal()" style="position:absolute; top:20px; right:20px; font-size:1.5rem; z-index:10; cursor:pointer"></i>
+            <img id="m-img" style="width:100%; height:300px; object-fit:cover">
+            <div style="padding:25px">
+                <h2 id="m-nome"></h2>
+                <p id="m-desc" style="color:#666; margin:15px 0; font-size:0.85rem; line-height:1.5"></p>
+                <div id="m-preco" style="font-size:1.5rem; font-weight:800; margin-bottom:20px"></div>
+                <button class="btn-buy" onclick="addFromModal()" style="padding:18px">ADICIONAR À SACOLA</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const CFG = { id: '1YYobMz2udkbtX9P9N76QhTvCJkNXnxpYUbNvv3M4G_M', wa: '5527997566512', pix: '27997566512' };
-        let db = [], cart = [], currentItem = null;
+        let db = [], cart = [], current = null;
 
         async function init() {
             const r = await fetch(`https://docs.google.com/spreadsheets/d/${CFG.id}/gviz/tq?tqx=out:csv`);
@@ -121,64 +147,58 @@
         function render(data) {
             document.getElementById('grid').innerHTML = data.map(p => `
                 <div class="card" onclick="openModal('${p.id}')">
-                    <div class="img-wrap">
-                        <span class="stock-tag">APENAS ${Math.floor(Math.random()*5)+2} EM ESTOQUE</span>
-                        <img src="${p.imagem}">
+                    <div class="img-container"><img src="${p.imagem}"></div>
+                    <div class="card-info">
+                        <h3>${p.nome}</h3>
+                        <div class="card-price">R$ ${parseFloat(p.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
+                        <button class="btn-buy" onclick="event.stopPropagation(); add('${p.id}')">Adicionar</button>
                     </div>
-                    <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <h3 style="font-size:1rem">${p.nome}</h3>
-                    <div class="price">R$ ${parseFloat(p.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
-                    <button class="btn btn-p" onclick="event.stopPropagation(); add('${p.id}')">COMPRAR</button>
                 </div>
             `).join('');
         }
 
         function openModal(id) {
-            currentItem = db.find(x => x.id == id);
-            document.getElementById('m-img').src = currentItem.imagem;
-            document.getElementById('m-nome').innerText = currentItem.nome;
-            document.getElementById('m-desc').innerText = currentItem.descricao || "Produto de alta qualidade com acabamento premium e durabilidade garantida.";
-            document.getElementById('m-preco').innerText = `R$ ${parseFloat(currentItem.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
+            current = db.find(x => x.id == id);
+            document.getElementById('m-img').src = current.imagem;
+            document.getElementById('m-nome').innerText = current.nome;
+            document.getElementById('m-desc').innerText = current.descricao || "Produto exclusivo Nobile com garantia de satisfação e qualidade premium.";
+            document.getElementById('m-preco').innerText = `R$ ${parseFloat(current.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
             document.getElementById('modal').style.display = 'flex';
         }
 
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
-
+        
         function add(id) {
             const p = db.find(x => x.id == id);
             const inCart = cart.find(x => x.id == id);
             if(inCart) inCart.q++; else cart.push({...p, q: 1});
             update();
+            toggleCart(true);
         }
 
-        function addFromModal() { add(currentItem.id); closeModal(); toggleCart(); }
+        function addFromModal() { add(current.id); closeModal(); }
 
         function update() {
             document.getElementById('count').innerText = cart.reduce((a, b) => a + b.q, 0);
             const total = cart.reduce((a, b) => a + (b.q * b.preco), 0);
             document.getElementById('total').innerText = `R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
             document.getElementById('cartList').innerHTML = cart.map(i => `
-                <div style="display:flex; gap:15px; margin-bottom:20px; align-items:center">
-                    <img src="${i.imagem}" style="width:60px; height:60px; border-radius:12px; object-fit:cover">
+                <div style="display:flex; gap:15px; margin-bottom:15px; align-items:center">
+                    <img src="${i.imagem}" style="width:50px; height:50px; border-radius:10px; object-fit:cover">
                     <div style="flex:1"><b>${i.nome}</b><br><small>${i.q}x R$ ${i.preco}</small></div>
-                    <i class="fas fa-trash-alt" onclick="remove('${i.id}')" style="color:#ddd; cursor:pointer"></i>
+                    <i class="fas fa-trash-alt" onclick="remove('${i.id}')" style="color:#ddd"></i>
                 </div>
             `).join('');
         }
 
         function remove(id) { cart = cart.filter(x => x.id != id); update(); }
-        function toggleCart() { document.getElementById('sidebar').classList.toggle('active'); }
-
-        function handleWA() {
-            if (cart.length > 0) checkout();
-            else window.open(`https://wa.me/${CFG.wa}?text=Olá!`, '_blank');
-        }
+        function toggleCart(f) { document.getElementById('cartSidebar').classList[f ? 'add' : 'toggle']('active'); }
 
         function checkout() {
-            const nome = prompt("Seu nome completo:");
-            if(!nome) return;
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            let m = `*PEDIDO:* \n👤 Cliente: ${nome}\n------------------\n`;
+            const n = prompt("Seu nome completo:");
+            if(!n) return;
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            let m = `*PEDIDO:* \n👤 Cliente: ${n}\n------------------\n`;
             cart.forEach(i => m += `• ${i.q}x ${i.nome}\n`);
             m += `------------------\n💰 Total: R$ ${cart.reduce((a,b)=>a+(b.q*b.preco),0).toFixed(2)}\n🔑 Pix: ${CFG.pix}`;
             setTimeout(() => window.open(`https://wa.me/${CFG.wa}?text=${encodeURIComponent(m)}`), 1000);
