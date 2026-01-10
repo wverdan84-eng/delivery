@@ -3,122 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nobile Store | Premium</title>
+    <title>Nobile Store | Oficial</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --p: #000; --s: #0071e3; --bg: #f5f5f7; --card: #ffffff; --text: #1d1d1f; --radius: 18px; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        :root { --p: #000; --s: #0071e3; --bg: #f5f5f7; --card: #fff; --radius: 18px; --success: #28a745; --accent: #ff3b30; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { background: var(--bg); color: var(--text); padding-bottom: 100px; }
+        body { background: var(--bg); color: #1d1d1f; padding-bottom: 100px; }
 
-        /* HEADER PREMIUM */
-        nav { 
-            background: rgba(255,255,255,0.8); 
-            backdrop-filter: blur(15px); 
-            position: sticky; top: 0; z-index: 1000; 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 15px 5%; border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        .logo { font-weight: 800; font-size: 1.3rem; letter-spacing: -1px; cursor: pointer; }
-        .cart-icon { position: relative; background: #eee; padding: 10px; border-radius: 50%; cursor: pointer; }
-        #count { position: absolute; top: -5px; right: -5px; background: var(--s); color: #fff; font-size: 0.6rem; padding: 3px 7px; border-radius: 20px; font-weight: 800; }
+        /* BARRA DE SEGURANÇA */
+        .trust-bar { background: #fff; padding: 8px 5%; display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 700; color: #666; border-bottom: 1px solid #eee; }
+        .trust-bar span { display: flex; align-items: center; gap: 5px; }
+        .trust-bar i { color: var(--success); }
 
-        /* CATEGORIAS MODERNAS */
-        .cat-container { 
-            display: flex; gap: 10px; padding: 15px 5%; 
-            overflow-x: auto; scrollbar-width: none; 
-        }
-        .cat-btn { 
-            padding: 10px 22px; border-radius: 12px; border: none; 
-            background: #fff; color: #666; font-size: 0.8rem; font-weight: 600; 
-            cursor: pointer; transition: 0.2s; white-space: nowrap;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        }
+        /* NAV GLASSMORPHISM */
+        nav { background: rgba(255,255,255,0.8); backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 6%; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .logo { font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; gap: 5px; }
+        .verified { color: var(--s); font-size: 0.9rem; }
+
+        /* CATEGORIAS */
+        .cat-container { display: flex; gap: 10px; padding: 15px 6%; overflow-x: auto; scrollbar-width: none; }
+        .cat-btn { padding: 10px 20px; border-radius: 50px; border: none; background: #fff; font-size: 0.75rem; font-weight: 700; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         .cat-btn.active { background: var(--p); color: #fff; }
 
-        /* GRID DE PRODUTOS */
+        /* GRID & CARDS PREMIUM */
         .container { padding: 0 5%; max-width: 1200px; margin: 0 auto; }
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         @media (min-width: 768px) { .grid { grid-template-columns: repeat(4, 1fr); } }
 
-        .card { 
-            background: var(--card); border-radius: var(--radius); 
-            padding: 15px; position: relative; transition: 0.3s; 
-            display: flex; flex-direction: column; text-decoration: none; color: inherit;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.02);
-        }
-        .card:active { transform: scale(0.97); }
-        .img-box { width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; background: #fdfdfd; margin-bottom: 12px; }
+        .card { background: var(--card); border-radius: var(--radius); padding: 12px; position: relative; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #efefef; display: flex; flex-direction: column; cursor: pointer; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.08); }
+        .img-box { width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; background: #fafafa; margin-bottom: 10px; }
         .img-box img { width: 100%; height: 100%; object-fit: contain; }
         
-        .badge { 
-            position: absolute; top: 10px; left: 10px; background: var(--accent); 
-            color: #fff; font-size: 0.6rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; 
-        }
+        .badge-stock { position: absolute; top: 15px; right: 15px; background: var(--accent); color: #fff; font-size: 0.55rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; z-index: 10; }
 
-        .prod-info h3 { font-size: 0.85rem; font-weight: 600; height: 38px; overflow: hidden; margin-bottom: 8px; color: #333; }
-        .price { font-size: 1.1rem; font-weight: 800; color: var(--p); }
-        .old-price { font-size: 0.7rem; text-decoration: line-through; color: #999; }
+        .prod-info h3 { font-size: 0.8rem; font-weight: 600; height: 35px; overflow: hidden; line-height: 1.2; margin-bottom: 8px; }
+        .price-tag { display: flex; flex-direction: column; }
+        .old-p { font-size: 0.65rem; text-decoration: line-through; color: #999; }
+        .new-p { font-size: 1.1rem; font-weight: 800; color: var(--p); }
 
-        /* SIDEBAR (CARRINHO) */
-        .sidebar { 
-            position: fixed; top: 0; right: -100%; width: 100%; max-width: 450px; 
-            height: 100%; background: #fff; z-index: 3000; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-            padding: 30px; display: flex; flex-direction: column;
-        }
-        .sidebar.active { right: 0; box-shadow: -10px 0 50px rgba(0,0,0,0.1); }
-        .cart-item { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f5f5f5; }
-        .cart-item img { width: 55px; height: 55px; border-radius: 10px; object-fit: cover; background: #f9f9f9; }
-
-        /* BOTÕES & INPUTS */
-        .btn-main { 
-            width: 100%; padding: 18px; border-radius: 16px; border: none; 
-            background: var(--p); color: #fff; font-size: 1rem; font-weight: 700; 
-            cursor: pointer; transition: 0.3s;
-        }
-        .btn-main:hover { background: #333; }
+        /* SIDEBAR CART */
+        .sidebar { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: #fff; z-index: 3000; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); padding: 25px; display: flex; flex-direction: column; }
+        .sidebar.active { right: 0; box-shadow: -15px 0 50px rgba(0,0,0,0.1); }
         
-        /* TOAST DE PROVA SOCIAL */
-        #toast { 
-            position: fixed; bottom: 100px; left: 20px; right: 20px; 
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
-            padding: 12px 20px; border-radius: 15px; z-index: 4000; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #eee;
-            display: none; align-items: center; gap: 10px; animation: slideUp 0.5s;
-        }
-        @keyframes slideUp { from {transform: translateY(100%);} to {transform: translateY(0);} }
+        /* FRETE BOX */
+        .frete-box { background: #f8f9fa; padding: 15px; border-radius: 15px; margin: 15px 0; border: 1px dashed #ddd; }
+        .inp-cep { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; outline: none; margin-bottom: 8px; font-size: 0.9rem; }
 
-        /* FLOATING WHATSAPP */
-        .wa-float { 
-            position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; 
-            background: #25d366; color: #fff; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 28px; box-shadow: 0 8px 20px rgba(37,211,102,0.3); z-index: 2000;
-        }
+        /* SELOS DE SEGURANÇA */
+        .security-badges { display: flex; justify-content: center; gap: 15px; margin-top: 20px; opacity: 0.6; filter: grayscale(1); }
+        .security-badges i { font-size: 1.5rem; }
+
+        /* TOAST NOTIFICAÇÃO REAL */
+        #toast { position: fixed; bottom: 100px; left: 20px; right: 20px; background: #fff; padding: 15px; border-radius: 15px; z-index: 4000; box-shadow: 0 15px 40px rgba(0,0,0,0.15); border-left: 5px solid var(--success); display: none; align-items: center; gap: 10px; animation: fadeInUp 0.5s; }
+        @keyframes fadeInUp { from {opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
+
+        .btn-pay { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--p); color: #fff; font-size: 1rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="loading" style="display:none; position:fixed; inset:0; background:rgba(255,255,255,0.8); z-index:5000; align-items:center; justify-content:center; flex-direction:column;">
-        <div style="width:40px; height:40px; border:4px solid #f3f3f3; border-top:4px solid var(--s); border-radius:50%; animation:spin 1s linear infinite;"></div>
-        <p style="margin-top:15px; font-weight:700;">Reservando seu pedido...</p>
+    <div id="loading" style="display:none; position:fixed; inset:0; background:rgba(255,255,255,0.9); z-index:5000; align-items:center; justify-content:center; flex-direction:column;">
+        <i class="fas fa-circle-notch fa-spin" style="font-size:2rem; color:var(--s)"></i>
+        <p style="margin-top:15px; font-weight:700;">Sincronizando com a Planilha...</p>
     </div>
-    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
 
-    <div id="toast"></div>
+    <div class="trust-bar">
+        <span><i class="fas fa-shield-alt"></i> SITE CRIPTOGRAFADO</span>
+        <span><i class="fas fa-check-circle"></i> ESTOQUE REAL</span>
+    </div>
 
     <nav>
-        <div class="logo" onclick="location.reload()">NOBILE<span style="color:var(--s)">.</span></div>
-        <div class="cart-icon" onclick="toggleCart()">
-            <i class="fas fa-shopping-bag"></i>
-            <span id="count">0</span>
+        <div class="logo">NOBILE <i class="fas fa-check-circle verified"></i></div>
+        <div onclick="toggleCart()" style="position:relative; cursor:pointer; background:#f0f0f0; padding:10px; border-radius:50%">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="count" style="position:absolute; top:-5px; right:-5px; background:var(--s); color:#fff; font-size:0.6rem; padding:3px 7px; border-radius:20px; font-weight:800">0</span>
         </div>
     </nav>
 
     <div class="cat-container" id="categoryMenu">
-        <button class="cat-btn active" onclick="filterCat('Tudo', this)">🔥 Novidades</button>
+        <button class="cat-btn active" onclick="filterCat('Tudo', this)">Tudo</button>
     </div>
 
     <div class="container">
@@ -126,25 +93,48 @@
     </div>
 
     <div class="sidebar" id="sidebar">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px">
-            <h2 style="font-weight:800; font-size:1.5rem">Sacola</h2>
-            <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer; font-size:1.5rem"></i>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+            <h2 style="font-weight:800">Sua Sacola</h2>
+            <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer; font-size:1.2rem"></i>
         </div>
         
-        <div class="cart-list" id="cartList"></div>
+        <div id="cartList" style="flex:1; overflow-y:auto"></div>
 
-        <div style="background:var(--bg); padding:20px; border-radius:20px; margin-top:auto">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px; color:#666; font-size:0.9rem">
-                <span>Subtotal</span> <span id="subtotalTxt">R$ 0,00</span>
+        <div class="frete-box">
+            <small><b>Calcular Frete Correios:</b></small>
+            <div style="display:flex; gap:8px; margin-top:8px">
+                <input type="text" id="cepInput" class="inp-cep" placeholder="00000-000">
+                <button onclick="calcularFreteReal()" style="padding:10px; background:var(--s); color:#fff; border:none; border-radius:10px; font-weight:700">OK</button>
+            </div>
+            <div id="freteRes" style="font-size:0.75rem; font-weight:700; color:var(--success); margin-top:5px"></div>
+        </div>
+
+        <div style="border-top:1px solid #eee; padding-top:20px">
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:0.9rem; color:#666">
+                <span>Produtos</span> <span id="subTxt">R$ 0,00</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:0.9rem; color:#666">
+                <span>Frete</span> <span id="freteTxt">R$ 0,00</span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-weight:800; font-size:1.4rem">
                 <span>Total</span> <span id="totalGeral">R$ 0,00</span>
             </div>
-            <button onclick="checkout()" class="btn-main">CONCLUIR PEDIDO</button>
+            <button onclick="checkout()" class="btn-pay">
+                <i class="fas fa-lock"></i> FECHAR PEDIDO AGORA
+            </button>
+            <div class="security-badges">
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+                <i class="fab fa-pix"></i>
+                <i class="fas fa-truck"></i>
+            </div>
         </div>
     </div>
 
-    <a href="https://wa.me/5527997566512" class="wa-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    <div id="toast"></div>
+    <a href="https://wa.me/5527997566512" class="wa-float" style="position:fixed; bottom:30px; right:20px; width:60px; height:60px; background:#25d366; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:30px; box-shadow:0 10px 20px rgba(0,0,0,0.1); z-index:2000; text-decoration:none">
+        <i class="fab fa-whatsapp"></i>
+    </a>
 
     <script>
         const CFG = { 
@@ -163,7 +153,7 @@
                 render(db.filter(p => parseInt(p.estoque) > 0));
                 generateCats(db);
                 carregarVendasReais();
-            } catch (e) { console.log("Erro ao carregar loja."); }
+            } catch (e) { console.log("Erro de sincronização."); }
         }
 
         function csvToJson(csv) {
@@ -178,12 +168,14 @@
         function render(data) {
             document.getElementById('grid').innerHTML = data.map(p => `
                 <div class="card" onclick="add('${p.id}')">
-                    ${parseInt(p.estoque) <= 2 ? `<span class="badge" style="background:red">ÚLTIMAS PEÇAS</span>` : ''}
+                    ${parseInt(p.estoque) <= 3 ? `<span class="badge-stock">🔥 SÓ RESTAM ${p.estoque}</span>` : ''}
                     <div class="img-box"><img src="${p.imagem}" loading="lazy"></div>
                     <div class="prod-info">
                         <h3>${p.nome}</h3>
-                        <div class="old-price">R$ ${(parseFloat(p.preco)*1.2).toFixed(2)}</div>
-                        <div class="price">R$ ${parseFloat(p.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
+                        <div class="price-tag">
+                            <span class="old-p">R$ ${(parseFloat(p.preco)*1.15).toFixed(2)}</span>
+                            <span class="new-p">R$ ${parseFloat(p.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}</span>
+                        </div>
                     </div>
                 </div>`).join('');
         }
@@ -212,13 +204,29 @@
                     setInterval(() => {
                         const v = vendas[i % vendas.length];
                         const t = document.getElementById('toast');
-                        t.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success)"></i> <span><b>${v.nome}</b> (${v.cidade}) comprou um item agora!</span>`;
+                        t.innerHTML = `<i class="fas fa-shopping-bag" style="color:var(--s)"></i> <span><b>${v.nome}</b> (${v.cidade}) acabou de comprar!</span>`;
                         t.style.display = 'flex';
-                        setTimeout(() => t.style.display = 'none', 5000);
+                        setTimeout(() => t.style.display = 'none', 6000);
                         i++;
-                    }, 25000);
+                    }, 20000);
                 }
             } catch(e) {}
+        }
+
+        async function calcularFreteReal() {
+            const cep = document.getElementById('cepInput').value.replace(/\D/g, '');
+            if (cep.length !== 8) return;
+            document.getElementById('freteRes').innerText = "⏳ Consultando Correios...";
+            const pesoT = cart.reduce((t, i) => t + (parseFloat(i.peso || 0.5) * i.q), 0);
+            try {
+                const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const d = await r.json();
+                if (d.erro) throw new Error();
+                valorFrete = (d.uf === 'ES' ? 0 : 22) + (pesoT * 5);
+                enderecoStr = `${d.logradouro}, ${d.localidade}-${d.uf}`;
+                document.getElementById('freteRes').innerHTML = `✅ ${d.localidade}/${d.uf} - R$ ${valorFrete.toFixed(2)}`;
+                updateCart();
+            } catch (e) { document.getElementById('freteRes').innerText = "❌ CEP não encontrado."; }
         }
 
         function add(id) {
@@ -232,12 +240,14 @@
         function updateCart() {
             const sub = cart.reduce((a, b) => a + (b.q * parseFloat(b.preco)), 0);
             document.getElementById('count').innerText = cart.reduce((a, b) => a + b.q, 0);
-            document.getElementById('totalGeral').innerText = `R$ ${sub.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
+            document.getElementById('subTxt').innerText = `R$ ${sub.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
+            document.getElementById('freteTxt').innerText = `R$ ${valorFrete.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
+            document.getElementById('totalGeral').innerText = `R$ ${(sub + valorFrete).toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
             document.getElementById('cartList').innerHTML = cart.map(i => `
-                <div class="cart-item">
-                    <img src="${i.imagem}">
-                    <div style="flex:1"><b>${i.nome}</b><br><small>${i.q}x R$ ${i.preco}</small></div>
-                    <i class="fas fa-trash-alt" onclick="remove('${i.id}')" style="color:#ff3b30; cursor:pointer"></i>
+                <div style="display:flex; gap:15px; margin-bottom:15px; align-items:center; background:#fcfcfc; padding:10px; border-radius:12px">
+                    <img src="${i.imagem}" style="width:50px; height:50px; border-radius:8px; object-fit:cover">
+                    <div style="flex:1; font-size:0.8rem"><b>${i.nome}</b><br><small>${i.q}x R$ ${i.preco}</small></div>
+                    <i class="fas fa-trash" onclick="remove('${i.id}')" style="color:#ddd; cursor:pointer"></i>
                 </div>`).join('');
         }
 
@@ -245,18 +255,15 @@
         function toggleCart(s) { document.getElementById('sidebar').classList[s ? 'add' : 'toggle']('active'); }
 
         async function checkout() {
-            if(cart.length === 0) return;
+            if(cart.length === 0 || enderecoStr === "") { alert("Adicione produtos e calcule o frete!"); return; }
             const n = prompt("Seu Nome Completo:"); if(!n) return;
-            const c = prompt("Cidade/UF:"); if(!c) return;
-            
             document.getElementById('loading').style.display = 'flex';
-            const dados = { cliente: n, cidade: c, itemPrincipal: cart[0].nome, itens: cart };
+            const dados = { cliente: n, cidade: enderecoStr.split('-')[0].split(',').pop() || 'Brasil', itemPrincipal: cart[0].nome, itens: cart };
             try { await fetch(CFG.script, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dados) }); } catch (e) {}
-            
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            
-            let msg = `*NOVO PEDIDO - NOBILE*\n👤: ${n}\n📍: ${c}\n------------------\n`;
+            let msg = `*NOVO PEDIDO CONFIRMADO*\n👤: ${n}\n📍: ${enderecoStr}\n------------------\n`;
             cart.forEach(i => msg += `• ${i.q}x ${i.nome}\n`);
+            msg += `------------------\n💰 *TOTAL: ${document.getElementById('totalGeral').innerText}*`;
             window.open(`https://wa.me/${CFG.wa}?text=${encodeURIComponent(msg)}`);
             setTimeout(() => location.reload(), 2000);
         }
