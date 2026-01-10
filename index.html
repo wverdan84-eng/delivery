@@ -3,88 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nobile Store | Oficial</title>
+    <title>Nobile Store | Premium E-commerce</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #000000; --accent: #0071e3; --bg: #ffffff; --gray: #f5f5f7; --text: #1d1d1f; }
+        :root { --p: #000; --s: #0071e3; --gray: #f5f5f7; --text: #1d1d1f; --radius: 20px; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; }
-        .top-bar { background: var(--primary); color: white; text-align: center; padding: 8px; font-size: 0.8rem; font-weight: 500; }
-        nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; }
-        .cart-btn { position: relative; cursor: pointer; padding: 8px; background: var(--gray); border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; }
-        .badge { position: absolute; top: -5px; right: -5px; background: var(--accent); color: white; font-size: 0.7rem; padding: 2px 7px; border-radius: 10px; border: 2px solid white; }
-        .categories-scroll { display: flex; overflow-x: auto; gap: 20px; padding: 20px 5%; scrollbar-width: none; }
-        .cat-item { flex: 0 0 auto; text-align: center; cursor: pointer; }
-        .cat-img { width: 60px; height: 60px; background: var(--gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; font-size: 1.2rem; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px 5%; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
-        .product-card { background: white; border-radius: 18px; padding: 15px; border: 1px solid transparent; transition: 0.3s; }
-        .product-card:hover { border-color: #e8e8ed; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .product-img { width: 100%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; margin-bottom: 15px; }
-        .add-btn { width: 100%; padding: 12px; margin-top: 15px; border: none; border-radius: 10px; background: var(--primary); color: white; font-weight: 600; cursor: pointer; }
-        .wa-float { position: fixed; bottom: 25px; right: 25px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; cursor: pointer; }
-        .cart-sidebar { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: white; z-index: 2000; transition: 0.4s; box-shadow: -10px 0 30px rgba(0,0,0,0.1); padding: 30px; display: flex; flex-direction: column; }
-        .cart-sidebar.active { right: 0; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 3000; align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 90%; max-width: 450px; border-radius: 24px; padding: 30px; text-align: center; }
+        body { background: #fff; color: var(--text); overflow-x: hidden; }
+
+        /* Barra de Anúncio Animada */
+        .promo-bar { background: linear-gradient(90deg, #000, #333); color: #fff; padding: 10px; text-align: center; font-size: 0.8rem; font-weight: 600; }
+
+        /* Navbar Estilo Apple */
+        nav { background: rgba(255,255,255,0.8); backdrop-filter: blur(15px); sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 18px 6%; border-bottom: 1px solid #eee; }
+        .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -1.5px; cursor: pointer; }
+        .nav-right { display: flex; gap: 15px; }
+        .circle-icon { background: var(--gray); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: 0.3s; }
+        .circle-icon:hover { transform: scale(1.1); background: #e8e8ed; }
+        .badge { position: absolute; top: -2px; right: -2px; background: var(--s); color: #fff; font-size: 0.7rem; padding: 3px 7px; border-radius: 10px; border: 2px solid #fff; }
+
+        /* Hero Banner */
+        .hero { margin: 20px 6%; background: var(--gray); border-radius: var(--radius); padding: 40px; display: flex; align-items: center; min-height: 200px; }
+        .hero-text h1 { font-size: 2.5rem; font-weight: 800; line-height: 1; }
+
+        /* Filtros */
+        .cats { display: flex; gap: 12px; padding: 20px 6%; overflow-x: auto; scrollbar-width: none; }
+        .cat-chip { padding: 10px 20px; background: var(--gray); border-radius: 30px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; cursor: pointer; transition: 0.3s; }
+        .cat-chip.active { background: var(--p); color: #fff; }
+
+        /* Grid Profissional */
+        .container { padding: 0 6% 100px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; }
+        
+        .card { position: relative; transition: 0.4s; }
+        .card-img-wrap { width: 100%; aspect-ratio: 1/1; border-radius: var(--radius); overflow: hidden; background: var(--gray); margin-bottom: 15px; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
+        .card:hover .card-img { transform: scale(1.1); }
+        .card h3 { font-size: 1.1rem; font-weight: 700; }
+        .price { font-size: 1.3rem; font-weight: 800; margin-top: 5px; color: var(--p); }
+        .buy-btn { width: 100%; padding: 15px; background: var(--p); color: #fff; border: none; border-radius: 14px; margin-top: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .buy-btn:active { transform: scale(0.95); }
+
+        /* Carrinho Sidebar */
+        .sidebar { position: fixed; top: 0; right: -100%; width: 100%; max-width: 420px; height: 100%; background: #fff; z-index: 2000; transition: 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); box-shadow: -20px 0 60px rgba(0,0,0,0.1); padding: 40px 30px; display: flex; flex-direction: column; }
+        .sidebar.active { right: 0; }
+        .cart-item { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; animation: slideIn 0.3s forwards; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* WhatsApp e Toasts */
+        .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: #fff; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 10px 25px rgba(37,211,102,0.3); z-index: 1500; cursor: pointer; }
+        .toast { position: fixed; top: 100px; right: 30px; background: #000; color: #fff; padding: 15px 25px; border-radius: 12px; z-index: 5000; display: none; animation: pop 0.3s; }
+        @keyframes pop { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Skeleton Loading */
+        .skeleton { background: #eee; height: 300px; border-radius: var(--radius); position: relative; overflow: hidden; }
+        .skeleton::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: load 1.5s infinite; }
+        @keyframes load { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">✨ Qualidade Premium com Entrega Garantida</div>
+    <div class="promo-bar">🔥 FRETE GRÁTIS PARA TODO O BRASIL SOMENTE HOJE</div>
 
     <nav>
-        <div class="logo">NOBILE.</div>
-        <div class="cart-btn" onclick="toggleCart()">
-            <i class="fas fa-shopping-bag"></i>
-            <span class="badge" id="count">0</span>
+        <div class="logo" onclick="location.reload()">NOBILE.</div>
+        <div class="nav-right">
+            <div class="circle-icon" onclick="toggleCart()"><i class="fas fa-shopping-bag"></i><span class="badge" id="count">0</span></div>
         </div>
     </nav>
 
-    <div class="categories-scroll">
-        <div class="cat-item" onclick="filterCat('Todos')"><div class="cat-img"><i class="fas fa-th"></i></div><span>Todos</span></div>
-        <div class="cat-item" onclick="filterCat('Eletrônicos')"><div class="cat-img"><i class="fas fa-mobile-alt"></i></div><span>Tech</span></div>
-        <div class="cat-item" onclick="filterCat('Acessórios')"><div class="cat-img"><i class="fas fa-gem"></i></div><span>Acessórios</span></div>
-        <div class="cat-item" onclick="filterCat('Moda')"><div class="cat-img"><i class="fas fa-tshirt"></i></div><span>Moda</span></div>
+    <section class="hero">
+        <div class="hero-text">
+            <h1>Sua nova<br>experiência.</h1>
+            <p style="margin-top:10px; color:#666">Os melhores produtos, selecionados para você.</p>
+        </div>
+    </section>
+
+    <div class="cats" id="cats">
+        <div class="cat-chip active" onclick="filterCat('Todos', this)">Todos</div>
+        <div class="cat-chip" onclick="filterCat('Eletrônicos', this)">Eletrônicos</div>
+        <div class="cat-chip" onclick="filterCat('Acessórios', this)">Acessórios</div>
+        <div class="cat-chip" onclick="filterCat('Moda', this)">Moda</div>
     </div>
 
     <div class="container">
-        <div id="grid" class="grid"></div>
+        <div id="grid" class="grid">
+            <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+        </div>
     </div>
 
-    <div class="cart-sidebar" id="cartSidebar">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px">
-            <h2>Sacola</h2> <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer"></i>
+    <div class="sidebar" id="sidebar">
+        <div style="display:flex; justify-content:space-between; margin-bottom:40px">
+            <h2 style="font-weight:800">Minha Sacola</h2>
+            <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer; font-size:1.5rem"></i>
         </div>
         <div id="cartList" style="flex:1; overflow-y:auto"></div>
-        <div style="padding-top:20px; border-top:1px solid #eee">
-            <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-weight:800">
+        <div style="padding-top:20px; border-top:2px solid #f5f5f7">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-weight:800; font-size:1.4rem">
                 <span>Total</span><span id="total">R$ 0,00</span>
             </div>
-            <button onclick="checkout()" style="width:100%; padding:20px; background:black; color:white; border-radius:12px; border:none; font-weight:bold; cursor:pointer">FINALIZAR PEDIDO</button>
+            <button onclick="checkout()" class="buy-btn" style="padding:22px; font-size:1rem">FECHAR PEDIDO</button>
         </div>
     </div>
 
     <div class="wa-float" onclick="handleWA()"><i class="fab fa-whatsapp"></i></div>
+    <div class="toast" id="toast">Adicionado com sucesso! 🛍️</div>
 
     <script>
-        const CONFIG = {
-            sheetId: '1YYobMz2udkbtX9P9N76QhTvCJkNXnxpYUbNvv3M4G_M',
-            whatsapp: '5527997566512',
+        const CFG = {
+            id: '1YYobMz2udkbtX9P9N76QhTvCJkNXnxpYUbNvv3M4G_M',
+            wa: '5527997566512',
             pix: '27997566512'
         };
 
-        let products = [], cart = [];
+        let db = [], cart = [];
 
         async function init() {
             try {
-                const r = await fetch(`https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/gviz/tq?tqx=out:csv`);
+                const r = await fetch(`https://docs.google.com/spreadsheets/d/${CFG.id}/gviz/tq?tqx=out:csv`);
                 const t = await r.text();
-                products = csvToJson(t);
-                render(products);
-            } catch(e) { alert("Erro ao carregar planilha. Verifique se está publicada como CSV."); }
+                db = csvToJson(t);
+                render(db);
+            } catch(e) { console.error(e); }
         }
 
         function csvToJson(csv) {
@@ -98,20 +138,21 @@
 
         function render(data) {
             document.getElementById('grid').innerHTML = data.map(p => `
-                <div class="product-card">
-                    <img src="${p.imagem}" class="product-img">
+                <div class="card">
+                    <div class="card-img-wrap"><img src="${p.imagem}" class="card-img"></div>
                     <h3>${p.nome}</h3>
-                    <div style="font-weight:800; font-size:1.1rem; margin-top:5px">R$ ${parseFloat(p.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
-                    <button class="add-btn" onclick="add('${p.id}')">Adicionar</button>
+                    <div class="price">R$ ${parseFloat(p.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
+                    <button class="buy-btn" onclick="add('${p.id}')">Adicionar à Sacola</button>
                 </div>
             `).join('');
         }
 
         function add(id) {
-            const p = products.find(x => x.id == id);
+            const p = db.find(x => x.id == id);
             const inCart = cart.find(x => x.id == id);
             if(inCart) inCart.q++; else cart.push({...p, q: 1});
-            update(); toggleCart(true);
+            update();
+            showToast();
         }
 
         function update() {
@@ -119,38 +160,41 @@
             const total = cart.reduce((a, b) => a + (b.q * b.preco), 0);
             document.getElementById('total').innerText = `R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
             document.getElementById('cartList').innerHTML = cart.map(i => `
-                <div style="display:flex; gap:15px; margin-bottom:15px; align-items:center">
-                    <img src="${i.imagem}" style="width:50px; height:50px; border-radius:8px; object-fit:cover">
+                <div class="cart-item">
+                    <img src="${i.imagem}" style="width:70px; height:70px; border-radius:15px; object-fit:cover">
                     <div style="flex:1"><b>${i.nome}</b><br><small>${i.q}x R$ ${i.preco}</small></div>
-                    <i class="fas fa-trash" onclick="remove('${i.id}')" style="color:#ccc; cursor:pointer"></i>
+                    <i class="fas fa-trash-alt" onclick="remove('${i.id}')" style="color:#ff3b30; cursor:pointer"></i>
                 </div>
             `).join('');
         }
 
         function remove(id) { cart = cart.filter(x => x.id != id); update(); }
-        function toggleCart(force) { document.getElementById('cartSidebar').classList[force ? 'add' : 'toggle']('active'); }
-        
-        function filterCat(cat) {
-            render(cat === 'Todos' ? products : products.filter(p => p.categoria.toLowerCase() === cat.toLowerCase()));
+        function toggleCart() { document.getElementById('sidebar').classList.toggle('active'); }
+
+        function filterCat(c, el) {
+            document.querySelectorAll('.cat-chip').forEach(x => x.classList.remove('active'));
+            el.classList.add('active');
+            render(c === 'Todos' ? db : db.filter(p => p.categoria.toLowerCase() === c.toLowerCase()));
+        }
+
+        function showToast() {
+            const t = document.getElementById('toast');
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 2000);
         }
 
         function handleWA() {
-            if (cart.length > 0) {
-                if (confirm("Você tem itens na sacola! Deseja finalizar seu pedido agora?")) {
-                    checkout(); return;
-                }
-            }
-            window.open(`https://wa.me/${CONFIG.whatsapp}?text=Olá! Gostaria de tirar uma dúvida.`, '_blank');
+            if (cart.length > 0) { if (confirm("Finalizar seu pedido agora?")) { checkout(); return; } }
+            window.open(`https://wa.me/${CFG.wa}?text=Olá!`, '_blank');
         }
 
         function checkout() {
-            if(cart.length === 0) return;
             const nome = prompt("Seu nome completo:");
-            const total = cart.reduce((a, b) => a + (b.q * b.preco), 0);
-            let m = `*NOVO PEDIDO*\n👤 Cliente: ${nome}\n------------------\n`;
+            if(!nome) return;
+            let m = `*PEDIDO:* \n👤 Cliente: ${nome}\n------------------\n`;
             cart.forEach(i => m += `• ${i.q}x ${i.nome}\n`);
-            m += `------------------\n💰 Total: R$ ${total.toFixed(2)}\n🔑 Pix: ${CONFIG.pix}`;
-            window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(m)}`);
+            m += `------------------\n💰 Total: R$ ${cart.reduce((a,b)=>a+(b.q*b.preco),0).toFixed(2)}\n🔑 Pix: ${CFG.pix}`;
+            window.open(`https://wa.me/${CFG.wa}?text=${encodeURIComponent(m)}`);
             cart = []; update(); toggleCart();
         }
 
