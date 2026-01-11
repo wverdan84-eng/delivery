@@ -38,6 +38,16 @@
     </main>
 
     <script>
+async function verificarAcesso() {
+  const res = await fetch(API_URL);
+  const data = await res.json();
+  
+  // Se a planilha estiver vazia ou sem o e-mail correto, bloqueia
+  if (!data || data.length === 0) {
+    document.body.innerHTML = "<h1 style='padding:50px'>⚠️ Acesso não autorizado ou Planilha Vazia.</h1>";
+  }
+}
+
         // SUA NOVA URL ATUALIZADA
         const API_URL = "https://script.google.com/macros/s/AKfycbypGoFXENiEzRdMeauIF2COeDMACjjs3PX9NicZkI2I_nL9tMW6Ahwu1oebaInIvbwJ/exec";
         let db = [];
