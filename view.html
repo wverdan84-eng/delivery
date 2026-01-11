@@ -3,27 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Produtos</title>
+    <title>Vitrine Digital</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js"></script>
+    <style>
+        .img-produto { width: 100%; height: 200px; object-fit: cover; border-radius: 12px 12px 0 0; }
+        .card { border-radius: 12px; }
+    </style>
 </head>
 <body class="light">
     <header class="primary shadow">
         <nav class="center-align padding">
-            <h6 class="bold" id="nome-loja">Carregando loja...</h6>
+            <h6 class="bold" id="nome-loja">Carregando...</h6>
         </nav>
     </header>
 
     <main class="responsive padding">
-        <div id="lista-clientes" class="grid">
+        <div id="lista-produtos" class="grid">
             <progress class="circle center"></progress>
         </div>
     </main>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycby1w7Iw3_DE1XPO4pwim5ClNw4TLCwt1mFpTvFZpJDKtu7Qg5m2AjvCFAzEDdsDWe14/exec";
+        const API_URL = "SUA_URL_DO_GOOGLE_SCRIPT";
         const urlParams = new URLSearchParams(window.location.search);
         const vendedorEmail = urlParams.get('loja');
+        let whatsappVendedor = ""; // Variável global para armazenar o número
 
         async function carregarVitrine() {
             if(!vendedorEmail) { document.body.innerHTML = "<h1>Loja não encontrada</h1>"; return; }
@@ -31,19 +36,21 @@
             const res = await fetch(`${API_URL}?action=getProdutos&dono=${vendedorEmail}`, {redirect: "follow"});
             const dados = await res.json();
             
-            document.getElementById('nome-loja').innerText = dados.nomeLoja || "Vitrine Digital";
-            
-            const container = document.getElementById('lista-clientes');
+            document.getElementById('nome-loja').innerText = dados.nomeLoja;
+            whatsappVendedor = dados.whatsapp; // Captura o Zap do lojista
+
+            const container = document.getElementById('lista-produtos');
             container.innerHTML = (dados.produtos || []).map(p => `
                 <div class="s12 m6 l4">
                     <div class="card white no-padding shadow">
-                        <img src="${p.img}" style="width:100%; height:200px; object-fit:cover">
+                        <img src="${p.img}" class="img-produto">
                         <div class="padding">
-                            <p class="bold max" style="font-size:1.2rem">${p.nome}</p>
-                            <p class="green-text bold" style="font-size:1.4rem">R$ ${p.preco}</p>
-                            <p class="small gray-text">Estoque disponível: ${p.estoque}</p>
-                            <button class="fill primary full-width round margin-top" onclick="comprar('${p.nome}', '${p.preco}')">
-                                <i>send</i> Pedir pelo WhatsApp
+                            <p class="bold" style="font-size:1.1rem; margin:0">${p.nome}</p>
+                            <p class="green-text bold" style="font-size:1.3rem">R$ ${p.preco}</p>
+                            <p class="small gray-text">Estoque: ${p.estoque} unidades</p>
+                            <button class="fill primary full-width round margin-top" onclick="enviarPedido('${p.nome}', '${p.preco}')">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width:20px; filter:invert(1)">
+                                Pedir pelo WhatsApp
                             </button>
                         </div>
                     </div>
@@ -51,11 +58,15 @@
             `).join('');
         }
 
-        function comprar(nome, preco) {
-            // O WhatsApp do vendedor deve vir do banco de dados (Ação getProdutos deve retornar o zap também)
-            // Para simplificar agora, ele gera a mensagem. 
-            const msg = encodeURIComponent(`Olá! Vi no seu catálogo e quero o produto: ${nome} (R$ ${preco})`);
-            window.open(`https://wa.me/?text=${msg}`);
+        function enviarPedido(nome, preco) {
+            if(!whatsappVendedor) {
+                alert("Este lojista ainda não cadastrou um WhatsApp.");
+                return;
+            }
+            // Limpa o número (remove espaços e parênteses se houver)
+            const numeroLimpo = whatsappVendedor.replace(/\D/g, "");
+            const msg = encodeURIComponent(`Olá! Gostaria de comprar o produto: *${nome}* no valor de *R$ ${preco}*. Está disponível?`);
+            window.open(`https://wa.me/${numeroLimpo}?text=${msg}`);
         }
 
         window.onload = carregarVitrine;
