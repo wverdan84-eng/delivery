@@ -1,156 +1,140 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel SaaS Profissional</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
-    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SaaS Catálogo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
+<script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js"></script>
 </head>
+
 <body class="light">
 
-    <div id="login-box" class="container small padding">
-        <article class="card shadow">
-            <h3>Login</h3>
-            <div class="field label border"><input type="email" id="email"><label>Email</label></div>
-            <div class="field label border"><input type="password" id="senha"><label>Senha</label></div>
-            <button class="fill primary full-width" onclick="login()">Entrar</button>
-        </article>
-    </div>
+<div id="app"></div>
 
-    <main id="app" style="display:none" class="responsive padding">
-        <header class="primary shadow no-margin">
-            <nav>
-                <h5 class="max bold" id="nome-da-loja-topo">Carregando...</h5>
-                <button class="circle transparent" onclick="location.reload()"><i>logout</i></button>
-            </nav>
-        </header>
+<script>
+const API = "COLE_AQUI_URL_DO_WEB_APP";
+const qs = new URLSearchParams(location.search);
+const page = qs.get("page") || "admin";
 
-        <div class="card secondary-container padding margin-top center-align">
-            <p>Seu link de catálogo para clientes:</p>
-            <a id="link-final" href="#" target="_blank" class="bold blue-text">Gerando link...</a>
-        </div>
+/* ================= ADMIN ================= */
+if (page === "admin") {
+document.getElementById("app").innerHTML = `
+<div class="container small padding">
+<article class="card center-align">
+<h5>Login</h5>
+<input id="email" placeholder="Email">
+<input id="senha" type="password" placeholder="Senha">
+<button class="fill primary" onclick="login()">Entrar</button>
+</article>
+</div>`;
+}
 
-        <div class="card white padding margin-top">
-            <h5>➕ Cadastrar Produto</h5>
-            <div class="field label border"><input type="text" id="p-nome"><label>Nome</label></div>
-            <div class="grid">
-                <div class="s6 field label border"><input type="text" id="p-preco"><label>Preço</label></div>
-                <div class="s6 field label border"><input type="number" id="p-estoque" value="10"><label>Estoque</label></div>
-            </div>
-            <div class="field label border">
-                <select id="p-cat">
-                    <option value="Geral">Geral</option>
-                    <option value="Destaques">Destaques</option>
-                    <option value="Promoção">Promoção</option>
-                </select>
-                <label>Categoria</label>
-            </div>
-            <div class="field label border">
-                <input type="file" accept="image/*" onchange="compactarImg(this)">
-                <label>Foto</label>
-                <input type="hidden" id="p-img">
-            </div>
-            <button id="btn-salvar" class="fill green full-width" onclick="salvar()">Salvar Produto</button>
-        </div>
+async function login() {
+  const email = email.value;
+  const senha = senha.value;
+  const r = await fetch(\`\${API}?action=login&email=\${email}&senha=\${senha}\`);
+  const d = await r.json();
+  if (!d.auth) return alert("Erro");
+  localStorage.setItem("user", JSON.stringify(d));
+  location.reload();
+}
 
-        <h5 class="margin-top">Meus Produtos</h5>
-        <div id="lista" class="grid"></div>
-    </main>
+const user = JSON.parse(localStorage.getItem("user"));
+if (user && page === "admin") painel();
 
-    <script>
-        const API = "https://script.google.com/macros/s/AKfycbw-QYdPb_aexPThuwZVzBWM_E7YnF1FftQzyELc2VQz1qD3bHK3c3-YQnffMIUezMq3/exec"; // <--- COLOQUE A URL AQUI
+function painel() {
+document.getElementById("app").innerHTML = `
+<header class="primary"><nav><h5>${user.loja}</h5>
+<button onclick="logout()">Sair</button></nav></header>
 
-        function compactarImg(el) {
-            const reader = new FileReader();
-            reader.readAsDataURL(el.files[0]);
-            reader.onload = (e) => {
-                const img = new Image();
-                img.src = e.target.result;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = 500; canvas.height = 500;
-                    ctx.drawImage(img, 0, 0, 500, 500);
-                    document.getElementById('p-img').value = canvas.toDataURL('image/jpeg', 0.6);
-                }
-            }
-        }
+<main class="padding">
+<p>Link do catálogo:</p>
+<a target="_blank"
+href="?page=view&loja=${user.email}">
+Abrir Catálogo</a>
 
-        async function login() {
-            const e = document.getElementById('email').value;
-            const s = document.getElementById('senha').value;
-            const res = await fetch(`${API}?action=login&email=${e}&senha=${s}`);
-            const d = await res.json();
-            if(d.auth) {
-                localStorage.setItem('user', JSON.stringify(d));
-                renderApp();
-            } else alert("Erro no login");
-        }
+<h6>Cadastrar</h6>
+<input id="n" placeholder="Nome">
+<input id="p" placeholder="Preço">
+<input id="e" type="number" placeholder="Estoque">
+<input id="c" placeholder="Categoria">
+<textarea id="i" placeholder="URL da imagem"></textarea>
+<button onclick="salvar()">Salvar</button>
 
-        function renderApp() {
-            const d = JSON.parse(localStorage.getItem('user'));
-            document.getElementById('login-box').style.display='none';
-            document.getElementById('app').style.display='block';
-            document.getElementById('nome-da-loja-topo').innerText = d.loja;
-            
-            // CORREÇÃO DO LINK:
-            const linkBase = window.location.href.split('index.html')[0];
-            const linkFinal = `${linkBase}view.html?loja=${d.email}`;
-            document.getElementById('link-final').innerText = linkFinal;
-            document.getElementById('link-final').href = linkFinal;
-            
-            carregar();
-        }
+<div id="lista"></div>
+</main>`;
+load();
+}
 
-        async function salvar() {
-            const u = JSON.parse(localStorage.getItem('user'));
-            const btn = document.getElementById('btn-salvar');
-            btn.disabled = true;
+async function salvar() {
+await fetch(API,{
+method:"POST",
+headers:{ "Content-Type":"application/json"},
+body:JSON.stringify({
+action:"cadastrarProduto",
+dono:user.email,
+nome:n.value,
+preco:p.value,
+estoque:e.value,
+cat:c.value,
+img:i.value
+})
+});
+load();
+}
 
-            const dados = {
-                action: "cadastrarProduto",
-                dono: u.email,
-                nome: document.getElementById('p-nome').value,
-                preco: document.getElementById('p-preco').value,
-                estoque: document.getElementById('p-estoque').value,
-                cat: document.getElementById('p-cat').value, // SALVANDO CATEGORIA
-                img: document.getElementById('p-img').value
-            };
+async function load() {
+const r = await fetch(\`\${API}?action=getProdutos&dono=\${user.email}\`);
+const d = await r.json();
+lista.innerHTML = d.produtos.map(p=>`
+<div class="card">
+<img src="${p.img||'https://via.placeholder.com/400'}">
+<b>${p.nome}</b>
+<p>R$ ${p.preco}</p>
+<button onclick="del('${p.id}')">Excluir</button>
+</div>`).join("");
+}
 
-            await fetch(API, { method: 'POST', body: JSON.stringify(dados) });
-            alert("Salvo!");
-            btn.disabled = false;
-            carregar();
-        }
+async function del(id){
+await fetch(API,{
+method:"POST",
+headers:{ "Content-Type":"application/json"},
+body:JSON.stringify({action:"deletarProduto",id,dono:user.email})
+});
+load();
+}
 
-        async function carregar() {
-            const u = JSON.parse(localStorage.getItem('user'));
-            const res = await fetch(`${API}?action=getProdutos&dono=${u.email}`);
-            const d = await res.json();
-            const list = document.getElementById('lista');
-            list.innerHTML = d.produtos.map(p => `
-                <div class="s12 m6 l4">
-                    <div class="card white no-padding shadow">
-                        <img src="${p.img}" style="height:150px; width:100%; object-fit:cover">
-                        <div class="padding">
-                            <p class="bold">${p.nome} | <span class="blue-text">${p.cat}</span></p>
-                            <p class="green-text bold">R$ ${p.preco}</p>
-                            <button class="border error small full-width" onclick="deletar('${p.nome}')">Excluir</button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
+function logout(){localStorage.clear();location.reload();}
 
-        async function deletar(n) {
-            if(!confirm("Deletar?")) return;
-            const u = JSON.parse(localStorage.getItem('user'));
-            await fetch(API, { method: 'POST', body: JSON.stringify({action:"deletarProduto", dono:u.email, nome:n}) });
-            carregar();
-        }
+/* ================= CATÁLOGO ================= */
+if (page === "view") {
+const loja = qs.get("loja");
+document.getElementById("app").innerHTML =
+"<p class='center-align'>Carregando...</p>";
 
-        if(localStorage.getItem('user')) renderApp();
-    </script>
+fetch(\`\${API}?action=getProdutos&dono=\${loja}\`)
+.then(r=>r.json())
+.then(d=>{
+document.getElementById("app").innerHTML = `
+<header class="primary"><nav><h5>${d.nomeLoja}</h5></nav></header>
+<main class="padding grid">
+${d.produtos.map(p=>`
+<div class="s12 m4 card">
+<img src="${p.img||'https://via.placeholder.com/400'}">
+<h6>${p.nome}</h6>
+<h5>R$ ${p.preco}</h5>
+<button onclick="pedido('${p.nome}','${p.preco}','${d.whatsapp}')">
+WhatsApp
+</button>
+</div>`).join("")}
+</main>`;
+});
+}
+
+function pedido(n,p,z){
+window.open(\`https://wa.me/\${z.replace(/\\D/g,'')}?text=Quero: \${n} R$ \${p}\`);
+}
+</script>
 </body>
 </html>
