@@ -3,100 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vitrine Digital Pro</title>
+    <title>SaaS Catálogo Pro</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
-    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js"></script>
     <style>
-        :root { --whatsapp: #25D366; }
-        body { background: #f8f9fa; }
-        .product-card { border-radius: 16px; overflow: hidden; background: white; border: none; transition: 0.3s; }
-        .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-        .category-badge { background: #eee; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
-        .search-container { position: sticky; top: 0; z-index: 100; background: white; padding: 10px; }
+        #main-app { display: none; } /* Esconde o app até logar */
+        .login-container { height: 100vh; display: flex; align-items: center; justify-content: center; }
     </style>
-<link rel="manifest" href="manifest.json">
 </head>
 <body>
 
-    <header class="primary shadow">
-        <nav class="center-align"><h5 class="white-text">🛍️ Minha Loja Digital</h5></nav>
-    </header>
-
-    <div class="search-container shadow">
-        <div class="field prefix round fill">
-            <i>search</i>
-            <input type="text" id="search" placeholder="Buscar produto..." onkeyup="filtrar()">
-        </div>
+    <div id="login-screen" class="login-container">
+        <article class="padding">
+            <h5 class="center-align">Acesse seu Catálogo</h5>
+            <div class="field label border round margin">
+                <input type="email" id="email">
+                <label>E-mail</label>
+            </div>
+            <div class="field label border round margin">
+                <input type="password" id="senha">
+                <label>Senha</label>
+            </div>
+            <button class="fill primary full-width" onclick="handleLogin()">Entrar</button>
+        </article>
     </div>
 
-    <main class="responsive p-2" id="app">
-        <div id="loader" class="center-align m-4">
-            <progress class="circle large"></progress>
-            <p>Sincronizando com estoque...</p>
-        </div>
-        <div class="grid" id="lista"></div>
+    <main id="main-app">
+        <header class="primary shadow">
+            <nav class="padding">
+                <h6 id="welcome" class="max">Bem-vindo</h6>
+                <button class="circle transparent" onclick="logout()"><i>logout</i></button>
+            </nav>
+        </header>
+        <div class="grid padding" id="lista"></div>
     </main>
 
     <script>
-async function verificarAcesso() {
-  const res = await fetch(API_URL);
-  const data = await res.json();
-  
-  // Se a planilha estiver vazia ou sem o e-mail correto, bloqueia
-  if (!data || data.length === 0) {
-    document.body.innerHTML = "<h1 style='padding:50px'>⚠️ Acesso não autorizado ou Planilha Vazia.</h1>";
-  }
-}
+        const API_URL = "https://script.google.com/macros/s/AKfycbzRChAMl-XwO_AG_hVbROAU7-OrY-Y0Bta0d5RqgF-6eAIRvtAZAH7G-n2HT_NBkaui/exec";
 
-        // SUA NOVA URL ATUALIZADA
-        const API_URL = "https://script.google.com/macros/s/AKfycbypGoFXENiEzRdMeauIF2COeDMACjjs3PX9NicZkI2I_nL9tMW6Ahwu1oebaInIvbwJ/exec";
-        let db = [];
+        async function handleLogin() {
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            
+            const res = await fetch(`${API_URL}?action=login&email=${email}&senha=${senha}`, { redirect: "follow" });
+            const user = await res.json();
 
-        async function init() {
-            try {
-                // 'redirect: follow' resolve o erro de autorização
-                const res = await fetch(API_URL, { redirect: "follow" });
-                db = await res.json();
-                render(db);
-            } catch (e) {
-                document.getElementById('app').innerHTML = "<h5>⚠️ Erro ao carregar. Verifique a URL do Script.</h5>";
+            if (user.auth) {
+                localStorage.setItem('vendedor_email', user.email);
+                localStorage.setItem('vendedor_nome', user.nome);
+                abrirApp();
+            } else {
+                alert("Dados incorretos!");
             }
         }
 
-        function render(itens) {
-            const lista = document.getElementById('lista');
-            document.getElementById('loader').style.display = 'none';
+        function abrirApp() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            document.getElementById('welcome').innerText = "Loja: " + localStorage.getItem('vendedor_nome');
+            carregarProdutos();
+        }
+
+        async function carregarProdutos() {
+            const email = localStorage.getItem('vendedor_email');
+            const res = await fetch(`${API_URL}?action=getProdutos&dono=${email}`, { redirect: "follow" });
+            const produtos = await res.json();
             
-            lista.innerHTML = itens.map(p => `
+            document.getElementById('lista').innerHTML = produtos.map(p => `
                 <div class="s12 m6 l4">
-                    <div class="card product-card">
-                        <img src="${p.img || 'https://via.placeholder.com/400x300'}" class="responsive" style="height:200px; object-fit:cover">
+                    <div class="card shadow">
+                        <img src="${p.img}" class="responsive" style="height:150px; object-fit:cover">
                         <div class="padding">
-                            <span class="category-badge">${p.cat}</span>
-                            <h6 class="bold" style="margin: 8px 0">${p.nome}</h6>
-                            <h5 class="green-text">R$ ${p.preco.toFixed(2)}</h5>
-                            <button class="fill green full-width round" onclick="pedir('${p.nome}')" style="background:var(--whatsapp)!important">
-                                <i>send</i> Pedir no WhatsApp
-                            </button>
+                            <h6 class="bold">${p.nome}</h6>
+                            <p class="green-text"><b>R$ ${p.preco.toFixed(2)}</b></p>
+                            <button class="fill green full-width">Ver no Zap</button>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        function filtrar() {
-            const termo = document.getElementById('search').value.toLowerCase();
-            const filtrados = db.filter(p => p.nome.toLowerCase().includes(termo) || p.cat.toLowerCase().includes(termo));
-            render(filtrados);
-        }
+        function logout() { localStorage.clear(); location.reload(); }
 
-        function pedir(nome) {
-            const fone = "5527997566512"; 
-            const msg = encodeURIComponent("Olá! Quero saber sobre o produto: " + nome);
-            window.open(`https://wa.me/${fone}?text=${msg}`);
-        }
-
-        window.onload = init;
+        // Mantém logado se já tiver entrado antes
+        window.onload = () => { if(localStorage.getItem('vendedor_email')) abrirApp(); };
     </script>
 </body>
 </html>
