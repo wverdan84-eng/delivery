@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel SaaS Pro</title>
+    <title>Painel Administrativo</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js"></script>
     <style>
@@ -25,9 +25,9 @@
 
         <div class="padding responsive">
             <div class="card primary-container padding margin center-align">
-                <p class="small">Seu link de vendas:</p>
-                <h6 id="share-link" class="bold blue-text" style="word-break: break-all;">Link...</h6>
-                <button class="border small round" onclick="copiarLink()">Copiar Link</button>
+                <p class="small">Seu link para CLIENTES:</p>
+                <h6 id="share-link" class="bold blue-text" style="word-break: break-all;">Gerando link...</h6>
+                <button class="border small round" onclick="copiarLink()">Copiar Link da Vitrine</button>
             </div>
 
             <article class="card white padding margin">
@@ -35,23 +35,23 @@
                 <div class="field label border round"><input type="text" id="p-nome"><label>Nome</label></div>
                 <div class="grid">
                     <div class="s6 field label border round"><input type="text" id="p-preco" placeholder="0,00"><label>Preço</label></div>
-                    <div class="s6 field label border round"><input type="number" id="p-estoque" value="10"><label>Estoque Inicial</label></div>
+                    <div class="s6 field label border round"><input type="number" id="p-estoque" value="10"><label>Estoque</label></div>
                 </div>
                 <div class="field label border round">
                     <input type="file" id="p-file" accept="image/*" capture="environment" onchange="converterFoto()">
-                    <label>Foto (Câmera ou Galeria)</label>
+                    <label>Foto do Produto</label>
                     <input type="hidden" id="p-img">
                 </div>
-                <button id="btn-salvar" class="fill green full-width round" onclick="salvarProduto()">Cadastrar Produto</button>
+                <button id="btn-salvar" class="fill green full-width round" onclick="salvarProduto()">Publicar no Catálogo</button>
             </article>
 
-            <h5>📦 Meus Itens</h5>
+            <h5>📦 Meus Itens Cadastrados</h5>
             <div id="meus-produtos" class="grid padding"></div>
         </div>
     </main>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycby1w7Iw3_DE1XPO4pwim5ClNw4TLCwt1mFpTvFZpJDKtu7Qg5m2AjvCFAzEDdsDWe14/exec";
+        const API_URL = "SUA_URL_DO_GOOGLE_SCRIPT";
 
         function converterFoto() {
             const file = document.getElementById('p-file').files[0];
@@ -74,20 +74,23 @@
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
             document.getElementById('display-loja').innerText = localStorage.getItem('lojaNome');
-            document.getElementById('share-link').innerText = `${window.location.href.replace('index.html', 'view.html')}?loja=${localStorage.getItem('vendedor')}`;
+            
+            // MACETE: Força o link a apontar para o view.html independente de onde você esteja
+            let urlAtual = window.location.href;
+            let linkConsumidor = urlAtual.substring(0, urlAtual.lastIndexOf("/")) + "/view.html";
+            document.getElementById('share-link').innerText = `${linkConsumidor}?loja=${localStorage.getItem('vendedor')}`;
+            
             carregarMeusProdutos();
         }
 
         async function carregarMeusProdutos() {
             const container = document.getElementById('meus-produtos');
-            container.innerHTML = "Carregando...";
             const res = await fetch(`${API_URL}?action=getProdutos&dono=${localStorage.getItem('vendedor')}`, {redirect: "follow"});
             const dados = await res.json();
-            
             container.innerHTML = (dados.produtos || []).map(p => `
                 <div class="s12 m6 l4">
                     <div class="card white no-padding shadow margin-bottom" style="position:relative">
-                        <span class="badge-estoque">Estoque: ${p.estoque}</span>
+                        <span class="badge-estoque">Qtd: ${p.estoque}</span>
                         <img src="${p.img}" style="width:100%; height:150px; object-fit:cover">
                         <div class="padding">
                             <p class="bold" style="margin:0">${p.nome}</p>
@@ -113,25 +116,19 @@
                 cat: "Geral"
             };
             await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados) });
-            alert("Salvo!");
+            alert("Produto Publicado!");
             btn.disabled = false;
             carregarMeusProdutos();
         }
 
         async function deletarProduto(nome) {
-            if(!confirm("Deseja excluir este produto?")) return;
-            const dados = {
-                action: "deletarProduto",
-                dono: localStorage.getItem('vendedor'),
-                nome: nome
-            };
-            await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados) });
-            alert("Excluído!");
+            if(!confirm("Excluir produto?")) return;
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify({action: "deletarProduto", dono: localStorage.getItem('vendedor'), nome: nome}) });
             carregarMeusProdutos();
         }
 
         function logout() { localStorage.clear(); location.reload(); }
-        function copiarLink() { navigator.clipboard.writeText(document.getElementById('share-link').innerText); alert("Copiado!"); }
+        function copiarLink() { navigator.clipboard.writeText(document.getElementById('share-link').innerText); alert("Link do Catálogo Copiado!"); }
         window.onload = () => { if(localStorage.getItem('vendedor')) abrirPainel(); };
     </script>
 </body>
