@@ -3,85 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Digital</title>
+    <title>Catálogo Online</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js"></script>
     <style>
-        body { background: #f9f9f9; }
-        .img-vitrine { width: 100%; height: 220px; object-fit: cover; border-radius: 12px 12px 0 0; }
-        .card-produto { transition: transform 0.2s; border-radius: 16px; border:none; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .card-produto:hover { transform: translateY(-5px); }
+        body { background-color: #f9f9f9; }
+        .hero { background: #6200ea; color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 20px 20px; }
+        .card-img { width: 100%; height: 250px; object-fit: cover; border-radius: 12px 12px 0 0; }
+        .float-btn { position: fixed; bottom: 20px; right: 20px; z-index: 10; }
     </style>
 </head>
 <body>
 
-    <header class="primary shadow">
-        <nav class="center-align padding">
-            <h5 class="bold" id="nome-loja">Carregando Loja...</h5>
-        </nav>
-    </header>
+    <div class="hero shadow">
+        <h4 id="nome-loja">Carregando loja...</h4>
+        <p id="nicho-loja">Seja bem-vindo!</p>
+    </div>
 
-    <main class="responsive padding">
-        <div id="loading" class="center-align padding"><progress class="circle"></progress></div>
-        <div id="lista-produtos" class="grid"></div>
+    <main class="responsive padding" style="margin-top: -30px;">
+        <div id="lista" class="grid">
+            <div class="s12 center-align"><div class="loader"></div></div>
+        </div>
     </main>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxWPEwlYvgHHcf3Ps0hxpoSJJEKqdRsmzfZD09boXShuoKJM1fsj4OdYXgyraW8sSlu/exec"; // Mesma URL do index
+        const API_URL = "COLE_SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI"; // <--- MESMA URL DO INDEX
         
-        const urlParams = new URLSearchParams(window.location.search);
-        const vendedorEmail = urlParams.get('loja');
-        let whatsappVendedor = ""; // Armazena o zap do dono
+        const params = new URLSearchParams(window.location.search);
+        const lojaEmail = params.get('loja');
+        let zapLojista = "";
 
         async function carregarVitrine() {
-            if(!vendedorEmail) { 
-                document.body.innerHTML = "<div class='padding center-align'><h3>🚫 Loja não especificada</h3><p>Use o link fornecido pelo vendedor.</p></div>"; 
-                return; 
+            if (!lojaEmail) {
+                document.body.innerHTML = "<h3 class='center-align padding'>Loja não encontrada.</h3>";
+                return;
             }
 
             try {
-                const res = await fetch(`${API_URL}?action=getProdutos&dono=${vendedorEmail}`, {redirect: "follow"});
-                const dados = await res.json();
-                
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('nome-loja').innerText = dados.nomeLoja || "Catálogo";
-                whatsappVendedor = dados.whatsapp; // Captura o Zap vindo do banco
+                const req = await fetch(`${API_URL}?action=getProdutos&dono=${lojaEmail}`);
+                const res = await req.json();
 
-                const container = document.getElementById('lista-produtos');
-                if(!dados.produtos || dados.produtos.length === 0) {
-                    container.innerHTML = "<div class='s12 center-align'><h5>Esta loja ainda não tem produtos.</h5></div>";
+                document.getElementById('nome-loja').innerText = res.nomeLoja;
+                zapLojista = res.whatsapp;
+
+                const div = document.getElementById('lista');
+                
+                if (!res.produtos || res.produtos.length === 0) {
+                    div.innerHTML = "<div class='s12 center-align padding card white'><h5>Nenhum produto disponível no momento.</h5></div>";
                     return;
                 }
 
-                container.innerHTML = dados.produtos.map(p => `
+                div.innerHTML = res.produtos.map(p => `
                     <div class="s12 m6 l4">
-                        <div class="card white no-padding card-produto">
-                            <img src="${p.img}" class="img-vitrine">
+                        <div class="card white no-padding shadow" style="border-radius:12px">
+                            <img src="${p.img}" class="card-img">
                             <div class="padding">
-                                <h6 class="bold" style="margin-bottom:5px">${p.nome}</h6>
-                                <p class="small gray-text">Estoque: ${p.estoque} unid.</p>
-                                <h5 class="green-text bold">R$ ${p.preco}</h5>
-                                <button class="fill primary full-width round margin-top waves" onclick="enviarPedido('${p.nome}', '${p.preco}')">
-                                    <i>message</i> Pedir no WhatsApp
+                                <h5 class="bold">${p.nome}</h5>
+                                <div class="row align-center">
+                                    <h5 class="green-text bold max">R$ ${p.preco}</h5>
+                                    <span class="badge surface">${p.estoque} disp.</span>
+                                </div>
+                                <button class="fill primary round full-width margin-top large" onclick="pedir('${p.nome}', '${p.preco}')">
+                                    <i>send</i> Pedir no WhatsApp
                                 </button>
                             </div>
                         </div>
                     </div>
                 `).join('');
-            } catch(e) {
-                alert("Erro ao carregar loja.");
+
+            } catch (e) {
+                alert("Erro ao carregar a loja.");
             }
         }
 
-        function enviarPedido(nome, preco) {
-            if(!whatsappVendedor) {
-                alert("O lojista não cadastrou um WhatsApp válido na planilha.");
-                return;
-            }
-            // Limpeza do número
-            const numeroLimpo = whatsappVendedor.replace(/\D/g, ""); 
-            const msg = encodeURIComponent(`Olá! 👋\n\nGostaria de comprar:\n*${nome}*\nPreço: *R$ ${preco}*\n\nAinda está disponível?`);
-            window.open(`https://wa.me/${numeroLimpo}?text=${msg}`, '_blank');
+        function pedir(nome, preco) {
+            if (!zapLojista) return alert("Esta loja não configurou o WhatsApp.");
+            
+            // Limpa o número (deixa só digitos)
+            const numero = zapLojista.replace(/\D/g, "");
+            
+            const texto = `Olá! Gostaria de pedir: *${nome}* (R$ ${preco}). Ainda tem disponível?`;
+            const link = `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
+            window.open(link, '_blank');
         }
 
         window.onload = carregarVitrine;
