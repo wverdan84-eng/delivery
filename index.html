@@ -3,46 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Zap</title>
+    <title>Vitrine Pro - Seu Catálogo Inteligente</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js"></script>
+    <style>
+        :root { --primary: #6200ee; --success: #25D366; }
+        body { background: #f8f9fa; font-family: 'Inter', sans-serif; }
+        .category-scroll { display: flex; overflow-x: auto; gap: 10px; padding: 10px; scrollbar-width: none; }
+        .category-scroll::-webkit-scrollbar { display: none; }
+        .product-card { border-radius: 20px; border: none; transition: transform 0.2s; background: white; }
+        .product-card:active { transform: scale(0.98); }
+        .price-tag { font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+        .fab-cart { position: fixed; bottom: 20px; right: 20px; z-index: 100; border-radius: 50px; padding: 15px 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+    </style>
 </head>
-<body class="light">
-    <header class="primary shadow">
-        <nav class="center-align"><h5 class="white-text">🛍️ Meu Catálogo</h5></nav>
+<body>
+
+    <header class="white shadow">
+        <nav class="padding">
+            <button class="circle transparent"><i>menu</i></button>
+            <div class="max center-align"><b>VITRINE PRO</b></div>
+            <button class="circle transparent" onclick="document.getElementById('search-modal').show()"><i>search</i></button>
+        </nav>
     </header>
 
-    <main class="responsive p-2" id="app">
-        <div class="grid" id="lista"></div>
+    <div class="category-scroll" id="categories">
+        <button class="chip fill primary" onclick="filtrar('Tudo')">Tudo</button>
+        </div>
+
+    <main class="responsive p-2">
+        <div class="grid" id="lista-produtos">
+            <div class="s12 m6 l4 card no-shadow">
+                <div class="loader-placeholder" style="height:200px; background:#eee"></div>
+            </div>
+        </div>
     </main>
+
+    <button class="fab-cart green fill white-text" id="btn-finalizar" onclick="enviarPedido()" style="display:none">
+        <i>shopping_cart</i>
+        <span>Finalizar Pedido (<span id="cart-count">0</span>)</span>
+    </button>
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbysE5Bi71WOorBpHrqTruFqsM6D6KQLyMNdx5HqAeK_0E6Q5DvWAYsIc-rJr7llpGpe/exec";
+        let todosProdutos = [];
+        let carrinho = [];
 
-        async function carregar() {
+        async function init() {
             try {
-                // O segredo está no 'mode: cors' e no redirecionamento
-                const response = await fetch(API_URL);
-                const produtos = await response.json();
-                
-                const lista = document.getElementById('lista');
-                lista.innerHTML = produtos.map(p => `
-                    <div class="s12 m6 l4">
-                        <div class="card">
-                            <img src="${p.img || 'https://via.placeholder.com/300x200?text=Sem+Foto'}" class="responsive" style="height:200px; object-fit:cover">
-                            <div class="padding">
-                                <h6>${p.nome}</h6>
-                                <p class="green-text"><b>R$ ${parseFloat(p.preco).toFixed(2)}</b></p>
-                                <button class="fill green full-width" onclick="alert('Pedido enviado!')">Pedir no Zap</button>
+                const res = await fetch(API_URL);
+                todosProdutos = await res.json();
+                renderCategorias();
+                renderProdutos(todosProdutos);
+            } catch (e) {
+                alert("Erro ao sincronizar dados.");
+            }
+        }
+
+        function renderCategorias() {
+            const cats = [...new Set(todosProdutos.map(p => p.cat))];
+            const div = document.getElementById('categories');
+            cats.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = "chip border";
+                btn.innerText = c;
+                btn.onclick = () => filtrar(c);
+                div.appendChild(btn);
+            });
+        }
+
+        function renderProdutos(lista) {
+            const container = document.getElementById('lista-produtos');
+            container.innerHTML = lista.map(p => `
+                <div class="s12 m6 l4">
+                    <div class="card product-card">
+                        <img src="${p.img || 'https://via.placeholder.com/400x300'}" class="responsive" style="height:180px; object-fit:cover">
+                        <div class="padding">
+                            <h6 class="bold">${p.nome}</h6>
+                            <div class="nav no-space">
+                                <div class="max price-tag">R$ ${parseFloat(p.preco).toFixed(2)}</div>
+                                <button class="circle primary" onclick="addCarrinho('${p.nome}', ${p.preco})"><i>add</i></button>
                             </div>
                         </div>
                     </div>
-                `).join('');
-            } catch (e) {
-                console.error(e);
-                document.getElementById('app').innerHTML = "<h5>Erro ao conectar com a planilha. Verifique se o Script está publicado como 'Qualquer Pessoa'.</h5>";
-            }
+                </div>
+            `).join('');
         }
-        window.onload = carregar;
+
+        function filtrar(categoria) {
+            if(categoria === 'Tudo') return renderProdutos(todosProdutos);
+            const filtrados = todosProdutos.filter(p => p.cat === categoria);
+            renderProdutos(filtrados);
+        }
+
+        function addCarrinho(n, p) {
+            carrinho.push({n, p});
+            document.getElementById('btn-finalizar').style.display = 'flex';
+            document.getElementById('cart-count').innerText = carrinho.length;
+        }
+
+        function enviarPedido() {
+            const total = carrinho.reduce((a, b) => a + b.p, 0);
+            const resumo = carrinho.map(i => `- ${i.n}`).join('%0A');
+            const msg = `*Novo Pedido*%0A%0A${resumo}%0A%0A*Total: R$ ${total.toFixed(2)}*`;
+            window.open(`https://wa.me/5511999999999?text=${msg}`);
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
