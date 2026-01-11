@@ -3,202 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Lojista</title>
+    <title>Painel Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js"></script>
     <style>
-        body { background: #f0f4f8; padding-bottom: 60px; }
-        .card { border-radius: 16px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .badge-estoque { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+        body { background-color: #f5f5f5; }
+        .card-img { height: 150px; object-fit: cover; width: 100%; border-radius: 8px 8px 0 0; }
+        .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div id="login-screen" class="padding center-align container" style="max-width:400px; margin-top:10vh">
-        <img src="https://cdn-icons-png.flaticon.com/512/2910/2910756.png" width="80" class="margin-bottom">
-        <h4>Painel SaaS</h4>
-        <div class="field label border round"><input type="email" id="email"><label>E-mail</label></div>
-        <div class="field label border round"><input type="password" id="senha"><label>Senha</label></div>
-        <button class="fill primary full-width round large" onclick="handleLogin()">Acessar Painel</button>
+    <div id="login-screen" class="container small padding center-align" style="margin-top: 10vh;">
+        <div class="card padding shadow">
+            <h5>🔐 Acesso Lojista</h5>
+            <div class="field label border"><input type="email" id="email"><label>Email</label></div>
+            <div class="field label border"><input type="password" id="senha"><label>Senha</label></div>
+            <button class="fill primary full-width" onclick="fazerLogin()">Entrar</button>
+        </div>
     </div>
 
     <main id="admin-panel" style="display:none">
         <header class="primary shadow">
             <nav class="padding">
-                <button class="circle transparent" onclick="logout()"><i>logout</i></button>
-                <h6 class="max center-align bold" id="display-loja">Carregando...</h6>
+                <h6 class="max bold" id="titulo-loja">Minha Loja</h6>
+                <button class="circle transparent" onclick="sair()"><i>logout</i></button>
             </nav>
         </header>
 
         <div class="padding responsive">
             
-            <div class="card primary-container padding margin center-align">
-                <p class="small no-margin">Seu Link de Vendas:</p>
-                <h6 id="share-link" class="bold blue-text" style="font-size:1rem; word-break: break-all; margin: 10px 0;">Gerando...</h6>
-                <button class="border small round white-text" onclick="copiarLink()">Copiar Link</button>
+            <div class="card secondary-container center-align padding margin-bottom">
+                <p class="small">Link para seus clientes:</p>
+                <b id="link-vendas" class="primary-text" style="word-break: break-all;">Gerando...</b>
+                <br><br>
+                <button class="round small border" onclick="copiarLink()">Copiar Link</button>
             </div>
 
-            <details class="card white padding margin shadow">
-                <summary class="bold primary-text">⚙️ Editar Dados da Loja</summary>
-                <div class="padding">
-                    <div class="field label border round small"><input type="text" id="edit-nome-loja"><label>Nome do Negócio</label></div>
-                    <div class="field label border round small">
-                        <select id="edit-nicho">
-                            <option value="Geral">Geral</option>
-                            <option value="Moda">Moda e Roupas</option>
-                            <option value="Alimentação">Alimentação</option>
-                            <option value="Eletrônicos">Eletrônicos</option>
-                        </select>
-                        <label>Nicho</label>
-                    </div>
-                    <button class="fill primary round small full-width" onclick="atualizarPerfil()">Salvar Alterações</button>
+            <details class="card padding margin-bottom shadow">
+                <summary class="bold">➕ Novo Produto</summary>
+                <div class="field label border"><input type="text" id="p-nome"><label>Nome</label></div>
+                <div class="grid">
+                    <div class="s6 field label border"><input type="text" id="p-preco" placeholder="0,00"><label>Preço</label></div>
+                    <div class="s6 field label border"><input type="number" id="p-estoque" value="1"><label>Qtd</label></div>
                 </div>
+                <div class="field label border">
+                    <input type="file" id="p-file" accept="image/*" onchange="processarImagem()">
+                    <label>Foto do Produto</label>
+                    <input type="hidden" id="p-img-base64">
+                </div>
+                <button id="btn-salvar" class="fill green full-width" onclick="salvarProduto()">Publicar</button>
             </details>
 
-            <article class="card white padding margin shadow">
-                <h5>➕ Adicionar Produto</h5>
-                <div class="field label border round"><input type="text" id="p-nome"><label>Nome do Produto</label></div>
-                <div class="grid">
-                    <div class="s6 field label border round"><input type="text" id="p-preco" placeholder="0,00"><label>Preço</label></div>
-                    <div class="s6 field label border round"><input type="number" id="p-estoque" value="1"><label>Qtd Estoque</label></div>
-                </div>
-                <div class="field label border round">
-                    <input type="file" id="p-file" accept="image/*" capture="environment" onchange="converterFoto()">
-                    <label>📸 Foto do Produto</label>
-                    <input type="hidden" id="p-img">
-                </div>
-                <button id="btn-salvar" class="fill green full-width round large" onclick="salvarProduto()">Publicar Agora</button>
-            </article>
-
-            <h5 class="padding">📦 Meu Estoque</h5>
-            <div id="meus-produtos" class="grid padding"></div>
+            <h5>📦 Meu Estoque</h5>
+            <div id="lista-produtos" class="grid"></div>
         </div>
     </main>
 
     <script>
-        // --- CONFIGURAÇÃO ---
-        const API_URL = "https://script.google.com/macros/s/AKfycbxWPEwlYvgHHcf3Ps0hxpoSJJEKqdRsmzfZD09boXShuoKJM1fsj4OdYXgyraW8sSlu/exec"; 
+        const API_URL = "COLE_SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI"; // <--- IMPORTANTE
 
-        // --- FUNÇÕES ---
-        function converterFoto() {
-            const file = document.getElementById('p-file').files[0];
-            const reader = new FileReader();
-            reader.onloadend = () => document.getElementById('p-img').value = reader.result;
-            if (file) reader.readAsDataURL(file);
-        }
-
-        async function handleLogin() {
-            const btn = document.querySelector('button'); btn.disabled = true; btn.innerText = "Entrando...";
-            const res = await fetch(`${API_URL}?action=login&email=${document.getElementById('email').value}&senha=${document.getElementById('senha').value}`, {redirect: "follow"});
-            const user = await res.json();
+        async function fazerLogin() {
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
             
-            if(user.auth) {
-                localStorage.setItem('vendedor', user.email);
-                localStorage.setItem('lojaNome', user.loja || "Minha Loja");
-                localStorage.setItem('lojaNicho', user.nicho || "Geral");
-                abrirPainel();
-            } else { 
-                alert("Login incorreto!"); 
-                btn.disabled = false; btn.innerText = "Acessar Painel";
+            if(!email || !senha) return alert("Preencha tudo!");
+
+            const btn = document.querySelector('button'); btn.disabled = true; btn.innerText = "Verificando...";
+            
+            try {
+                const req = await fetch(`${API_URL}?action=login&email=${email}&senha=${senha}`);
+                const res = await req.json();
+                
+                if (res.auth) {
+                    localStorage.setItem('usuario', JSON.stringify(res));
+                    iniciarPainel();
+                } else {
+                    alert("Dados incorretos!");
+                    btn.disabled = false; btn.innerText = "Entrar";
+                }
+            } catch (error) {
+                alert("Erro de conexão. Verifique sua internet ou a URL do Script.");
+                btn.disabled = false; btn.innerText = "Entrar";
             }
         }
 
-        function abrirPainel() {
+        function iniciarPainel() {
+            const user = JSON.parse(localStorage.getItem('usuario'));
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
+            document.getElementById('titulo-loja').innerText = user.loja;
             
-            // Atualiza UI com dados locais
-            document.getElementById('display-loja').innerText = localStorage.getItem('lojaNome');
-            document.getElementById('edit-nome-loja').value = localStorage.getItem('lojaNome');
-            document.getElementById('edit-nicho').value = localStorage.getItem('lojaNicho');
-            
-            // Gera Link da Vitrine (Troca index.html por view.html)
-            const linkBase = window.location.href.replace('index.html', 'view.html').split('?')[0]; // Limpa query params antigos
-            const linkFinal = linkBase.includes('view.html') ? linkBase : linkBase + 'view.html'; // Garante estrutura
-            document.getElementById('share-link').innerText = `${linkFinal}?loja=${localStorage.getItem('vendedor')}`;
-            
-            carregarMeusProdutos();
+            // Gera o link da vitrine
+            const urlBase = window.location.href.replace('index.html', 'view.html');
+            const linkFinal = urlBase.includes('view.html') ? urlBase : urlBase + 'view.html';
+            document.getElementById('link-vendas').innerText = `${linkFinal}?loja=${user.email}`;
+
+            carregarProdutos();
         }
 
-        async function carregarMeusProdutos() {
-            const container = document.getElementById('meus-produtos');
-            container.innerHTML = "<div class='center-align'><progress class='circle'></progress></div>";
-            
-            const res = await fetch(`${API_URL}?action=getProdutos&dono=${localStorage.getItem('vendedor')}`, {redirect: "follow"});
-            const dados = await res.json();
-            const lista = dados.produtos || [];
+        async function carregarProdutos() {
+            const user = JSON.parse(localStorage.getItem('usuario'));
+            const div = document.getElementById('lista-produtos');
+            div.innerHTML = '<div class="loading-spinner"></div>'; // Spinner temporário
 
-            if(lista.length === 0) { container.innerHTML = "<p class='center-align gray-text'>Nenhum produto cadastrado.</p>"; return; }
+            try {
+                const req = await fetch(`${API_URL}?action=getProdutos&dono=${user.email}`);
+                const res = await req.json();
+                
+                if (!res.produtos || res.produtos.length === 0) {
+                    div.innerHTML = '<p class="center-align gray-text">Nenhum produto cadastrado.</p>';
+                    return;
+                }
 
-            container.innerHTML = lista.map(p => `
-                <div class="s12 m6 l4">
-                    <div class="card white no-padding shadow margin-bottom" style="position:relative">
-                        <span class="badge-estoque">Restam: ${p.estoque}</span>
-                        <img src="${p.img}" style="width:100%; height:180px; object-fit:cover; border-radius: 16px 16px 0 0">
-                        <div class="padding">
-                            <p class="bold" style="margin:0; font-size:1.1rem">${p.nome}</p>
-                            <div class="row align-center space-between" style="margin-top:10px">
-                                <span class="green-text bold" style="font-size:1.2rem">R$ ${p.preco}</span>
-                                <button class="circle transparent red-text" onclick="deletarProduto('${p.nome}')"><i>delete</i></button>
+                div.innerHTML = res.produtos.map(p => `
+                    <div class="s12 m6 l4">
+                        <div class="card no-padding shadow">
+                            <img src="${p.img}" class="card-img">
+                            <div class="padding">
+                                <h6 class="bold">${p.nome}</h6>
+                                <div class="row">
+                                    <span class="max green-text bold">R$ ${p.preco}</span>
+                                    <small>Qtd: ${p.estoque}</small>
+                                </div>
+                                <button class="small border error full-width margin-top" onclick="deletar('${p.nome}')">Excluir</button>
                             </div>
                         </div>
                     </div>
-                </div>`).join('');
+                `).join('');
+            } catch (e) {
+                div.innerHTML = '<p class="center-align red-text">Erro ao carregar. Tente recarregar a página.</p>';
+            }
+        }
+
+        // --- TRUQUE: COMPRESSOR DE IMAGEM (Evita travamentos) ---
+        function processarImagem() {
+            const file = document.getElementById('p-file').files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 600; // Reduz para 600px (Leve e rápido)
+                    const scaleSize = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scaleSize;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    // Salva comprimido (JPEG 0.7)
+                    document.getElementById('p-img-base64').value = canvas.toDataURL('image/jpeg', 0.7);
+                };
+            };
         }
 
         async function salvarProduto() {
-            const btn = document.getElementById('btn-salvar'); btn.disabled = true; btn.innerText = "Salvando...";
+            const user = JSON.parse(localStorage.getItem('usuario'));
+            const btn = document.getElementById('btn-salvar');
+            
             const dados = {
                 action: "cadastrarProduto",
-                dono: localStorage.getItem('vendedor'),
+                dono: user.email,
                 nome: document.getElementById('p-nome').value,
                 preco: document.getElementById('p-preco').value,
                 estoque: document.getElementById('p-estoque').value,
-                img: document.getElementById('p-img').value,
-                cat: localStorage.getItem('lojaNicho')
+                img: document.getElementById('p-img-base64').value,
+                cat: user.nicho
             };
-            await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados) });
-            alert("Produto Cadastrado!");
-            btn.disabled = false; btn.innerText = "Publicar Agora";
+
+            if(!dados.nome || !dados.preco || !dados.img) return alert("Preencha nome, preço e foto!");
+
+            btn.disabled = true; btn.innerText = "Enviando...";
             
-            // Limpar form
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados) });
+            
+            alert("Sucesso!");
+            btn.disabled = false; btn.innerText = "Publicar";
+            // Limpa form e recarrega
             document.getElementById('p-nome').value = "";
             document.getElementById('p-preco').value = "";
-            document.getElementById('p-img').value = "";
-            carregarMeusProdutos();
+            document.getElementById('p-file').value = "";
+            carregarProdutos();
         }
 
-        async function atualizarPerfil() {
-            const dados = {
-                action: "salvarPerfil",
-                email: localStorage.getItem('vendedor'),
-                nomeLoja: document.getElementById('edit-nome-loja').value,
-                nicho: document.getElementById('edit-nicho').value
-            };
-            await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados) });
-            
-            localStorage.setItem('lojaNome', dados.nomeLoja);
-            localStorage.setItem('lojaNicho', dados.nicho);
-            document.getElementById('display-loja').innerText = dados.nomeLoja;
-            alert("Perfil Atualizado!");
-        }
-
-        async function deletarProduto(nome) {
-            if(!confirm(`Tem certeza que deseja apagar "${nome}"?`)) return;
-            const container = document.getElementById('meus-produtos'); container.style.opacity = "0.5";
+        async function deletar(nome) {
+            if(!confirm("Apagar este produto?")) return;
+            const user = JSON.parse(localStorage.getItem('usuario'));
             await fetch(API_URL, { method: 'POST', body: JSON.stringify({
-                action: "deletarProduto", 
-                dono: localStorage.getItem('vendedor'), 
-                nome: nome
+                action: "deletarProduto", dono: user.email, nome: nome
             })});
-            container.style.opacity = "1";
-            carregarMeusProdutos();
+            carregarProdutos();
         }
 
-        function logout() { localStorage.clear(); location.reload(); }
-        function copiarLink() { navigator.clipboard.writeText(document.getElementById('share-link').innerText); alert("Link Copiado!"); }
-        
-        window.onload = () => { if(localStorage.getItem('vendedor')) abrirPainel(); };
+        function sair() { localStorage.clear(); location.reload(); }
+        function copiarLink() { navigator.clipboard.writeText(document.getElementById('link-vendas').innerText); alert("Link copiado!"); }
+
+        // Mantém logado se já entrou antes
+        if(localStorage.getItem('usuario')) iniciarPainel();
     </script>
 </body>
 </html>
