@@ -3,89 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS Catálogo Pro</title>
+    <title>SaaS Control Panel</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
-    <style>
-        #main-app { display: none; } /* Esconde o app até logar */
-        .login-container { height: 100vh; display: flex; align-items: center; justify-content: center; }
-    </style>
 </head>
 <body>
-
-    <div id="login-screen" class="login-container">
-        <article class="padding">
-            <h5 class="center-align">Acesse seu Catálogo</h5>
-            <div class="field label border round margin">
-                <input type="email" id="email">
-                <label>E-mail</label>
-            </div>
-            <div class="field label border round margin">
-                <input type="password" id="senha">
-                <label>Senha</label>
-            </div>
-            <button class="fill primary full-width" onclick="handleLogin()">Entrar</button>
-        </article>
+    <div id="login-screen" class="padding center-align">
+        <h4>🔐 Acesso Lojista</h4>
+        <div class="field label border"><input type="email" id="email"><label>Email</label></div>
+        <div class="field label border"><input type="password" id="senha"><label>Senha</label></div>
+        <button class="fill primary full-width" onclick="handleLogin()">Entrar</button>
     </div>
 
-    <main id="main-app">
-        <header class="primary shadow">
-            <nav class="padding">
-                <h6 id="welcome" class="max">Bem-vindo</h6>
-                <button class="circle transparent" onclick="logout()"><i>logout</i></button>
-            </nav>
-        </header>
-        <div class="grid padding" id="lista"></div>
+    <main id="admin-panel" style="display:none">
+        <header class="primary shadow"><nav class="padding"><h6 class="max">Meu Painel</h6><button onclick="logout()">Sair</button></nav></header>
+        
+        <div class="padding">
+            <div class="card border padding margin">
+                <h6>🔗 Seu Link para Clientes:</h6>
+                <p id="share-link" class="blue-text" style="word-break: break-all;"></p>
+                <button class="border small" onclick="copiarLink()">Copiar Link</button>
+            </div>
+
+            <h5>➕ Novo Produto</h5>
+            <div class="field label border"><input type="text" id="p-nome"><label>Nome</label></div>
+            <div class="field label border"><input type="number" id="p-preco"><label>Preço</label></div>
+            <div class="field label border"><input type="text" id="p-img"><label>Link da Foto</label></div>
+            <button class="fill green full-width" onclick="salvarProduto()">Cadastrar na Planilha</button>
+            
+            <hr>
+            <h5>📦 Meus Produtos</h5>
+            <div id="meus-produtos"></div>
+        </div>
     </main>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbyDKTT2FrGvr8fKCp70-4y96Bz39X3DMOwS0df0RZY8YKdp-9bVwZdRA7OI2Tm4C3vK/exec";
+        const API_URL = "SUA_NOVA_URL_AQUI";
 
         async function handleLogin() {
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
-            
-            const res = await fetch(`${API_URL}?action=login&email=${email}&senha=${senha}`, { redirect: "follow" });
+            const res = await fetch(`${API_URL}?action=login&email=${email}&senha=${senha}`, {redirect: "follow"});
             const user = await res.json();
-
-            if (user.auth) {
-                localStorage.setItem('vendedor_email', user.email);
-                localStorage.setItem('vendedor_nome', user.nome);
-                abrirApp();
-            } else {
-                alert("Dados incorretos!");
-            }
+            if(user.auth) {
+                localStorage.setItem('vendedor', user.email);
+                abrirPainel();
+            } else { alert("Erro!"); }
         }
 
-        function abrirApp() {
+        function abrirPainel() {
             document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            document.getElementById('welcome').innerText = "Loja: " + localStorage.getItem('vendedor_nome');
-            carregarProdutos();
+            document.getElementById('admin-panel').style.display = 'block';
+            // Macete: Gera o link automático da Vercel para o cliente dele
+            const link = `${window.location.origin}/view.html?loja=${localStorage.getItem('vendedor')}`;
+            document.getElementById('share-link').innerText = link;
+            carregarMeusProdutos();
         }
 
-        async function carregarProdutos() {
-            const email = localStorage.getItem('vendedor_email');
-            const res = await fetch(`${API_URL}?action=getProdutos&dono=${email}`, { redirect: "follow" });
-            const produtos = await res.json();
-            
-            document.getElementById('lista').innerHTML = produtos.map(p => `
-                <div class="s12 m6 l4">
-                    <div class="card shadow">
-                        <img src="${p.img}" class="responsive" style="height:150px; object-fit:cover">
-                        <div class="padding">
-                            <h6 class="bold">${p.nome}</h6>
-                            <p class="green-text"><b>R$ ${p.preco.toFixed(2)}</b></p>
-                            <button class="fill green full-width">Ver no Zap</button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+        async function salvarProduto() {
+            const btn = event.target; btn.disabled = true;
+            const dados = {
+                action: "cadastrarProduto",
+                dono: localStorage.getItem('vendedor'),
+                nome: document.getElementById('p-nome').value,
+                preco: document.getElementById('p-preco').value,
+                img: document.getElementById('p-img').value,
+                cat: "Geral"
+            };
+
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados) });
+            alert("Sucesso!");
+            location.reload();
         }
 
-        function logout() { localStorage.clear(); location.reload(); }
+        function copiarLink() {
+            navigator.clipboard.writeText(document.getElementById('share-link').innerText);
+            alert("Link copiado!");
+        }
 
-        // Mantém logado se já tiver entrado antes
-        window.onload = () => { if(localStorage.getItem('vendedor_email')) abrirApp(); };
+        window.onload = () => { if(localStorage.getItem('vendedor')) abrirPainel(); };
     </script>
 </body>
 </html>
