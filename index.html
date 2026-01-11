@@ -3,75 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Digital SaaS</title>
+    <title>Catálogo Zap SaaS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
     <style>
-        body { background: #f4f7f6; }
-        .product-card { border-radius: 15px; overflow: hidden; margin-bottom: 20px; transition: 0.3s; }
-        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .status-tag { position: absolute; top: 10px; right: 10px; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .available { background: #d4edda; color: #155724; }
-        .out-of-stock { background: #f8d7da; color: #721c24; filter: grayscale(1); }
+        body { background: #f0f2f5; padding-bottom: 80px; }
+        .product-card { border-radius: 12px; overflow: hidden; background: white; transition: 0.3s; }
+        .img-container { height: 200px; background-size: cover; background-position: center; background-color: #eee; }
+        .chip { background: #25D366; color: white; font-size: 12px; }
     </style>
 </head>
-<body class="light">
-    <header class="primary p-2 shadow">
+<body>
+    <header class="primary shadow">
         <nav class="center-align">
-            <h5 class="white-text">🛍️ Catálogo Digital</h5>
+            <h5 class="white-text">🛍️ Catálogo de Vendas</h5>
         </nav>
     </header>
 
     <main class="responsive p-2" id="app">
         <div class="center-align m-4" id="loader">
             <progress class="circle large"></progress>
-            <p>Carregando produtos...</p>
+            <p>Sincronizando com a Planilha...</p>
         </div>
-        <div class="grid" id="product-list"></div>
+        <div class="grid" id="lista-produtos"></div>
     </main>
 
     <script>
-        // O URL do seu Apps Script (seu backend)
-        const API_URL = "https://script.google.com/macros/s/AKfycbxH-D5bbeewK5KFo5gVwRMtdBzHo6SQ4uh4hgLc7UEtnsCEy46gKfetx-2wEno5c6w/exec";
+        // SUA NOVA URL ATUALIZADA
+        const API_URL = "https://script.google.com/macros/s/AKfycbysE5Bi71WOorBpHrqTruFqsM6D6KQLyMNdx5HqAeK_0E6Q5DvWAYsIc-rJr7llpGpe/exec";
 
-        async function fetchProducts() {
+        async function carregar() {
             try {
-                const response = await fetch(API_URL);
-                const data = await response.json();
-                render(data);
-            } catch (error) {
-                document.getElementById('app').innerHTML = "<h5>Erro ao carregar dados. Verifique a autorização do Script.</h5>";
-            }
-        }
+                // Macete: O Google Script exige seguir o redirecionamento (follow)
+                const response = await fetch(API_URL, { redirect: "follow" });
+                const produtos = await response.json();
+                
+                const lista = document.getElementById('lista-produtos');
+                document.getElementById('loader').style.display = 'none';
 
-        function render(products) {
-            const list = document.getElementById('product-list');
-            document.getElementById('loader').style.display = 'none';
-            
-            list.innerHTML = products.map(p => {
-                const isOut = p.status.toLowerCase() === 'esgotado';
-                return `
+                if (produtos.length === 0) {
+                    document.getElementById('app').innerHTML = "<p class='center-align'>Nenhum produto cadastrado na planilha.</p>";
+                    return;
+                }
+
+                lista.innerHTML = produtos.map(p => `
                     <div class="s12 m6 l4">
-                        <div class="card product-card ${isOut ? 'out-of-stock' : ''}">
-                            <img src="${p.img}" class="responsive" style="height:250px; object-fit:cover">
+                        <div class="card product-card">
+                            <div class="img-container" style="background-image: url('${p.img}')"></div>
                             <div class="padding">
-                                <div class="status-tag ${isOut ? 'out-of-stock' : 'available'}">${p.status}</div>
-                                <h5>${p.nome}</h5>
-                                <p class="secondary-text">${p.cat}</p>
-                                <h4 class="green-text">R$ ${p.preco.toFixed(2)}</h4>
-                                ${isOut ? '' : `<button class="fill primary full-width" onclick="order('${p.nome}')">Pedir no WhatsApp</button>`}
+                                <div class="nav">
+                                    <div class="max">
+                                        <h6 style="margin:0">${p.nome}</h6>
+                                        <span class="green-text"><b>R$ ${p.preco.toFixed(2)}</b></span>
+                                    </div>
+                                    <span class="chip">${p.cat}</span>
+                                </div>
+                                <p class="small-text">${p.status}</p>
+                                <button class="fill green full-width" onclick="pedir('${p.nome}')">
+                                    Pedir no WhatsApp
+                                </button>
                             </div>
                         </div>
                     </div>
-                `;
-            }).join('');
+                `).join('');
+            } catch (error) {
+                document.getElementById('app').innerHTML = `
+                    <div class='center-align p-4'>
+                        <h5>⚠️ Erro de Conexão</h5>
+                        <p>Verifique se você autorizou o Script e se a planilha tem dados.</p>
+                        <button class='border' onclick='location.reload()'>Tentar Denovo</button>
+                    </div>`;
+            }
         }
 
-        function order(name) {
-            const msg = encodeURIComponent(`Olá! Gostaria de comprar o produto: ${name}`);
-            window.open(`https://wa.me/5511999999999?text=${msg}`);
+        function pedir(nome) {
+            const fone = "5511999999999"; // O cliente muda isso na planilha depois
+            const msg = encodeURIComponent("Olá! Vi o produto *" + nome + "* no catálogo e gostaria de mais informações.");
+            window.open("https://wa.me/" + fone + "?text=" + msg);
         }
 
-        window.onload = fetchProducts;
+        window.onload = carregar;
     </script>
 </body>
 </html>
