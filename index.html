@@ -3,84 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Zap SaaS</title>
+    <title>Catálogo Zap</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
-    <style>
-        body { background: #f0f2f5; padding-bottom: 80px; }
-        .product-card { border-radius: 12px; overflow: hidden; background: white; transition: 0.3s; }
-        .img-container { height: 200px; background-size: cover; background-position: center; background-color: #eee; }
-        .chip { background: #25D366; color: white; font-size: 12px; }
-    </style>
 </head>
-<body>
+<body class="light">
     <header class="primary shadow">
-        <nav class="center-align">
-            <h5 class="white-text">🛍️ Catálogo de Vendas</h5>
-        </nav>
+        <nav class="center-align"><h5 class="white-text">🛍️ Meu Catálogo</h5></nav>
     </header>
 
     <main class="responsive p-2" id="app">
-        <div class="center-align m-4" id="loader">
-            <progress class="circle large"></progress>
-            <p>Sincronizando com a Planilha...</p>
-        </div>
-        <div class="grid" id="lista-produtos"></div>
+        <div class="grid" id="lista"></div>
     </main>
 
     <script>
-        // SUA NOVA URL ATUALIZADA
         const API_URL = "https://script.google.com/macros/s/AKfycbysE5Bi71WOorBpHrqTruFqsM6D6KQLyMNdx5HqAeK_0E6Q5DvWAYsIc-rJr7llpGpe/exec";
 
         async function carregar() {
             try {
-                // Macete: O Google Script exige seguir o redirecionamento (follow)
-                const response = await fetch(API_URL, { redirect: "follow" });
+                // O segredo está no 'mode: cors' e no redirecionamento
+                const response = await fetch(API_URL);
                 const produtos = await response.json();
                 
-                const lista = document.getElementById('lista-produtos');
-                document.getElementById('loader').style.display = 'none';
-
-                if (produtos.length === 0) {
-                    document.getElementById('app').innerHTML = "<p class='center-align'>Nenhum produto cadastrado na planilha.</p>";
-                    return;
-                }
-
+                const lista = document.getElementById('lista');
                 lista.innerHTML = produtos.map(p => `
                     <div class="s12 m6 l4">
-                        <div class="card product-card">
-                            <div class="img-container" style="background-image: url('${p.img}')"></div>
+                        <div class="card">
+                            <img src="${p.img || 'https://via.placeholder.com/300x200?text=Sem+Foto'}" class="responsive" style="height:200px; object-fit:cover">
                             <div class="padding">
-                                <div class="nav">
-                                    <div class="max">
-                                        <h6 style="margin:0">${p.nome}</h6>
-                                        <span class="green-text"><b>R$ ${p.preco.toFixed(2)}</b></span>
-                                    </div>
-                                    <span class="chip">${p.cat}</span>
-                                </div>
-                                <p class="small-text">${p.status}</p>
-                                <button class="fill green full-width" onclick="pedir('${p.nome}')">
-                                    Pedir no WhatsApp
-                                </button>
+                                <h6>${p.nome}</h6>
+                                <p class="green-text"><b>R$ ${parseFloat(p.preco).toFixed(2)}</b></p>
+                                <button class="fill green full-width" onclick="alert('Pedido enviado!')">Pedir no Zap</button>
                             </div>
                         </div>
                     </div>
                 `).join('');
-            } catch (error) {
-                document.getElementById('app').innerHTML = `
-                    <div class='center-align p-4'>
-                        <h5>⚠️ Erro de Conexão</h5>
-                        <p>Verifique se você autorizou o Script e se a planilha tem dados.</p>
-                        <button class='border' onclick='location.reload()'>Tentar Denovo</button>
-                    </div>`;
+            } catch (e) {
+                console.error(e);
+                document.getElementById('app').innerHTML = "<h5>Erro ao conectar com a planilha. Verifique se o Script está publicado como 'Qualquer Pessoa'.</h5>";
             }
         }
-
-        function pedir(nome) {
-            const fone = "5511999999999"; // O cliente muda isso na planilha depois
-            const msg = encodeURIComponent("Olá! Vi o produto *" + nome + "* no catálogo e gostaria de mais informações.");
-            window.open("https://wa.me/" + fone + "?text=" + msg);
-        }
-
         window.onload = carregar;
     </script>
 </body>
