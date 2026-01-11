@@ -3,60 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel SaaS Profissional</title>
+    <title>Painel SaaS Pro</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js"></script>
     <style>
-        body { background: #f4f7f6; }
-        .card { border-radius: 16px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .preview-img { width: 100%; height: 150px; object-fit: cover; border-radius: 12px; }
+        body { background: #f4f7f6; padding-bottom: 50px; }
+        .card { border-radius: 16px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; }
+        .badge-estoque { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
     </style>
 </head>
 <body>
-
     <div id="login-screen" class="padding center-align container" style="max-width:400px; margin-top:10vh">
         <h4>Acesso Lojista</h4>
-        <div class="field label border round"><input type="email" id="email"><label>E-mail</label></div>
+        <div class="field label border round"><input type="email" id="email"><label>Email</label></div>
         <div class="field label border round"><input type="password" id="senha"><label>Senha</label></div>
         <button class="fill primary full-width round" onclick="handleLogin()">Entrar</button>
     </div>
 
     <main id="admin-panel" style="display:none">
-        <header class="primary shadow">
-            <nav class="padding">
-                <button class="circle transparent" onclick="logout()"><i>logout</i></button>
-                <h6 class="max center-align bold" id="display-loja">Painel</h6>
-            </nav>
-        </header>
+        <header class="primary shadow"><nav class="padding"><button class="circle transparent" onclick="logout()"><i>logout</i></button><h6 class="max center-align bold" id="display-loja">Painel</h6></nav></header>
 
         <div class="padding responsive">
-            <details class="card white padding margin">
-                <summary class="bold">⚙️ Configurar Meu Negócio</summary>
-                <div class="padding">
-                    <div class="field label border round small"><input type="text" id="edit-nome-loja"><label>Nome da Loja</label></div>
-                    <div class="field label border round small">
-                        <select id="edit-nicho">
-                            <option value="Geral">Geral</option>
-                            <option value="Perfumaria">Perfumaria</option>
-                            <option value="Moda">Moda</option>
-                        </select>
-                        <label>Nicho</label>
-                    </div>
-                    <button class="fill primary round small" onclick="atualizarPerfil()">Salvar Perfil</button>
-                </div>
-            </details>
+            <div class="card primary-container padding margin center-align">
+                <p class="small">Seu link de vendas:</p>
+                <h6 id="share-link" class="bold blue-text" style="word-break: break-all;">Link...</h6>
+                <button class="border small round" onclick="copiarLink()">Copiar Link</button>
+            </div>
 
-            <div class="card white padding margin">
+            <article class="card white padding margin">
                 <h5>➕ Novo Produto</h5>
                 <div class="field label border round"><input type="text" id="p-nome"><label>Nome</label></div>
-                <div class="field label border round"><input type="text" id="p-preco" placeholder="0,00"><label>Preço</label></div>
+                <div class="grid">
+                    <div class="s6 field label border round"><input type="text" id="p-preco" placeholder="0,00"><label>Preço</label></div>
+                    <div class="s6 field label border round"><input type="number" id="p-estoque" value="10"><label>Estoque Inicial</label></div>
+                </div>
                 <div class="field label border round">
                     <input type="file" id="p-file" accept="image/*" capture="environment" onchange="converterFoto()">
                     <label>Foto (Câmera ou Galeria)</label>
                     <input type="hidden" id="p-img">
                 </div>
-                <button id="btn-salvar" class="fill green full-width round" onclick="salvarProduto()">Salvar Produto</button>
-            </div>
+                <button id="btn-salvar" class="fill green full-width round" onclick="salvarProduto()">Cadastrar Produto</button>
+            </article>
 
             <h5>📦 Meus Itens</h5>
             <div id="meus-produtos" class="grid padding"></div>
@@ -64,7 +51,7 @@
     </main>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycby4Wuv60wJm35kTJpPQk9phzjDKHQcFGRFybs50g5QGtZ6DazRhmS9LC76LHpEwK2M/exec";
+        const API_URL = "SUA_URL_AQUI";
 
         function converterFoto() {
             const file = document.getElementById('p-file').files[0];
@@ -87,6 +74,7 @@
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
             document.getElementById('display-loja').innerText = localStorage.getItem('lojaNome');
+            document.getElementById('share-link').innerText = `${window.location.href.replace('index.html', 'view.html')}?loja=${localStorage.getItem('vendedor')}`;
             carregarMeusProdutos();
         }
 
@@ -96,16 +84,17 @@
             const res = await fetch(`${API_URL}?action=getProdutos&dono=${localStorage.getItem('vendedor')}`, {redirect: "follow"});
             const dados = await res.json();
             
-            // Correção: acessa a propriedade .produtos do objeto retornado
-            const lista = dados.produtos || [];
-
-            container.innerHTML = lista.map(p => `
+            container.innerHTML = (dados.produtos || []).map(p => `
                 <div class="s12 m6 l4">
-                    <div class="card white no-padding shadow margin-bottom">
-                        <img src="${p.img}" class="preview-img">
+                    <div class="card white no-padding shadow margin-bottom" style="position:relative">
+                        <span class="badge-estoque">Estoque: ${p.estoque}</span>
+                        <img src="${p.img}" style="width:100%; height:150px; object-fit:cover">
                         <div class="padding">
                             <p class="bold" style="margin:0">${p.nome}</p>
-                            <span class="green-text bold">R$ ${p.preco}</span>
+                            <div class="nav">
+                                <span class="green-text bold max">R$ ${p.preco}</span>
+                                <button class="circle transparent red-text" onclick="deletarProduto('${p.nome}')"><i>delete</i></button>
+                            </div>
                         </div>
                     </div>
                 </div>`).join('');
@@ -119,16 +108,30 @@
                 dono: localStorage.getItem('vendedor'),
                 nome: document.getElementById('p-nome').value,
                 preco: document.getElementById('p-preco').value,
+                estoque: document.getElementById('p-estoque').value,
                 img: document.getElementById('p-img').value,
                 cat: "Geral"
             };
             await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados) });
-            alert("Sucesso!");
+            alert("Salvo!");
             btn.disabled = false;
             carregarMeusProdutos();
         }
 
+        async function deletarProduto(nome) {
+            if(!confirm("Deseja excluir este produto?")) return;
+            const dados = {
+                action: "deletarProduto",
+                dono: localStorage.getItem('vendedor'),
+                nome: nome
+            };
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados) });
+            alert("Excluído!");
+            carregarMeusProdutos();
+        }
+
         function logout() { localStorage.clear(); location.reload(); }
+        function copiarLink() { navigator.clipboard.writeText(document.getElementById('share-link').innerText); alert("Copiado!"); }
         window.onload = () => { if(localStorage.getItem('vendedor')) abrirPainel(); };
     </script>
 </body>
