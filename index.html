@@ -58,6 +58,37 @@
             document.getElementById('share-link').innerText = link;
             carregarMeusProdutos();
         }
+async function carregarMeusProdutos() {
+    const dono = localStorage.getItem('vendedor');
+    const container = document.getElementById('meus-produtos');
+    
+    // Mostra um carregando simples
+    container.innerHTML = "<p>Carregando seus produtos...</p>";
+
+    try {
+        const res = await fetch(`${API_URL}?action=getProdutos&dono=${dono}`, { redirect: "follow" });
+        const produtos = await res.json();
+
+        if (produtos.length === 0) {
+            container.innerHTML = "<p>Você ainda não tem produtos cadastrados.</p>";
+            return;
+        }
+
+        container.innerHTML = produtos.map(p => `
+            <div class="card border margin padding">
+                <div class="nav">
+                    <img src="${p.img}" width="50" height="50" style="object-fit:cover; border-radius:8px">
+                    <div class="max">
+                        <h6>${p.nome}</h6>
+                        <p class="green-text">R$ ${parseFloat(p.preco).toFixed(2)}</p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } catch (e) {
+        container.innerHTML = "<p>Erro ao carregar produtos.</p>";
+    }
+}
 
         async function salvarProduto() {
             const btn = event.target; btn.disabled = true;
