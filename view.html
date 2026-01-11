@@ -3,42 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Produtos</title>
+    <title>Vitrine Online</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
+    <style>
+        .product-card { border-radius: 15px; overflow: hidden; background: white; border: none; }
+        .btn-zap { background: #25D366 !important; color: white !important; font-weight: bold; }
+    </style>
 </head>
-<body class="light">
-    <header class="primary shadow"><nav class="center-align"><h5>🛍️ Vitrine Online</h5></nav></header>
+<body>
+    <header class="primary shadow"><nav class="center-align"><h5>🛍️ Catálogo Digital</h5></nav></header>
 
     <main class="responsive p-2">
-        <div class="grid" id="lista-cliente"></div>
+        <div class="grid" id="lista"></div>
     </main>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwIxLFaCaB3oH2w3O2OO-FzQgje_VNk86r42DuMzxCaKZeAryfN-5OI9ZIs-WmVCBVr/exec";
-        
-        // Macete: Pega o e-mail da URL (?loja=email@teste.com)
+        const API_URL = "SUA_URL_DO_GOOGLE_SCRIPT_AQUI";
         const urlParams = new URLSearchParams(window.location.search);
         const lojaEmail = urlParams.get('loja');
 
-        async function carregarVitrine() {
-            const res = await fetch(`${API_URL}?action=getProdutos&dono=${lojaEmail}`, {redirect: "follow"});
-            const produtos = await res.json();
-            const lista = document.getElementById('lista-cliente');
+        async function carregar() {
+            try {
+                const res = await fetch(`${API_URL}?action=getProdutos&dono=${lojaEmail}`, {redirect: "follow"});
+                const dados = await res.json();
+                
+                const produtos = dados.produtos;
+                const whatsapp = dados.whatsapp; // Número dinâmico da planilha
 
-            lista.innerHTML = produtos.map(p => `
-                <div class="s12 m6 l4">
-                    <div class="card shadow">
-                        <img src="${p.img}" class="responsive" style="height:200px; object-fit:cover">
-                        <div class="padding">
-                            <h6>${p.nome}</h6>
-                            <h5 class="green-text">R$ ${parseFloat(p.preco).toFixed(2)}</h5>
-                            <button class="fill green full-width">Pedir no WhatsApp</button>
+                document.getElementById('lista').innerHTML = produtos.map(p => {
+                    const msg = encodeURIComponent(`Olá! Quero pedir: ${p.nome} (R$ ${parseFloat(p.preco).toFixed(2)})`);
+                    const linkZap = `https://wa.me/${whatsapp}?text=${msg}`;
+                    
+                    return `
+                    <div class="s12 m6 l4">
+                        <div class="card product-card shadow">
+                            <img src="${p.img || 'https://via.placeholder.com/400'}" class="responsive" style="height:200px; object-fit:cover">
+                            <div class="padding">
+                                <h6 class="bold">${p.nome}</h6>
+                                <h5 class="green-text">R$ ${parseFloat(p.preco).toFixed(2)}</h5>
+                                <a href="${linkZap}" target="_blank" class="button fill btn-zap full-width">
+                                    <i>send</i> Pedir no WhatsApp
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            `).join('');
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                console.error("Erro ao carregar vitrine");
+            }
         }
-        window.onload = carregarVitrine;
+        window.onload = carregar;
     </script>
 </body>
 </html>
