@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS Control Panel</title>
+    <title>Painel Administrativo</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
 </head>
 <body>
@@ -15,7 +15,7 @@
     </div>
 
     <main id="admin-panel" style="display:none">
-        <header class="primary shadow"><nav class="padding"><h6 class="max">Meu Painel</h6><button onclick="logout()">Sair</button></nav></header>
+        <header class="primary shadow"><nav class="padding"><h6 class="max">Meu Painel</h6><button class="chip" onclick="logout()">Sair</button></nav></header>
         
         <div class="padding">
             <div class="card border padding margin">
@@ -27,17 +27,31 @@
             <h5>➕ Novo Produto</h5>
             <div class="field label border"><input type="text" id="p-nome"><label>Nome</label></div>
             <div class="field label border"><input type="number" id="p-preco"><label>Preço</label></div>
-            <div class="field label border"><input type="text" id="p-img"><label>Link da Foto</label></div>
-            <button class="fill green full-width" onclick="salvarProduto()">Cadastrar na Planilha</button>
+            
+            <div class="field label border">
+                <input type="file" id="p-file" accept="image/*" capture="environment" onchange="converterFoto()">
+                <label>Foto (Câmera ou Galeria)</label>
+                <input type="hidden" id="p-img">
+            </div>
+            
+            <button id="btn-salvar" class="fill green full-width" onclick="salvarProduto()">Cadastrar na Planilha</button>
             
             <hr>
             <h5>📦 Meus Produtos</h5>
-            <div id="meus-produtos"></div>
+            <div id="meus-produtos" class="grid"></div>
         </div>
     </main>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwrLu_HlF_VRrokiKPbFrMUQzaG1vl_HkXzmZ5HN1GZN4RgIzmYq3U6HXI1L1j3EcFC/exec";
+        const API_URL = "SUA_URL_DO_SCRIPT_AQUI";
+
+        // MACETE: Converte imagem em texto para salvar na planilha
+        function converterFoto() {
+            const file = document.getElementById('p-file').files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => document.getElementById('p-img').value = reader.result;
+            if (file) reader.readAsDataURL(file);
+        }
 
         async function handleLogin() {
             const email = document.getElementById('email').value;
@@ -53,45 +67,29 @@
         function abrirPainel() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
-            // Macete: Gera o link automático da Vercel para o cliente dele
-            const link = `${window.location.origin}/view.html?loja=${localStorage.getItem('vendedor')}`;
-            document.getElementById('share-link').innerText = link;
+            document.getElementById('share-link').innerText = `${window.location.origin}/view.html?loja=${localStorage.getItem('vendedor')}`;
             carregarMeusProdutos();
         }
-async function carregarMeusProdutos() {
-    const dono = localStorage.getItem('vendedor');
-    const container = document.getElementById('meus-produtos');
-    
-    // Mostra um carregando simples
-    container.innerHTML = "<p>Carregando seus produtos...</p>";
 
-    try {
-        const res = await fetch(`${API_URL}?action=getProdutos&dono=${dono}`, { redirect: "follow" });
-        const produtos = await res.json();
-
-        if (produtos.length === 0) {
-            container.innerHTML = "<p>Você ainda não tem produtos cadastrados.</p>";
-            return;
+        async function carregarMeusProdutos() {
+            const container = document.getElementById('meus-produtos');
+            container.innerHTML = "Carregando...";
+            const res = await fetch(`${API_URL}?action=getProdutos&dono=${localStorage.getItem('vendedor')}`, {redirect: "follow"});
+            const dados = await res.json();
+            const produtos = dados.produtos || [];
+            
+            container.innerHTML = produtos.map(p => `
+                <div class="s12 m6 card border padding shadow">
+                    <div class="nav">
+                        <img src="${p.img}" width="50" height="50" class="circle">
+                        <div class="max"><h6>${p.nome}</h6><p>R$ ${p.preco}</p></div>
+                    </div>
+                </div>`).join('');
         }
 
-        container.innerHTML = produtos.map(p => `
-            <div class="card border margin padding">
-                <div class="nav">
-                    <img src="${p.img}" width="50" height="50" style="object-fit:cover; border-radius:8px">
-                    <div class="max">
-                        <h6>${p.nome}</h6>
-                        <p class="green-text">R$ ${parseFloat(p.preco).toFixed(2)}</p>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    } catch (e) {
-        container.innerHTML = "<p>Erro ao carregar produtos.</p>";
-    }
-}
-
         async function salvarProduto() {
-            const btn = event.target; btn.disabled = true;
+            const btn = document.getElementById('btn-salvar');
+            btn.disabled = true;
             const dados = {
                 action: "cadastrarProduto",
                 dono: localStorage.getItem('vendedor'),
@@ -100,17 +98,14 @@ async function carregarMeusProdutos() {
                 img: document.getElementById('p-img').value,
                 cat: "Geral"
             };
-
             await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados) });
             alert("Sucesso!");
-            location.reload();
+            btn.disabled = false;
+            carregarMeusProdutos(); // Atualiza a lista sem recarregar a página
         }
 
-        function copiarLink() {
-            navigator.clipboard.writeText(document.getElementById('share-link').innerText);
-            alert("Link copiado!");
-        }
-
+        function logout() { localStorage.clear(); location.reload(); }
+        function copiarLink() { navigator.clipboard.writeText(document.getElementById('share-link').innerText); alert("Link copiado!"); }
         window.onload = () => { if(localStorage.getItem('vendedor')) abrirPainel(); };
     </script>
 </body>
