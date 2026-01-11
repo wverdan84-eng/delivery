@@ -3,64 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel SaaS Pro</title>
+    <title>Painel Administrativo Pro</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js"></script>
     <style>
-        body { background: #f0f2f5; }
-        .card { border-radius: 20px; border: none; }
+        body { background: #f4f7f6; }
+        .card { border-radius: 16px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        #meus-produtos img { border-radius: 12px; object-fit: cover; }
     </style>
 </head>
 <body>
-    <div id="login-screen" class="padding center-align" style="max-width:400px; margin: 10vh auto;">
-        <h4>🚀 Meu Negócio</h4>
-        <div class="field label border round"><input type="email" id="email"><label>Email</label></div>
+
+    <div id="login-screen" class="padding center-align container" style="max-width:400px; margin-top:10vh">
+        <img src="https://cdn-icons-png.flaticon.com/512/1162/1162499.png" width="80" class="margin">
+        <h4>Acesso ao Painel</h4>
+        <div class="field label border round"><input type="email" id="email"><label>E-mail</label></div>
         <div class="field label border round"><input type="password" id="senha"><label>Senha</label></div>
         <button class="fill primary full-width round" onclick="handleLogin()">Entrar</button>
     </div>
 
     <main id="admin-panel" style="display:none">
-        <header class="primary shadow"><nav class="padding"><h6 class="max bold" id="display-loja">Painel</h6><button class="circle transparent" onclick="logout()"><i>logout</i></button></nav></header>
+        <header class="primary shadow">
+            <nav class="padding">
+                <button class="circle transparent" onclick="logout()"><i>logout</i></button>
+                <h6 class="max center-align bold" id="display-loja">Carregando...</h6>
+            </nav>
+        </header>
+
         <div class="padding responsive">
             
-            <div class="card white padding margin shadow">
-                <h6>🔗 Link do seu Catálogo:</h6>
-                <p id="share-link" class="blue-text bold" style="word-break: break-all;"></p>
+            <article class="card white padding margin shadow">
+                <details>
+                    <summary class="bold primary-text">✏️ Editar Meu Negócio / Nicho</summary>
+                    <div class="padding">
+                        <p class="small">Personalize como os clientes verão sua marca.</p>
+                        <div class="field label border round">
+                            <input type="text" id="edit-nome-loja">
+                            <label>Nome do Negócio (Ex: Perfumes do João)</label>
+                        </div>
+                        <div class="field label border round">
+                            <select id="edit-nicho">
+                                <option value="Perfumaria">Perfumaria</option>
+                                <option value="Moda">Moda/Roupas</option>
+                                <option value="Alimentação">Alimentação</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                            <label>Nicho do Negócio</label>
+                        </div>
+                        <button id="btn-perfil" class="fill primary round small" onclick="atualizarPerfil()">Salvar Alterações</button>
+                    </div>
+                </details>
+            </article>
+
+            <div class="card primary-container padding margin center-align">
+                <p class="small">Seu link de vendas:</p>
+                <h6 id="share-link" class="bold blue-text" style="word-break: break-all;">Link...</h6>
                 <button class="border small round" onclick="copiarLink()">Copiar Link</button>
             </div>
 
             <article class="card white padding margin shadow">
-                <h5>➕ Cadastrar Item</h5>
-                <div class="field label border round"><input type="text" id="p-nome"><label>Nome do Produto</label></div>
+                <h5>➕ Novo Produto</h5>
+                <div class="field label border round"><input type="text" id="p-nome"><label>Nome</label></div>
                 <div class="field label border round"><input type="number" id="p-preco"><label>Preço</label></div>
                 <div class="field label border round">
                     <input type="file" id="p-file" accept="image/*" capture="environment" onchange="converterFoto()">
                     <label>Foto (Câmera ou Galeria)</label>
                     <input type="hidden" id="p-img">
                 </div>
-                <button id="btn-salvar" class="fill green full-width round" onclick="salvarProduto()">Salvar Produto</button>
+                <button id="btn-salvar" class="fill green full-width round" onclick="salvarProduto()">Cadastrar na Planilha</button>
             </article>
 
-            <h5>📦 Meus Produtos</h5>
-            <div id="meus-produtos" class="grid"></div>
+            <h5 class="padding">📦 Meus Itens</h5>
+            <div id="meus-produtos" class="grid padding"></div>
         </div>
     </main>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbyP91JTAxhpjHEvo4F9oZTVvwyVxT2pc5V3SZIfwpRQSz97ES1JClQBJ3dLoohEOrEK/exec";
+        // SUBSTITUA PELA SUA URL DO GOOGLE APPS SCRIPT
+        const API_URL = "SUA_URL_DO_GOOGLE_SCRIPT_AQUI";
 
+        // Converte a foto em Base64 para salvar na planilha
         function converterFoto() {
             const file = document.getElementById('p-file').files[0];
             const reader = new FileReader();
-            reader.onloadend = () => document.getElementById('p-img').value = reader.result;
+            reader.onloadend = () => {
+                document.getElementById('p-img').value = reader.result;
+                alert("Foto carregada com sucesso!");
+            };
             if (file) reader.readAsDataURL(file);
         }
 
         async function handleLogin() {
-            const res = await fetch(`${API_URL}?action=login&email=${document.getElementById('email').value}&senha=${document.getElementById('senha').value}`, {redirect: "follow"});
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const res = await fetch(`${API_URL}?action=login&email=${email}&senha=${senha}`, {redirect: "follow"});
             const user = await res.json();
+            
             if(user.auth) {
                 localStorage.setItem('vendedor', user.email);
                 localStorage.setItem('lojaNome', user.loja || "Minha Loja");
+                localStorage.setItem('lojaNicho', user.nicho || "Geral");
                 abrirPainel();
             } else { alert("Acesso inválido!"); }
         }
@@ -68,21 +110,31 @@
         function abrirPainel() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
-            document.getElementById('display-loja').innerText = localStorage.getItem('lojaNome');
+            
+            const nomeLoja = localStorage.getItem('lojaNome');
+            document.getElementById('display-loja').innerText = nomeLoja;
+            document.getElementById('edit-nome-loja').value = nomeLoja;
+            document.getElementById('edit-nicho').value = localStorage.getItem('lojaNicho');
+            
             document.getElementById('share-link').innerText = `${window.location.origin}/view.html?loja=${localStorage.getItem('vendedor')}`;
             carregarMeusProdutos();
         }
 
         async function carregarMeusProdutos() {
             const container = document.getElementById('meus-produtos');
-            container.innerHTML = "Carregando...";
+            container.innerHTML = "<progress class='circle'></progress>";
+            
             const res = await fetch(`${API_URL}?action=getProdutos&dono=${localStorage.getItem('vendedor')}`, {redirect: "follow"});
             const dados = await res.json();
+            
             container.innerHTML = dados.produtos.map(p => `
-                <div class="s12 m6 card white padding shadow margin-bottom">
-                    <div class="nav">
-                        <img src="${p.img}" width="60" height="60" style="object-fit:cover; border-radius:10px">
-                        <div class="max"><h6>${p.nome}</h6><p class="green-text bold">R$ ${p.preco}</p></div>
+                <div class="s12 m6 l4">
+                    <div class="card white no-padding shadow">
+                        <img src="${p.img}" style="width:100%; height:150px;">
+                        <div class="padding">
+                            <p class="bold" style="margin:0">${p.nome}</p>
+                            <span class="green-text bold">R$ ${parseFloat(p.preco).toFixed(2)}</span>
+                        </div>
                     </div>
                 </div>`).join('');
         }
@@ -90,22 +142,51 @@
         async function salvarProduto() {
             const btn = document.getElementById('btn-salvar');
             btn.disabled = true;
+            
             const dados = {
                 action: "cadastrarProduto",
                 dono: localStorage.getItem('vendedor'),
                 nome: document.getElementById('p-nome').value,
                 preco: document.getElementById('p-preco').value,
                 img: document.getElementById('p-img').value,
-                cat: "Geral"
+                cat: localStorage.getItem('lojaNicho')
             };
+
             await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados) });
-            alert("Cadastrado!");
+            alert("Produto Salvo!");
             btn.disabled = false;
+            
+            // Limpa campos e recarrega lista
+            document.getElementById('p-nome').value = "";
+            document.getElementById('p-preco').value = "";
+            document.getElementById('p-img').value = "";
             carregarMeusProdutos();
+        }
+
+        async function atualizarPerfil() {
+            const btn = document.getElementById('btn-perfil');
+            btn.disabled = true;
+            
+            const dados = {
+                action: "salvarPerfil",
+                email: localStorage.getItem('vendedor'),
+                nomeLoja: document.getElementById('edit-nome-loja').value,
+                nicho: document.getElementById('edit-nicho').value
+            };
+
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados) });
+            
+            localStorage.setItem('lojaNome', dados.nomeLoja);
+            localStorage.setItem('lojaNicho', dados.nicho);
+            document.getElementById('display-loja').innerText = dados.nomeLoja;
+            
+            alert("Configurações atualizadas!");
+            btn.disabled = false;
         }
 
         function logout() { localStorage.clear(); location.reload(); }
         function copiarLink() { navigator.clipboard.writeText(document.getElementById('share-link').innerText); alert("Link copiado!"); }
+        
         window.onload = () => { if(localStorage.getItem('vendedor')) abrirPainel(); };
     </script>
 </body>
