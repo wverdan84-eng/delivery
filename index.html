@@ -3,49 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo</title>
+    <title>Painel SaaS Pro</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
+    <style>
+        body { background: #f0f2f5; }
+        .card { border-radius: 20px; border: none; }
+    </style>
 </head>
 <body>
-    <div id="login-screen" class="padding center-align">
-        <h4>🔐 Acesso Lojista</h4>
-        <div class="field label border"><input type="email" id="email"><label>Email</label></div>
-        <div class="field label border"><input type="password" id="senha"><label>Senha</label></div>
-        <button class="fill primary full-width" onclick="handleLogin()">Entrar</button>
+    <div id="login-screen" class="padding center-align" style="max-width:400px; margin: 10vh auto;">
+        <h4>🚀 Meu Negócio</h4>
+        <div class="field label border round"><input type="email" id="email"><label>Email</label></div>
+        <div class="field label border round"><input type="password" id="senha"><label>Senha</label></div>
+        <button class="fill primary full-width round" onclick="handleLogin()">Entrar</button>
     </div>
 
     <main id="admin-panel" style="display:none">
-        <header class="primary shadow"><nav class="padding"><h6 class="max">Meu Painel</h6><button class="chip" onclick="logout()">Sair</button></nav></header>
-        
-        <div class="padding">
-            <div class="card border padding margin">
-                <h6>🔗 Seu Link para Clientes:</h6>
-                <p id="share-link" class="blue-text" style="word-break: break-all;"></p>
-                <button class="border small" onclick="copiarLink()">Copiar Link</button>
+        <header class="primary shadow"><nav class="padding"><h6 class="max bold" id="display-loja">Painel</h6><button class="circle transparent" onclick="logout()"><i>logout</i></button></nav></header>
+        <div class="padding responsive">
+            
+            <div class="card white padding margin shadow">
+                <h6>🔗 Link do seu Catálogo:</h6>
+                <p id="share-link" class="blue-text bold" style="word-break: break-all;"></p>
+                <button class="border small round" onclick="copiarLink()">Copiar Link</button>
             </div>
 
-            <h5>➕ Novo Produto</h5>
-            <div class="field label border"><input type="text" id="p-nome"><label>Nome</label></div>
-            <div class="field label border"><input type="number" id="p-preco"><label>Preço</label></div>
-            
-            <div class="field label border">
-                <input type="file" id="p-file" accept="image/*" capture="environment" onchange="converterFoto()">
-                <label>Foto (Câmera ou Galeria)</label>
-                <input type="hidden" id="p-img">
-            </div>
-            
-            <button id="btn-salvar" class="fill green full-width" onclick="salvarProduto()">Cadastrar na Planilha</button>
-            
-            <hr>
+            <article class="card white padding margin shadow">
+                <h5>➕ Cadastrar Item</h5>
+                <div class="field label border round"><input type="text" id="p-nome"><label>Nome do Produto</label></div>
+                <div class="field label border round"><input type="number" id="p-preco"><label>Preço</label></div>
+                <div class="field label border round">
+                    <input type="file" id="p-file" accept="image/*" capture="environment" onchange="converterFoto()">
+                    <label>Foto (Câmera ou Galeria)</label>
+                    <input type="hidden" id="p-img">
+                </div>
+                <button id="btn-salvar" class="fill green full-width round" onclick="salvarProduto()">Salvar Produto</button>
+            </article>
+
             <h5>📦 Meus Produtos</h5>
             <div id="meus-produtos" class="grid"></div>
         </div>
     </main>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxMnQmO0z840ux3eEYvBV7b5iqLE_WPgSoUQbGphAbP14L3mgQLT25DQvwIMM0OyFnm/exec";
+        const API_URL = "SUA_NOVA_URL_AQUI";
 
-        // MACETE: Converte imagem em texto para salvar na planilha
         function converterFoto() {
             const file = document.getElementById('p-file').files[0];
             const reader = new FileReader();
@@ -54,19 +56,19 @@
         }
 
         async function handleLogin() {
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
-            const res = await fetch(`${API_URL}?action=login&email=${email}&senha=${senha}`, {redirect: "follow"});
+            const res = await fetch(`${API_URL}?action=login&email=${document.getElementById('email').value}&senha=${document.getElementById('senha').value}`, {redirect: "follow"});
             const user = await res.json();
             if(user.auth) {
                 localStorage.setItem('vendedor', user.email);
+                localStorage.setItem('lojaNome', user.loja || "Minha Loja");
                 abrirPainel();
-            } else { alert("Erro!"); }
+            } else { alert("Acesso inválido!"); }
         }
 
         function abrirPainel() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
+            document.getElementById('display-loja').innerText = localStorage.getItem('lojaNome');
             document.getElementById('share-link').innerText = `${window.location.origin}/view.html?loja=${localStorage.getItem('vendedor')}`;
             carregarMeusProdutos();
         }
@@ -76,13 +78,11 @@
             container.innerHTML = "Carregando...";
             const res = await fetch(`${API_URL}?action=getProdutos&dono=${localStorage.getItem('vendedor')}`, {redirect: "follow"});
             const dados = await res.json();
-            const produtos = dados.produtos || [];
-            
-            container.innerHTML = produtos.map(p => `
-                <div class="s12 m6 card border padding shadow">
+            container.innerHTML = dados.produtos.map(p => `
+                <div class="s12 m6 card white padding shadow margin-bottom">
                     <div class="nav">
-                        <img src="${p.img}" width="50" height="50" class="circle">
-                        <div class="max"><h6>${p.nome}</h6><p>R$ ${p.preco}</p></div>
+                        <img src="${p.img}" width="60" height="60" style="object-fit:cover; border-radius:10px">
+                        <div class="max"><h6>${p.nome}</h6><p class="green-text bold">R$ ${p.preco}</p></div>
                     </div>
                 </div>`).join('');
         }
@@ -99,9 +99,9 @@
                 cat: "Geral"
             };
             await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados) });
-            alert("Sucesso!");
+            alert("Cadastrado!");
             btn.disabled = false;
-            carregarMeusProdutos(); // Atualiza a lista sem recarregar a página
+            carregarMeusProdutos();
         }
 
         function logout() { localStorage.clear(); location.reload(); }
