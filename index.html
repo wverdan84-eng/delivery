@@ -1,220 +1,77 @@
-<!--
-NOBILE STORE PRO
-Template Premium – HTML + JS + Google Sheets + PWA Offline
-Autor: Washington Verdan
-Licença: Comercial
---><!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nobile Store | Oficial</title>  <!-- SEO -->  <meta name="description" content="Nobile Store – Template premium de loja virtual integrada ao Google Sheets, com PWA offline e checkout via WhatsApp." />
-  <meta name="robots" content="index, follow" />  <!-- PWA -->  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#000000" />  <!-- Fonts & Icons -->  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>  <style>
-    :root {
-      --primary:#000;
-      --secondary:#0071e3;
-      --bg:#fff;
-      --soft:#f5f5f7;
-      --radius:22px;
-      --danger:#ff3b30;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Digital SaaS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css">
+    <style>
+        body { background: #f4f7f6; }
+        .product-card { border-radius: 15px; overflow: hidden; margin-bottom: 20px; transition: 0.3s; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .status-tag { position: absolute; top: 10px; right: 10px; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .available { background: #d4edda; color: #155724; }
+        .out-of-stock { background: #f8d7da; color: #721c24; filter: grayscale(1); }
+    </style>
+</head>
+<body class="light">
+    <header class="primary p-2 shadow">
+        <nav class="center-align">
+            <h5 class="white-text">🛍️ Catálogo Digital</h5>
+        </nav>
+    </header>
 
-    *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
-    body{background:var(--bg);color:#1d1d1f}
+    <main class="responsive p-2" id="app">
+        <div class="center-align m-4" id="loader">
+            <progress class="circle large"></progress>
+            <p>Carregando produtos...</p>
+        </div>
+        <div class="grid" id="product-list"></div>
+    </main>
 
-    nav{
-      position:sticky;top:0;z-index:10;
-      display:flex;justify-content:space-between;align-items:center;
-      padding:18px 8%;background:rgba(255,255,255,.85);
-      backdrop-filter:blur(20px);border-bottom:1px solid #eee
-    }
-    .logo{font-size:1.5rem;font-weight:800}
-    .logo span{color:var(--secondary)}
+    <script>
+        // O URL do seu Apps Script (seu backend)
+        const API_URL = "https://script.google.com/macros/s/AKfycbxH-D5bbeewK5KFo5gVwRMtdBzHo6SQ4uh4hgLc7UEtnsCEy46gKfetx-2wEno5c6w/exec";
 
-    .cart-trigger{background:var(--soft);padding:12px;border-radius:50%;cursor:pointer;position:relative}
-    #count{position:absolute;top:-5px;right:-5px;background:var(--secondary);color:#fff;font-size:.7rem;padding:3px 8px;border-radius:20px;font-weight:800}
+        async function fetchProducts() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                render(data);
+            } catch (error) {
+                document.getElementById('app').innerHTML = "<h5>Erro ao carregar dados. Verifique a autorização do Script.</h5>";
+            }
+        }
 
-    .hero{
-      margin:20px 5%;height:340px;border-radius:35px;
-      background:linear-gradient(135deg,#000,#1a1a1a);
-      color:#fff;display:flex;align-items:center;padding:0 50px;overflow:hidden
-    }
-    .hero h1{font-size:2.8rem;font-weight:800;letter-spacing:-2px}
+        function render(products) {
+            const list = document.getElementById('product-list');
+            document.getElementById('loader').style.display = 'none';
+            
+            list.innerHTML = products.map(p => {
+                const isOut = p.status.toLowerCase() === 'esgotado';
+                return `
+                    <div class="s12 m6 l4">
+                        <div class="card product-card ${isOut ? 'out-of-stock' : ''}">
+                            <img src="${p.img}" class="responsive" style="height:250px; object-fit:cover">
+                            <div class="padding">
+                                <div class="status-tag ${isOut ? 'out-of-stock' : 'available'}">${p.status}</div>
+                                <h5>${p.nome}</h5>
+                                <p class="secondary-text">${p.cat}</p>
+                                <h4 class="green-text">R$ ${p.preco.toFixed(2)}</h4>
+                                ${isOut ? '' : `<button class="fill primary full-width" onclick="order('${p.nome}')">Pedir no WhatsApp</button>`}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
-    .container{padding:40px 8%;max-width:1400px;margin:auto}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:30px}
+        function order(name) {
+            const msg = encodeURIComponent(`Olá! Gostaria de comprar o produto: ${name}`);
+            window.open(`https://wa.me/5511999999999?text=${msg}`);
+        }
 
-    .card{
-      background:#fff;border-radius:var(--radius);
-      padding:15px;border:1px solid #eee;cursor:pointer;
-      transition:.4s;display:flex;flex-direction:column
-    }
-    .card:hover{transform:translateY(-8px);border-color:var(--secondary)}
-
-    .img-box{aspect-ratio:1/1;background:var(--soft);border-radius:18px;overflow:hidden;margin-bottom:12px}
-    .img-box img{width:100%;height:100%;object-fit:contain}
-
-    .price{font-weight:800;font-size:1.2rem}
-
-    .tag{position:absolute;top:10px;left:10px;background:var(--danger);color:#fff;font-size:.6rem;padding:5px 10px;border-radius:8px}
-
-    .sidebar{
-      position:fixed;top:0;right:-100%;width:100%;max-width:420px;height:100%;
-      background:#fff;z-index:50;padding:35px;transition:.4s;display:flex;flex-direction:column
-    }
-    .sidebar.active{right:0;box-shadow:-20px 0 50px rgba(0,0,0,.15)}
-
-    .c-item{display:flex;gap:15px;background:var(--soft);padding:15px;border-radius:18px;margin-bottom:12px}
-    .c-item img{width:55px;height:55px;border-radius:12px;object-fit:cover}
-
-    .btn-pay{margin-top:auto;padding:22px;border-radius:20px;border:none;background:#000;color:#fff;font-size:1.1rem;font-weight:800;cursor:pointer}
-  </style></head>
-<body><h1 hidden>Nobile Store Oficial</h1><nav>
-  <div class="logo">NOBILE<span>.</span></div>
-  <div class="cart-trigger" id="cartBtn">
-    <i class="fas fa-shopping-bag"></i>
-    <span id="count">0</span>
-  </div>
-</nav><section class="hero">
-  <div>
-    <h1>Premium<br>Experience.</h1>
-    <p style="opacity:.7">Template profissional para vendas online.</p>
-  </div>
-</section><div class="container">
-  <div id="grid" class="grid">Carregando produtos...</div>
-</div><div class="sidebar" id="sidebar">
-  <h2>Sacola</h2>
-  <div id="cartList" style="flex:1;overflow:auto"></div>
-  <div style="font-weight:800;font-size:1.3rem">Total: <span id="total">R$ 0,00</span></div>
-  <button class="btn-pay" id="checkout">Finalizar Pedido</button>
-</div><script>
-/* CONFIGURAÇÕES */
-const CFG = {
-  SHEET_ID: '1YYobMz2udkbtX9P9N76QhTvCJkNXnxpYUbNvv3M4G_M',
-  WHATSAPP: '5527997566512'
- SCRIPT_URL:'https://script.google.com/macros/s/AKfycbxjB7ns1Fl28xDgJAy9Y30uf32op9Y5faYDonLeveKBoiyqVRKVYAZGYsM0ryM5x-qs/exec'
-
-};
-
-/* ================= STATE ================= */
-let products = [];
-let cart = [];
-
-/* ================= LOAD PRODUCTS ================= */
-async function loadProducts() {
-  try {
-    const url = `https://docs.google.com/spreadsheets/d/${CFG.SHEET_ID}/gviz/tq?tqx=out:csv`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('Erro ao carregar planilha');
-
-    const csv = await res.text();
-    const rows = csv.split('
-').slice(1);
-
-    products = rows.map(r => {
-      if (!r.trim()) return null;
-      const c = r.split(/,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/);
-      return {
-        id: c[0]?.replace(/\"/g, ''),
-        name: c[1]?.replace(/\"/g, ''),
-        price: parseFloat(c[2]),
-        image: c[3]?.replace(/\"/g, ''),
-        stock: parseInt(c[5] || 0)
-      };
-    }).filter(Boolean);
-
-    renderProducts();
-  } catch (e) {
-    document.getElementById('grid').innerText = 'Erro ao carregar produtos.';
-    console.error(e);
-  }
-}
-
-/* ================= RENDER ================= */
-function renderProducts() {
-  const grid = document.getElementById('grid');
-  grid.innerHTML = products.filter(p => p.stock > 0).map(p => `
-    <div class="card" data-id="${p.id}">
-      ${p.stock < 4 ? `<span class="tag">Últimas</span>` : ''}
-      <div class="img-box">
-        <img src="${p.image}" onerror="this.src='https://via.placeholder.com/300'" />
-      </div>
-      <h3>${p.name}</h3>
-      <div class="price">R$ ${p.price.toFixed(2)}</div>
-    </div>
-  `).join('');
-}
-
-function renderCart() {
-  const list = document.getElementById('cartList');
-  const totalEl = document.getElementById('total');
-  const countEl = document.getElementById('count');
-
-  list.innerHTML = cart.map(i => `
-    <div class="c-item">
-      <img src="${i.image}" />
-      <div>
-        <strong>${i.name}</strong><br />
-        ${i.qty}x R$ ${i.price.toFixed(2)}
-      </div>
-    </div>
-  `).join('');
-
-  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  totalEl.innerText = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  countEl.innerText = cart.reduce((s, i) => s + i.qty, 0);
-}
-
-/* ================= CART ACTIONS ================= */
-document.getElementById('grid').addEventListener('click', e => {
-  const card = e.target.closest('.card');
-  if (!card) return;
-
-  const product = products.find(p => p.id === card.dataset.id);
-  if (!product) return;
-
-  const item = cart.find(i => i.id === product.id);
-  if (item) {
-    if (item.qty >= product.stock) return alert('Estoque máximo atingido');
-    item.qty++;
-  } else {
-    cart.push({ ...product, qty: 1 });
-  }
-
-  openCart();
-  renderCart();
-});
-
-/* ================= UI ================= */
-const sidebar = document.getElementById('sidebar');
-
-document.getElementById('cartBtn').onclick = () => toggleCart();
-
-function openCart() {
-  sidebar.classList.add('active');
-}
-
-function toggleCart() {
-  sidebar.classList.toggle('active');
-}
-
-/* ================= CHECKOUT ================= */
-document.getElementById('checkout').onclick = () => {
-  if (!cart.length) return alert('Carrinho vazio');
-
-  const name = prompt('Digite seu nome completo');
-  if (!name || name.length < 5) return;
-
-  const message = `*NOVO PEDIDO*%0ACliente: ${name}%0A%0A${cart.map(i => `${i.qty}x ${i.name}`).join('%0A')}%0A%0ATotal: ${document.getElementById('total').innerText}`;
-
-  confetti({ particleCount: 120, spread: 70 });
-  window.open(`https://wa.me/${CFG.WHATSAPP}?text=${message}`);
-};
-
-/* ================= PWA ================= */
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}
-
-loadProducts();
+        window.onload = fetchProducts;
+    </script>
+</body>
+</html>
